@@ -1,0 +1,59 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+
+<picture version='3' xmlns:rgml='http://r-project.org/RGML' source='heatmap.ps' date='2015-12-03 19:27:17' creator='R (3.2.2)' >
+
+<path type='eofill' id='upperLeft'>
+	<context>
+		<rgb r='0.0' g='0.0' b='0.0'/>
+		<style lwd='10.0' lty='' lineend='0' linemitre='10.0' linejoin='0'/>
+	</context>
+
+	<move y='1919.51' x='3.98047'/>
+	<line y='1919.51' x='803.98'/>
+	<line y='1119.51' x='803.98'/>
+	<line y='1119.51' x='3.98047'/>
+	<line y='1919.51' x='3.98047'/>
+</path>
+
+<path type='eofill' id='upperRight'>
+	<context>
+		<rgb r='0.0' g='0.0' b='0.0'/>
+		<style lwd='8.0' lty='' lineend='0' linemitre='4.0' linejoin='0'/>
+	</context>
+
+	<move y='1919.51' x='1121.17'/>
+	<line y='1919.51' x='1921.17'/>
+	<line y='1119.51' x='1921.17'/>
+	<line y='1119.51' x='1121.17'/>
+	<line y='1919.51' x='1121.17'/>
+</path>
+
+<path type='eofill' id='lowerLeft'>
+	<context>
+		<rgb r='0.0' g='0.0' b='0.0'/>
+		<style lwd='8.0' lty='' lineend='0' linemitre='4.0' linejoin='0'/>
+	</context>
+
+	<move y='804.0' x='4.69141'/>
+	<line y='804.0' x='804.691'/>
+	<line y='4.0' x='804.691'/>
+	<line y='4.0' x='4.69141'/>
+	<line y='804.0' x='4.69141'/>
+</path>
+
+<path type='eofill' id='lowerRight'>
+	<context>
+		<rgb r='0.0' g='0.0' b='0.0'/>
+		<style lwd='8.0' lty='' lineend='0' linemitre='4.0' linejoin='0'/>
+	</context>
+
+	<move y='808.648' x='1123.2'/>
+	<line y='808.648' x='1923.2'/>
+	<line y='8.64844' x='1923.2'/>
+	<line y='8.64844' x='1123.2'/>
+	<line y='808.648' x='1123.2'/>
+</path>
+
+<summary count='8' ymax='1919.51' ymin='4.0' xmax='1923.2' xmin='3.98047'/>
+
+</picture>
