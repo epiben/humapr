@@ -7,7 +7,7 @@ GeomBody <- ggproto("GeomBody", Geom,
     s <- humapr_env$surf # The humapr_env environment and its surf object are created by humap() before it invoks ggplot
     for (i in seq(s@summary@numPaths - 1)) {
       s@paths[[i]]@rgb <- if (!is.na(coords[i, "fill"])) coords[i, "fill"] else "#FFFFFF"
-    } # This loops takes less than 0.005 seconds
+    } # This loops takes less than 0.001 seconds
     grImport::pictureGrob(s) # Takes about 0.05 seconds
   }
 )

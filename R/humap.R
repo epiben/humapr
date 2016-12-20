@@ -2,7 +2,7 @@
 # Output: \code{ggplot2} object that the user may modify with, e.g., \code{theme}.
 
 humap <- function(data, var, region = "body", gender = "male", type = "topo",
-                  quality = "normal", side = "front") {
+                  quality = "normal", side = "front", coding = "simple") {
     # data = tidy data frame
     # var = name of columns in data frame that contains counts for each region
     # region = body region, options: body (default), head, neck, arm,
@@ -10,6 +10,7 @@ humap <- function(data, var, region = "body", gender = "male", type = "topo",
     # gender = n(eutral), f(emale), m(male)
     # side = front, back, both
     # quality = draft, normal, high
+    # coding = which coding scheme is used, currently supports simple and AIS
 
     # Set up dedicated environment for the humap, so it's easy to call objects
     # and values within the geom functions
@@ -21,7 +22,8 @@ humap <- function(data, var, region = "body", gender = "male", type = "topo",
 
     # Coding of body regions
         # Crosswalks between coding systems and pictureGrob shape id's
-        crosswalk <- list(
+        # The vector represent the transformation from coding scheme to path id
+        crosswalks <- list(
             ais = c( # Ensure to make it a named vector (names are path ids)
                 51, # Scalp
                 52, # Forehead
@@ -55,32 +57,32 @@ humap <- function(data, var, region = "body", gender = "male", type = "topo",
                 80, # Foot
                 81), # Toe
             simple = c( # Based on data from my thesis, mainly for testing purposes but might be useful also "post-publication"
-                11, # Head, frontside
-                12, # Head, posterior side
-                21, # Neck, frontside
-                22, # Neck, posterior side
-                31, # Chest, frontside
-                32, # Chest, posterior side
-                41, # Abdomen, frontside
-                42, # Abdomen, posterior side
-                51, # Pelvic area, frontside
-                52, # Pelvic area, posterior side
-                61, # Upper arm, frontside
-                62, # Upper arm, posterior side
-                64, # Forearm, frontside
-                65, # Forearm, posterior side
-                71, # Palm
-                72, # Back of hand
-                81, # Legs and feet, frontside
-                82) # Legs and feet, posterior side
+                "11" = 1, # Head, frontside
+                "12" = 1, # Head, posterior side
+                "21" = 2, # Neck, frontside
+                "22" = 2, # Neck, posterior side
+                "31" = 3, # Chest, frontside
+                "32" = 3, # Chest, posterior side
+                "41" = 4, # Abdomen, frontside
+                "42" = 4, # Abdomen, posterior side
+                "51" = 5, # Pelvic area, frontside
+                "52" = 5, # Pelvic area, posterior side
+                "61" = 6, # Upper arm, frontside
+                "62" = 6, # Upper arm, posterior side
+                "64" = 7, # Forearm, frontside
+                "65" = 7, # Forearm, posterior side
+                "71" = 8, # Palm
+                "72" = 8, # Back of hand
+                "81" = 9, # Legs and feet, frontside
+                "82" = 9) # Legs and feet, posterior side
         )
-        names(crosswalk$ais) <- c()
-        names(crosswalk$simple) <- c(1, 1, 2, 2, 3, 3, 4, 4, 5, 5, 6, 6, 7, 7, 8, 8, 9, 9)
+        # Crosswalking to update input var
+            data$mapped_var <- crosswalks[["coding"]][as.character(data[, var])]
 
         # User may supply a function that changes (i.e., simplifies) the coding, e.g., merging facial sub-regions
         if (exists("humapr_env$simplify_coding")) crosswalk[humapr_env$simplify_coding[1]] <- humapr_env$simplify_coding[2]
 
-    ggplot(data, aes_string(x = var, fill = "-..count..")) +
+    ggplot(data, aes(x = mapped_var, fill = -..count..)) +
         geom_body()
         # + theme(...) at some point
 }
