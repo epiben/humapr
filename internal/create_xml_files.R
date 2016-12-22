@@ -1,1 +1,1 @@
-grImport::PostScriptTrace("internal/body_male_front.ps", "data/body_male_front_high.xml", setflat = 0.2)
+grImport::PostScriptTrace("internal/body_male_front.ps", "data/topo_body_male_front_draft", setflat = 100)
