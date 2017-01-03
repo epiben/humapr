@@ -77,23 +77,24 @@ humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
                                       "//path[@id]", XML::xmlGetAttr, "id"))
         names(humapr_env$surf@paths) <- humapr_env$path_ids # Give paths original names
         if (half %in% c("right", "left")) {
-            humapr_env$path_ids <- grep(paste0(half, "_"), humapr_env$path_ids)
-            humapr_env$surf <- humapr$surf[humapr_env$path_ids]
+            humapr_env$path_ids <- grep(paste0(half, "_"), humapr_env$path_ids, value = TRUE)
+            humapr_env$surf <- humapr_env$surf[humapr_env$path_ids]
         }
 
     # Generate mapped_loc variable
         humapr_env$regions <- grep("_outline", humapr_env$path_ids, value = TRUE, invert = TRUE)
         if (half == "mirror") {
             data$loc_long <- as.character(data[, loc.var])
-            humapr_env$regions <- substring(grep("right_", humapr_env$path_ids, value = TRUE), 7)
-            humapr_env$used_loc <- sort(humapr_env$regions[(humapr_env$regions %in% unique(data[, loc.var]))])
-            humapr_env$unused_loc <- humapr_env$regions[(!humapr_env$regions %in% unique(data[, loc.var]))]
+            humapr_env$regions <- substring(grep("right_", humapr_env$regions, value = TRUE), 7)
 
+        } else if (half %in% c("left", "right")) {
+            data$loc_long <- ifelse(data[, lr.var] == half,
+                                    as.character(paste0(half, "_", data[, loc.var])),
+                                    NA)
         } else {
             data$loc_long <- as.character(paste0(data[, lr.var], "_", data[, loc.var]))
-            humapr_env$used_loc <- sort(humapr_env$regions[(humapr_env$regions %in% unique(data$loc_long))])
-            humapr_env$unused_loc <- humapr_env$regions[(!humapr_env$regions %in% unique(data$loc_long))]
         }
+
         if (!is.null(combine)) {
             humapr_env$comb_key <- list()
             for (new_loc in names(combine)) {
@@ -109,12 +110,12 @@ humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
         } else {
             data$mapped_loc <- data$loc_long
         }
-        humapr_env$mapped_loc <- sort(unique(data$mapped_loc))
 
     # Generate data for annotations
         if (annotate %in% c("all", "absolute", "relative")) {
             #for (region in )
         }
+
     ggplot(data, aes(x = mapped_loc, fill = ..count..)) +
         eval(call(paste0("geom_", region))) +
         theme(axis.title = element_blank(),

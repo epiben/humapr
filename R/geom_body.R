@@ -3,44 +3,33 @@ GeomBody <- ggproto("GeomBody", Geom,
   draw_key = draw_key_polygon,
 
   draw_panel = function(data, panel_scales, coord) {
-      browser()
     coords <- coord$transform(data, panel_scales)
-
-    shade_surf <- function(path, colour) {}
-        body(shade_surf) <- if (humapr_env$half == "mirror") {
-            quote(surf@paths[[paste0("left_", path)]]@rgb <<- surf@paths[[paste0("right_", path)]]@rgb <<- colour)
-        } else {
-            quote(surf@paths[[path]]@rgb <<- colour)
-        }
+    data$label <- panel_scales$x.labels
     surf <- humapr_env$surf
-    for (i in seq(humapr_env$mapped_loc)) {
-        # This can be simplified a lot by using panel_scales$x.labels to find the mapped locs
-        # - will also simplify the humap() function
-        colour <- if (!is.na(coords[i, "fill"])) coords[i, "fill"] else "#FFFFFF"
-        region <- humapr_env$mapped_loc[i]
-        if (region %in% humapr_env$comb_key) {
-            for (old_loc in names(humapr_env$comb_key[humapr_env$comb_key == region])) {
-                shade_surf(old_loc, colour)
+
+    shade_surf <- function(path, colour) surf@paths[[path]]@rgb <<- colour
+    if (humapr_env$half == "mirror") body(shade_surf) <- quote(surf@paths[[paste0("left_", path)]]@rgb <<- surf@paths[[paste0("right_", path)]]@rgb <<- colour)
+
+    for (i in seq(nrow(data))) {
+        if (data[i, "label"] %in% humapr_env$comb_key) {
+            for (old_loc in names(humapr_env$comb_key[humapr_env$comb_key == data[i, "label"]])) {
+                shade_surf(old_loc, coords[i, "fill"])
             }
         } else {
-            shade_surf(region, colour)
+            shade_surf(data[i, "label"], coords[i, "fill"])
         }
-    }
-    for (loc in humapr_env$unused_loc) {
-        shade_surf(loc, "#FFFFFF")
     }
 
-    if (humapr_env$half == "mirror") {
-        shade_surf("outline", humapr_env$outline)
-    } else {
-        for (id in grep("outline", humapr_env$path_ids, value = TRUE)) {
-            shade_surf(id, humapr_env$outline)
-        }
+    for (loc in humapr_env$regions[!humapr_env$regions %in% data$label]) {
+        shade_surf(loc, "#FFFFFF")
+    }
+    for (id in grep("_outline", humapr_env$path_ids, value = TRUE)) {
+        surf@paths[[id]]@rgb <- humapr_env$outline
     }
 
     if (humapr_env$annotate %in% c("all", "absolute", "relative")) {
     } else {
-        grImport::pictureGrob(surf) # See if it's easier to use a gpar function to shade the paths...
+        grImport::pictureGrob(surf)
     }
   }
 )
