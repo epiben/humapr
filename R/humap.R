@@ -34,7 +34,8 @@
 #'   indicated half and ignores observations on the other half.
 #' @param coding which coding scheme is used, currently supports simple and AIS
 #' @param annotate none (defautlt), all, absolute, relative
-#' @param outline hexadecimal string indicating the colour of the outline.
+#' @param outline_colour hexadecimal string indicating the colour of the outline.
+#' @param anno_gp grid::gpar object. Default is fontsize = 9 and col = "black".
 #' @param combine a \italic{list} of vectors naming the regions to be combined and
 #'   mapped as one. E.g., list(arm = c("shoulder", arm", "elbow", "wrist"))
 #'
@@ -43,17 +44,17 @@
 #' @export
 #'
 #' @examples
-humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
+humap <- function(data, loc.var, lr.var = NULL, region = "body",
                   gender = "male", type = "topo", proj = "front",
-                  half = "mirror", coding = "simple", annotate = "all",
-                  outline = "#000000", combine = NULL) {
+                  half = "mirror", coding = "simple", annotate = TRUE,
+                  outline_colour = "#222222", anno_gp = NULL,
+                  combine = NULL) {
 
     # Safety moves. If invalid argument supplied, default chosen and user prompted.
     vargs <- list( # vargs = valid argument values
         c("region", "body"),
         c("proj", "front", "back", "both"),
-        c("quality", "normal", "draft", "high"),
-        c("annotate", "none", "all", "absolute", "relative")
+        c("annotate", TRUE, FALSE)
     )
     for (i in seq(length(vargs))) {
         if (!get(vargs[[i]][1]) %in% vargs[[i]][-1]) {
@@ -69,6 +70,7 @@ humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
         args <- formals()[-1] # Defaults args
         args[names(args) %in% names(sargs)] <- sargs
         for (arg in names(args)) humapr_env[[arg]] <- args[[arg]]
+        if (is.null(humapr_env$anno_gp)) humapr_env$anno_gp <- grid::gpar(col = "black", fontsize = 9)
 
     # Import appropriate XML file and retain (i.e., rename()) path id's
         geom_file <- paste0("data/", type, "_", region, "_", gender, "_", proj, ".xml")
@@ -91,6 +93,7 @@ humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
             data$loc_long <- ifelse(data[, lr.var] == half,
                                     as.character(paste0(half, "_", data[, loc.var])),
                                     NA)
+            humapr_env$regions <- grep(paste0(half, "_"), humapr_env$regions, value = TRUE)
         } else {
             data$loc_long <- as.character(paste0(data[, lr.var], "_", data[, loc.var]))
         }
@@ -104,20 +107,33 @@ humap <- function(data, loc.var = "loc", lr.var = NULL, region = "body",
             }
             humapr_env$comb_key <- do.call(c, humapr_env$comb_key)
 
+            # This must support half = "both"; so user doesn't have to merge left_chest and left_abdomen, but just chest and abdomen
             data$mapped_loc <- ifelse(data$loc_long %in% names(humapr_env$comb_key),
                                       humapr_env$comb_key[data$loc_long],
                                       data$loc_long)
         } else {
             data$mapped_loc <- data$loc_long
         }
+        humapr_env$N <- sum(!is.na(data$mapped_loc))
 
     # Generate data for annotations
-        if (annotate %in% c("all", "absolute", "relative")) {
-            #for (region in )
+        if (annotate) {
+            mids <- list()
+            if (half == "mirror") {
+                for (id in paste0("right_", humapr_env$regions)) {
+                    mids[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
+                }
+            } else {
+                for (id in humapr_env$regions) {
+                    mids[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
+                }
+            }
+            humapr_env$mids <- do.call(rbind, mids)
         }
 
     ggplot(data, aes(x = mapped_loc, fill = ..count..)) +
         eval(call(paste0("geom_", region))) +
+        guides(fill = FALSE) +
         theme(axis.title = element_blank(),
               axis.text = element_blank(),
               axis.line = element_blank(),
