@@ -48,7 +48,7 @@ humap <- function(data, loc.var, lr.var = NULL, region = "body",
                   gender = "male", type = "topo", proj = "front",
                   half = "mirror", coding = "simple", annotate = TRUE,
                   outline_colour = "#222222", anno_gp = NULL,
-                  combine = NULL) {
+                  combine = NULL, controls = NULL) {
 
     # Safety moves. If invalid argument supplied, default chosen and user prompted.
     vargs <- list( # vargs = valid argument values
@@ -102,33 +102,61 @@ humap <- function(data, loc.var, lr.var = NULL, region = "body",
             humapr_env$comb_key <- list()
             for (new_loc in names(combine)) {
                 for (old_loc in combine[[new_loc]]) {
-                    humapr_env$comb_key[[old_loc]] <- new_loc
+                    humapr_env$comb_key[[paste0("right_", old_loc)]] <- paste0("right_", new_loc)
+                    humapr_env$comb_key[[paste0("left_", old_loc)]] <- paste0("left_", new_loc)
                 }
             }
             humapr_env$comb_key <- do.call(c, humapr_env$comb_key)
-
-            # This must support half = "both"; so user doesn't have to merge left_chest and left_abdomen, but just chest and abdomen
             data$mapped_loc <- ifelse(data$loc_long %in% names(humapr_env$comb_key),
-                                      humapr_env$comb_key[data$loc_long],
+                                      humapr_env$comb_key[as.character(data$loc_long)],
                                       data$loc_long)
         } else {
             data$mapped_loc <- data$loc_long
         }
-        humapr_env$N <- sum(!is.na(data$mapped_loc))
 
     # Generate data for annotations
         if (annotate) {
-            mids <- list()
+            if (is.null(humapr_env$controls)) humapr_env$controls <- list(label_pad = 3.5)
+            humapr_env$controls$label_pad <- humapr_env$surf@summary@yscale[2] * humapr_env$controls$label_pad / 100
+browser()
+            anno_coords <- list()
             if (half == "mirror") {
                 for (id in paste0("right_", humapr_env$regions)) {
-                    mids[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
+                    anno_coords[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
                 }
             } else {
                 for (id in humapr_env$regions) {
-                    mids[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
+                    anno_coords[[id]] <- find_midpoint(humapr_env$surf@paths[[id]])
                 }
             }
-            humapr_env$mids <- do.call(rbind, mids)
+            humapr_env$anno_coords <- do.call(rbind, anno_coords)
+
+            mapped_regions <- as.vector(na.exclude(unique(substring(data$mapped_loc, regexpr("_", data$mapped_loc) + 1))))
+
+            if (!is.null(combine)) {
+                for (comb_name in names(combine)) {
+                    mapped_regions[mapped_regions == comb_name] <- combine[[comb_name]][[1]]
+                }
+            }
+
+            if (half == "mirror") {
+                label_y_adj <- vadj(humapr_env$anno_coords[paste0("right_", mapped_regions), "y0"], humapr_env$controls$label_pad)
+            } else if (half %in% c("left", "right")) {
+                label_y_adj <- vadj(humapr_env$anno_coords[paste0(half, "_", mapped_regions), "y0"], humapr_env$controls$label_pad)
+            } else {
+                label_y_adj <- vadj(humapr_env$anno_coords[paste0("right_", mapped_regions), "y0"], humapr_env$controls$label_pad)
+            }
+            humapr_env$anno_coords <- as.data.frame(humapr_env$anno_coords)
+            humapr_env$anno_coords$label_y <- 0
+            if (half == "mirror") {
+                humapr_env$anno_coords[paste0("right_", mapped_regions), "label_y"] <- label_y_adj[paste0("right_", mapped_regions)]
+            } else if (half %in% c("left", "right")) {
+                humapr_env$anno_coords[paste0(half, "_", mapped_regions), "label_y"] <- label_y_adj[paste0(half, "_", mapped_regions)]
+            } else {
+                humapr_env$anno_coords[paste0("right_", mapped_regions), "label_y"] <- humapr_env$anno_coords[paste0("left_", mapped_regions), "label_y"] <- label_y_adj[paste0("right_", mapped_regions)]
+            }
+            humapr_env$anno_coords$offset <- humapr_env$anno_coords$label_y - humapr_env$anno_coords$y0
+            humapr_env$anno_coords$y2 <- humapr_env$anno_coords$y1 <- humapr_env$anno_coords$label_y
         }
 
     ggplot(data, aes(x = mapped_loc, fill = ..count..)) +
