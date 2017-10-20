@@ -53,8 +53,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
         mapdf <- h_env$mapdf
 
         # This gives missing regions the NA default fill
-        data <- dplyr::left_join(as.data.frame(map), data,
-                                 by = c("Layer" = "label")) %>%
+        data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
             dplyr::mutate(
                 fill = ifelse(is.na(fill), h_env$controls$na_fill, fill),
                 label = Layer
