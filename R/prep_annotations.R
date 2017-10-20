@@ -1,21 +1,4 @@
 prep_annotations <- function(mapped_loc, combine, type, gender, proj, half) {
-    # Utility functions
-    # `%||%` <- function(a, b) if(!is.null(a)) a else b
-    # def_dist <- function (x, p = h_env$controls$label_pad, a = h_env$controls$vert_adj) {
-    #     distribute_coords(x, p, a)
-    # }
-    # inverse_coords <- function (x, cols = "x0", patt = "left_") {
-    #     patt <- grepl(patt, row.names(x))
-    #     if (all(patt == FALSE)) return(x)
-    #     xt <- x[patt, ]
-    #     for (col in cols) xt[patt, col] <- max(xt[, cols]) - xt[, col] + min(xt[, cols])
-    #     x[patt, ] <- xt
-    #     na.omit(x)
-    # }
-    # lr_conc <- function(x) c(paste0("left_", x), paste0("right_", x))
-    # line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
-    # rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
-
     # Applying defaults
     h_env$controls$label_pad <- diff(sp::bbox(h_env$map)["y", ]) *
         (h_env$controls$label_pad %||% 3.5) / 100

@@ -3,11 +3,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
     default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
     draw_key = function (data, ...) draw_key_polygon(data/2, ...),
     draw_group = function(data, panel_scales, coord) {
-        # Utility functions
-        `%||%` <- function(a, b) if(!is.null(a)) a else b
-        line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
-        rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
-
         # Transform data and append a label column to the data frame
         coords <- coord$transform(data, panel_scales)
         data$label <- panel_scales$x.labels[data$x]
@@ -58,7 +53,8 @@ GeomHumap <- ggproto("GeomHumap", Geom,
         mapdf <- h_env$mapdf
 
         # This gives missing regions the NA default fill
-        data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
+        data <- dplyr::left_join(as.data.frame(map), data,
+                                 by = c("Layer" = "label")) %>%
             dplyr::mutate(
                 fill = ifelse(is.na(fill), h_env$controls$na_fill, fill),
                 label = Layer
@@ -77,8 +73,8 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                                                     first_rows$alpha)))
 
         # Define x and y scales, as they're used repeatedly in the code
-        xscale <- bbox(map)["x", ]
-        yscale <- bbox(map)["y", ]
+        xscale <- sp::bbox(map)["x", ]
+        yscale <- sp::bbox(map)["y", ]
 
         # If the user wants annotations, the relevant grobs are made here
         if (h_env$annotate %in% c("all", "freq")) {
