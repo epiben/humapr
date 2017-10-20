@@ -10,11 +10,17 @@ build_bridge <- function (d, bridge, type, lr.var, loc.var) {
     }
 
     built_in <- list(
-        ais = list(head = 51:58, neck = 59, shoulder = 60, arm = 61, elbow = 62,
-                   forearm = 63, wrist = 64, hand = 65, fingers = 66, back = 68,
-                   flank = 69, chest = 70, abdomen = 71, buttocks = 72,
-                   genitalia = 73:74, hip = 75, thigh = 76, knee = 77, leg = 78,
-                   ankle = 79, foot = 80, toes = 81))
+        ais = list(
+            head = 51:58, neck = 59, shoulder = 60, arm = 61, elbow = 62,
+            forearm = 63, wrist = 64, hand = 65, fingers = 66, back = 68,
+            flank = 69, chest = 70, abdomen = 71, buttocks = 72,
+            genitalia = 73:74, hip = 75, thigh = 76, knee = 77, leg = 78,
+            ankle = 79, foot = 80, toes = 81),
+        simple = list(
+            head = 11:12, neck = 21:22, chest = 31:32, abdomen = 41:42,
+            pelvis = 51:52, arm = 61:62, forearm = 64:65, hand = 71:72,
+            leg = 81:82)
+    )
 
     if (names(built_in) %in% bridge) bridge <- built_in[[bridge]]
 
