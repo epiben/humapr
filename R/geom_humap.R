@@ -29,7 +29,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                         # if (h_env$half == "mirror") old_loc <- paste0(c("right_", "left_"), old_loc)
                         if (!data[i, "label"] == old_loc) {
                             new_data[[length(new_data) + 1]] <- data[i, ] %>%
-                                mutate(label = old_loc, y = 0, count = 0, prop = 0)
+                                dplyr::mutate(label = old_loc, y = 0, count = 0, prop = 0)
                         }
                     }
                 }
@@ -41,7 +41,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
         data <- dplyr::mutate(data, label = if (h_env$half == "mirror") paste0("right_", label) else label)
         if (h_env$half == "mirror") {
             data <- data %>%
-                mutate(label = paste0("left_", rm_lr(label)),
+                dplyr::mutate(label = paste0("left_", rm_lr(label)),
                        y = 0,
                        count = 0,
                        prop = 0) %>%
