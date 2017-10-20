@@ -71,7 +71,8 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     # Convert user formats with bridge argument
     if (!is.null(h_env$bridge)) data <- build_bridge(data, h_env$bridge,
-                                                     h_env$map)
+                                                     h_env$type, h_env$lr.var,
+                                                     h_env$loc.var)
 
     # Add mapped_loc variable to user's data frame
     data <- generate_mapped_loc(data, h_env$loc.var, h_env$lr.var,
