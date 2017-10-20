@@ -1,8 +1,7 @@
 fetch_map <- function(type, gender, proj, half) {
-    load("R/sysdata.rda")
     mapname <- sprintf("%s_%s_%s", type, gender, proj)
-    map <- maps[[mapname]]$map
-    mapdf <- maps[[mapname]]$mapdf # A data frame with grouped polygon coordinates
+    map <- humapr:::maps[[mapname]]$map # The maps object is kept in R/sysdata.rda
+    mapdf <- humapr:::maps[[mapname]]$mapdf # A data frame with grouped polygon coordinates
 
     pids_all <- as.data.frame(map)$Layer # polygon ids
     names(pids_all) <- seq(1, length(pids_all))
