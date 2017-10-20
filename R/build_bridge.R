@@ -22,7 +22,7 @@ build_bridge <- function (d, bridge, type, lr.var, loc.var) {
             leg = 81:82)
     )
 
-    if (names(built_in) %in% bridge) bridge <- built_in[[bridge]]
+    if (bridge %in% names(built_in)) bridge <- built_in[[bridge]]
 
     if (!is.list(bridge)) stop(paste0("Please, make sure to give a *list* as
                                       the 'bridge' argument, or choose one of
