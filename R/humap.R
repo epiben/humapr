@@ -62,6 +62,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
+    # if (!exists("data")) stop("Please, include a data object.")
     if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
     housekeeping(match.call()[-c(1, 2)], formals()[-1])
         # In here, we save a viewport-creation function to the h_env
@@ -70,8 +71,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
     fetch_map(h_env$type, h_env$gender, h_env$proj, h_env$half)
 
     # Convert user formats with bridge argument
-    if (!is.null(h_env$bridge)) data <- build_bridge(data, h_env$bridge,
-                                                     h_env$map)
+    if (!is.null(h_env$bridge)) data <- build_bridge(data, h_env$bridge, h_env$type)
 
     # Add mapped_loc variable to user's data frame
     data <- generate_mapped_loc(data, h_env$loc.var, h_env$lr.var,
