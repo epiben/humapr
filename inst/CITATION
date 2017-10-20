@@ -1,0 +1,16 @@
+citHeader("To cite humapr in publications use:")
+
+citEntry(entry  = "Article",
+    title       = "No publications yet",
+    author      = personList(as.person("Benjamin Skov Kaas-Hansen"),
+                             as.person("Asser Hedegaard Thomsen")),
+    journal     = "No publications yet",
+    year        = "2017",
+    volumne     = "",
+    number      = "",
+    pages       = "",
+    url         = "",
+
+    textVersion =
+    paste("No publications yet")
+)

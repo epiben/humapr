@@ -53,6 +53,7 @@
 #' @import ggplot2
 #' @import grid
 #' @importFrom stats na.exclude na.omit setNames
+#' @importFrom magrittr %>%
 
 humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
                   proj = "simple", half = "both",
