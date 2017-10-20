@@ -2,13 +2,6 @@ housekeeping <- function(user, defs) {
     # user = user-specified argument values
     # defs = default argument values
 
-    # Utility functions
-    # `%||%` <- function(a, b) if(!is.null(a)) a else b
-    # prompt_inv <- function(arg, val){ # Prompt on invalid argument
-    #     message("Invalid `", arg, "` argument. Defaults to \"", val, "\".")
-    #     assign(arg, val, h_env)
-    # }
-
     # Set up new environment for the humap
     h_env <<- new.env(parent = emptyenv())
 

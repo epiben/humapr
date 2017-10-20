@@ -1,7 +1,4 @@
 generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
-    # Utility functions
-    # rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
-
     # Convert from user's left/right/mid indication to those of humapr
     if (is.list(lr)) {
         test <- c("left", "right")

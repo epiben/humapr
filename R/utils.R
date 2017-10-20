@@ -9,8 +9,6 @@ prompt_inv <- function(arg, val){ # Prompt on invalid argument
     assign(arg, val, h_env)
 }
 
-# `%>%` <- magrittr::`%>%`
-
 def_dist <- function (x, p = h_env$controls$label_pad, a = h_env$controls$vert_adj) {
     distribute_coords(x, p, a)
 }
