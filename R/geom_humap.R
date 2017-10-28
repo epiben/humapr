@@ -137,23 +137,14 @@ GeomHumap <- ggproto("GeomHumap", Geom,
             for (lab in labels$children) label_text[[lab$name]] <- lab$label
             label_text <- do.call(c, label_text)
             long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
-            # h_env$longest_label <- if (!is.null(h_env$longest_label)) {
-            #     if (nchar(long_label) > nchar(h_env$longest_label)) {
-            #         long_label
-            #     } else {
-            #         h_env$longest_label
-            #     }
-            # } else {
-            #     long_label
-            # } Was trying to find a way to harmonise across panels...
 
             # Return final grob tree
-            grid::grobTree(m, lines, labels, vp = h_env$vps(xscale, yscale,
+            grid::grobTree(m, lines, labels, humap_vp = h_env$vps(xscale, yscale,
                                                             li_margin,
                                                             long_label,
                                                             h_env$half))
         } else {
-            the_vp <- h_env$vps(x_range = xscale, y_range = yscale,
+            the_vp <- humap_vp(x_range = xscale, y_range = yscale,
                                 li_margin = list(main = 0, map = c(0, 0)),
                                 longest_label = "", h_env$half)
 
