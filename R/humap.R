@@ -55,7 +55,7 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
+humap <- function(data, loc_var, lr_var = NULL, type = "body", gender = "neutral",
                   proj = "simple", half = "both",
                   annotate = "freq", anno_gp = NULL, bridge = NULL,
                   na_rm = FALSE, combine = NULL, controls = NULL) {
@@ -64,7 +64,8 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
     if (missing(data)) stop("Please, include data.")
     # if (!exists("data")) stop("Please, include a data object.")
     if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
-    housekeeping(match.call()[-c(1, 2)], formals()[-1])
+    # housekeeping(match.call()[-c(1, 2)], formals()[-1])
+    housekeeping(match.call()[-1:2], formals()[-1])
         # In here, we save a viewport-creation function to the h_env
 
     # Import map as SpatialPolygon object

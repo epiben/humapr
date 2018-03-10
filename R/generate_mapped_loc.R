@@ -11,24 +11,25 @@ generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
             # may also complain when a non-used list element supplied, although it's not too important
         d[!is.na(match(d[, lr$var], lr$left)), lr$var] <- "left"
         d[!is.na(match(d[, lr$var], lr$right)), lr$var] <- "right"
-        if (h_env$controls$mid_include) d[!is.na(match(d[, lr$var], lr$mid)),
-                                          lr$var] <- "mid"
-        d[, lr$var] <- ifelse(d[, lr$var] %in% test,
-                              d[, lr$var], NA)
+        # The following now disabled
+        # if (h_env$controls$mid_include) d[!is.na(match(d[, lr$var], lr$mid)),
+        #                                   lr$var] <- "mid"
+        d[, lr$var] <- ifelse(d[, lr$var] %in% test, d[, lr$var], NA)
         lr <- lr$var
     }
 
     # Inelegant "hack" to allow 50% weight of mid-line observations on each side
-    if (h_env$controls$mid_include) {
-        # Basically, we make the data twice as long as originally...
-        d <- rbind(d, d[!d[, lr] == "mid", ])
-        for (x in c("left", "right")) {
-            t <- d[d[, lr] == "mid", ]
-            t[, lr] <- x
-            d <- rbind(d, t)
-        }
-        d <- d[!d[, lr] == "mid", ]
-    }
+    # Now disabled
+    # if (h_env$controls$mid_include) {
+    #     # Basically, we make the data twice as long as originally...
+    #     d <- rbind(d, d[!d[, lr] == "mid", ])
+    #     for (x in c("left", "right")) {
+    #         t <- d[d[, lr] == "mid", ]
+    #         t[, lr] <- x
+    #         d <- rbind(d, t)
+    #     }
+    #     d <- d[!d[, lr] == "mid", ]
+    # }
 
     d[is.na(d[, loc]), ] <- NA # to remove NAs
 
@@ -42,12 +43,12 @@ generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
             as.character(d[, loc])
         }
         h_env$regions <- paste0("right_", unique(rm_lr(regions)))
-    } else if (h %in% c("left", "right")) {
-        d <- dplyr::filter(d, lr == h) # To keep only relevant observations in d
-        d$loc_long <- ifelse(d[, lr] == h,
-                             as.character(paste0(h, "_", d[, loc])),
-                             NA)
-        h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
+    # } else if (h %in% c("left", "right")) {
+    #     d <- dplyr::filter(d, lr == h) # To keep only relevant observations in d
+    #     d$loc_long <- ifelse(d[, lr] == h,
+    #                          as.character(paste0(h, "_", d[, loc])),
+    #                          NA)
+    #     h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
     } else {
         d$loc_long <- ifelse(d[, lr] %in% c("left", "right"),
                              as.character(paste0(d[, lr], "_", d[, loc])),

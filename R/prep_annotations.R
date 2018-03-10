@@ -8,6 +8,7 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, half) {
     if (gender == "neutral" && type == "body" && proj == "simple") {
         # This one should check that the computed (x0, y0) is actually inside
         # the relevant region, and find a new one if it isn't
+        # But that's for later versions
         h_env$anno_coords <- h_env$mapdf %>%
             dplyr::group_by(id) %>%
             dplyr::summarise(
@@ -40,8 +41,8 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, half) {
     if (h_env$controls$vert_adj == "smart") {
         coords <- switch(half,
                     "left" = h_env$anno_coords[paste0("left_", mapped_regions), ],
-                    "right" = , # Takes the next value
-                    "mirror" = h_env$anno_coords[paste0("right_", mapped_regions), ],
+                    "mirror" = , # Takes the next value
+                    "right" = h_env$anno_coords[paste0("right_", mapped_regions), ],
                     rbind(h_env$anno_coords[paste0("left_", mapped_regions), ],
                        h_env$anno_coords[paste0("right_", mapped_regions), ])) %>%
             inverse_coords("x0", "left_")
@@ -54,9 +55,8 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, half) {
                   def_dist(coords[grepl("right_", row.names(coords)), ]))
         }
 
-        if (half %in% c("both", "left")) coords <- inverse_coords(coords,
-                                                                  c("x0", "x1"),
-                                                                  "left_")
+        if (half %in% c("both", "left"))
+            coords <- inverse_coords(coords, c("x0", "x1"), "left_")
         h_env$anno_coords <- coords
     } else {
         lr <- if (h_env$half == "left") "left_" else "right_"

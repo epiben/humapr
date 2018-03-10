@@ -2,6 +2,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
     required_aes = c("x", "y", "fill"),
     default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
     draw_key = function (data, ...) draw_key_polygon(data/2, ...),
+    # Why do I divide data by 2?
     draw_group = function(data, panel_scales, coord) {
         # Transform data and append a label column to the data frame
         coords <- coord$transform(data, panel_scales)
@@ -41,23 +42,19 @@ GeomHumap <- ggproto("GeomHumap", Geom,
         data <- dplyr::mutate(data, label = if (h_env$half == "mirror") paste0("right_", label) else label)
         if (h_env$half == "mirror") {
             data <- data %>%
-                dplyr::mutate(label = paste0("left_", rm_lr(label)),
-                       y = 0,
-                       count = 0,
-                       prop = 0) %>%
-                rbind(data)
+                dplyr::mutate(label = paste0("left_", rm_lr(label)), y = 0,
+                              count = 0, prop = 0) %>%
+                dplyr::bind_rows(data)
         }
 
         # Make "local" copies of map and mapdf objects
         map <- h_env$map
         mapdf <- h_env$mapdf
 
-        # This gives missing regions the NA default fill
+        # Give missing regions default NA fill
         data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
-            dplyr::mutate(
-                fill = ifelse(is.na(fill), h_env$controls$na_fill, fill),
-                label = Layer
-            )
+            dplyr::mutate(label = Layer,
+                          fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
         # Used to fill the polygons
         first_rows <- mapdf[!duplicated(mapdf$id), ] %>%
@@ -109,11 +106,11 @@ GeomHumap <- ggproto("GeomHumap", Geom,
             # Prepare data to feed into vps()
             li_margin <- list(main = 2 * lines_margin,
                               map = lines_margin * c(-1, 1))
-            if (h_env$half %in% c("right", "left")) {
-                li_margin$main <- lines_margin
-                li_margin$map <- lines_margin *
-                    if (h_env$half == "right") c(-1, 0) else c(0, 1)
-            }
+            # if (h_env$half %in% c("right", "left")) {
+            #     li_margin$main <- lines_margin
+            #     li_margin$map <- lines_margin *
+            #         if (h_env$half == "right") c(-1, 0) else c(0, 1)
+            # } Disabled now
 
             # Adjust the viewports in s to make room for annotations
             yscale <- c(min(yscale[1], min(local_coords$y1)),
@@ -126,17 +123,23 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                         id.lengths = rep(3, nrow(local_coords)))
 
             # Create label grob
-            labels <- list()
-            for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
-                                                                    local_coords,
-                                                                    label_pad)
+            # labels <- list()
+            # for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
+            #                                                         local_coords,
+            #                                                         label_pad)
+            # Replaced by this sapply call:
+            labels <- sapply(label_data$label, function(.)
+                make_label(., label_data, local_coords, label_pad))
             labels <- do.call(grid::grobTree, labels)
 
             # Finds the longest label, and use it to define the area for margins
-            label_text <- list()
-            for (lab in labels$children) label_text[[lab$name]] <- lab$label
-            label_text <- do.call(c, label_text)
-            long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
+            # label_text <- list()
+            # for (lab in labels$children) label_text[[lab$name]] <- lab$label
+            # label_text <- do.call(c, label_text)
+            # long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
+            # Replaced by this chain:
+            long_label <- sapply(labels$children, function(.) nchar(.$label)) %>%
+                sort(decreasing = TRUE)[1] # maybe necessary to add: %>% unname()
 
             # Return final grob tree
             grid::grobTree(m, lines, labels, humap_vp = h_env$vps(xscale, yscale,

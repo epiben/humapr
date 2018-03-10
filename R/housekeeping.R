@@ -16,10 +16,13 @@ housekeeping <- function(user, defs) {
     for (arg in names(vargs)) {
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])
     }
-    h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black", fontsize = 9)
+    h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black",
+                                                   fontsize = 9 / ggplot2:::.pt)
+        # Not sure this gives the desired result! Need to investigate more
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
-    h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
+    # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
+    h_env$controls$mid_include <- FALSE
 
     if (is.null(h_env$lr.var) & h_env$half != "mirror") {
         h_env$half <- "mirror"
