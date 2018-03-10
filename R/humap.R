@@ -22,7 +22,7 @@
 #' an observations on each side. Default is FALSE.
 #'
 #' @param data tidy data frame (more under details)
-#' @param loc.var column in data frame containing localisation codes for
+#' @param loc_var column in data frame containing localisation codes for
 #'   observations. Character string.
 #' @param lr.var variable indication left and right side of observations. Values
 #'   must be "left" or "right". May also be a list that defines the variable (=
@@ -74,7 +74,7 @@ humap <- function(data, loc_var, lr_var = NULL, type = "body", gender = "neutral
     if (!is.null(h_env$bridge)) data <- build_bridge(data, h_env$bridge, h_env$type)
 
     # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc.var, h_env$lr.var,
+    data <- generate_mapped_loc(data, h_env$loc_var, h_env$lr_var,
                                 h_env$regions, h_env$half, h_env$combine)
 
     # Generate (preliminary) data for annotations
