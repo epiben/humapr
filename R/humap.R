@@ -24,10 +24,10 @@
 #' @param data tidy data frame (more under details)
 #' @param loc_var column in data frame containing localisation codes for
 #'   observations. Character string.
-#' @param lr.var variable indication left and right side of observations. Values
+#' @param lr_var variable indication left and right side of observations. Values
 #'   must be "left" or "right". May also be a list that defines the variable (=
 #'   data frame column) holding the variables, and which value(s) in that column
-#'   correspond(s) to left and right. So, lr.var = "xx" or lr.var = list(var =
+#'   correspond(s) to left and right. So, lr_var = "xx" or lr_var = list(var =
 #'   "xx", left = c("left", "l"), right = "r")
 #' @param gender n(eutral) (default), f(emale), m(male)
 #' @param type body
