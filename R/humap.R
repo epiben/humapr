@@ -63,7 +63,7 @@ humap <- function(data, loc_var, lr_var = NULL, type = "body", gender = "neutral
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
     # if (!exists("data")) stop("Please, include a data object.")
-    if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
+    if (missing(loc_var)) stop("Please, specify a 'loc_var'.")
     # housekeeping(match.call()[-c(1, 2)], formals()[-1])
     housekeeping(match.call()[-1:2], formals()[-1])
         # In here, we save a viewport-creation function to the h_env
