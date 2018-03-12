@@ -62,12 +62,14 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    # if (!exists("data")) stop("Please, include a data object.")
     if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
     housekeeping(match.call()[-c(1, 2)], formals()[-1])
         # In here, we save a viewport-creation function to the h_env
+        # We also force half = "both" regardless of input, to simplify
+        # Likewise, forces controls$mid_include = FALSE
 
     # Import map as SpatialPolygon object
+    # fetch_map(h_env$type, h_env$gender, h_env$proj, h_env$half)
     fetch_map(h_env$type, h_env$gender, h_env$proj, h_env$half)
 
     # Convert user formats with bridge argument
@@ -88,7 +90,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
         guides(fill = if (h_env$annotate == "none") NULL else FALSE) +
-        geom_humap(stat = "count", na.rm = h_env$na_rm) +
+        geom_humap(stat = "count", na.rm = h_env$na_rm, h_env = h_env) +
         theme(axis.title = element_blank(),
                        axis.text = element_blank(),
                        axis.line = element_blank(),
