@@ -11,14 +11,14 @@ generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
             # may also complain when a non-used list element supplied, although it's not too important
         d[!is.na(match(d[, lr$var], lr$left)), lr$var] <- "left"
         d[!is.na(match(d[, lr$var], lr$right)), lr$var] <- "right"
-        if (h_env$controls$mid_include) d[!is.na(match(d[, lr$var], lr$mid)),
-                                          lr$var] <- "mid"
-        d[, lr$var] <- ifelse(d[, lr$var] %in% test,
-                              d[, lr$var], NA)
+        # This is disabled by forcing mid_include = FALSE in housekeeping.R
+        if (h_env$controls$mid_include) d[!is.na(match(d[, lr$var], lr$mid)), lr$var] <- "mid"
+        d[, lr$var] <- ifelse(d[, lr$var] %in% test, d[, lr$var], NA)
         lr <- lr$var
     }
 
     # Inelegant "hack" to allow 50% weight of mid-line observations on each side
+    # This is disabled by forcing mid_include = FALSE in housekeeping.R
     if (h_env$controls$mid_include) {
         # Basically, we make the data twice as long as originally...
         d <- rbind(d, d[!d[, lr] == "mid", ])
@@ -35,9 +35,7 @@ generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
     # Generate "loc_long" based on user inputs
     if (h == "mirror") {
         d$loc_long <- if (!is.null(lr)) {
-            ifelse(d[, lr] %in% c("left", "right"),
-                   as.character(d[, loc]),
-                   NA)
+            ifelse(d[, lr] %in% c("left", "right"), as.character(d[, loc]), NA)
         } else {
             as.character(d[, loc])
         }
