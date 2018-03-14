@@ -56,8 +56,8 @@
 #' @importFrom magrittr %>%
 
 humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
-                  proj = "simple", annotate = "freq", anno_gp = NULL, bridge = NULL,
-                  na_rm = FALSE, combine = NULL, controls = NULL) {
+                  proj = "simple", half = "both", annotate = "freq", anno_gp = NULL,
+                  bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
