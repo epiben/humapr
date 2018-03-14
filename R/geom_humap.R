@@ -86,13 +86,13 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                  local_coords$side <-  ifelse(grepl("left_", local_coords$region), "left", "right")
                                  local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
                              }
-                             # if (h_env$controls$vert_adj == "smart") {
-                             #     local_coords <- h_env$anno_coords
-                             #     local_coords$side <-  ifelse(grepl("left_", row.names(local_coords)),
-                             #                                  "left", "right")
-                             #     # local_coords$x0 <- with(local_coords, ifelse(side == "left", xscale[2] - x0, x0))
-                             #     # local_coords$x1 <- with(local_coords, ifelse(side == "left", xscale[2] - x1, x1))
-                             # }
+                             if (h_env$controls$vert_adj == "smart") {
+                                 local_coords <- h_env$anno_coords
+                                 local_coords$side <-  ifelse(grepl("left_", row.names(local_coords)),
+                                                              "left", "right")
+                                 # local_coords$x0 <- with(local_coords, ifelse(side == "left", xscale[2] - x0, x0))
+                                 # local_coords$x1 <- with(local_coords, ifelse(side == "left", xscale[2] - x1, x1))
+                             }
                              label_pad <- diff(xscale) / 10
                              lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
                                                  max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
