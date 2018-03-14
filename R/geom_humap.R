@@ -86,27 +86,31 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                  local_coords$side <-  ifelse(grepl("left_", local_coords$region), "left", "right")
                                  local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
                              }
-                             if (h_env$controls$vert_adj == "smart") {
-                                 local_coords <- h_env$anno_coords
-                                 local_coords$side <-  ifelse(grepl("left_",
-                                                                    row.names(local_coords)),
-                                                              "left", "right")
-                                 # local_coords$x0 <- with(local_coords, ifelse(side == "left", xscale[2] - x0, x0))
-                                 # local_coords$x1 <- with(local_coords, ifelse(side == "left", xscale[2] - x1, x1))
-                             }
+                             # if (h_env$controls$vert_adj == "smart") {
+                             #     local_coords <- h_env$anno_coords
+                             #     local_coords$side <-  ifelse(grepl("left_", row.names(local_coords)),
+                             #                                  "left", "right")
+                             #     # local_coords$x0 <- with(local_coords, ifelse(side == "left", xscale[2] - x0, x0))
+                             #     # local_coords$x1 <- with(local_coords, ifelse(side == "left", xscale[2] - x1, x1))
+                             # }
                              label_pad <- diff(xscale) / 10
                              lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
                                                  max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
                              local_coords$x2 <- ifelse(local_coords$side == "left",
                                                        xscale[2] + lines_margin,
                                                        xscale[1] - lines_margin)
-                             local_coords <- switch(h_env$half,
-                                                    mirror = , # uses the following (= right)
-                                                    right = subset(local_coords, side == "right"),
-                                                    left = subset(local_coords, side == "left"),
-                                                    local_coords)
+                             local_coords <- switch(
+                                 h_env$half,
+                                 mirror = , # uses the following (= right)
+                                 right = subset(local_coords, side == "right"),
+                                 left = subset(local_coords, side == "left"),
+                                 local_coords)
                              # local_coords <- local_coords[row.names(local_coords) %in% data$label, ]
-                             temp_labels <- if (h_env$half == "mirror") paste0("right_", label_data$label) else label_data$label
+                             temp_labels <- if (h_env$half == "mirror") {
+                                 paste0("right_", label_data$label)
+                             } else {
+                                 label_data$label
+                             }
                              local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
 
                              # Prepare data to feed into vps()
@@ -129,34 +133,31 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                                          id.lengths = rep(3, nrow(local_coords)))
 
                              # Create label grob
-                             labels <- list()
-                             for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
-                                                                                     local_coords,
-                                                                                     label_pad)
-                             # This should be a good, concise replacement for the four lines above
+                             # labels <- list()
+                             # for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
+                             #                                                         local_coords,
+                             #                                                         label_pad)
                              labels <- sapply(label_data$label, function(.)
                                  make_label(., label_data, local_coords, label_pad))
                              labels <- do.call(grid::grobTree, labels)
 
                              # Find longest label, and use it to define the area for margins
-                             label_text <- list()
-                             for (lab in labels$children) label_text[[lab$name]] <- lab$label
-                             label_text <- do.call(c, label_text)
-                             long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
-
-                             # The four lines above this should be equivalent to (and thus use this):
+                             # label_text <- list()
+                             # for (lab in labels$children) label_text[[lab$name]] <- lab$label
+                             # label_text <- do.call(c, label_text)
+                             # long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
                              long_label <- sapply(labels$children, function(.) nchar(.$label)) %>%
                                  sort(decreasing = TRUE)[1] %>% unname()
 
+                             # Make viewport
+                             the_vp <- vp(xscale, yscale, li_margin, long_label, h_env$half)
+
                              # Return final grob tree
-                             grid::grobTree(m, lines, labels, humap_vp = h_env$vps(xscale, yscale,
-                                                                                   li_margin,
-                                                                                   long_label,
-                                                                                   h_env$half))
+                             grid::grobTree(m, lines, labels, vp = the_vp)
                          } else {
-                             the_vp <- humap_vp(x_range = xscale, y_range = yscale,
-                                                li_margin = list(main = 0, map = c(0, 0)),
-                                                longest_label = "", h_env$half)
+                             the_vp <- vp(x_range = xscale, y_range = yscale,
+                                          li_margin = list(main = 0, map = c(0, 0)),
+                                          longest_label = "", h_env$half)
                              grid::grobTree(m, vp = the_vp)
                          }
                      }

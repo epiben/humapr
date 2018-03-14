@@ -1,10 +1,15 @@
+# Use default, if no other value specified
 `%||%` <- function(a, b) if(!is.null(a)) a else b
 
 line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
 
+# Remove "left_" and "right_" from vector of localizers
 rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
 
-prompt_inv <- function(arg, val){ # Prompt on invalid argument
+lr_conc <- function(x) c(paste0("left_", x), paste0("right_", x))
+
+# Prompt on invalid argument
+prompt_inv <- function(arg, val){
     message("Invalid `", arg, "` argument. Defaults to \"", val, "\".")
     assign(arg, val, h_env)
 }
@@ -22,8 +27,33 @@ inverse_coords <- function (x, cols = "x0", patt = "left_") {
     na.omit(x)
 }
 
-lr_conc <- function(x) c(paste0("left_", x), paste0("right_", x))
-
 line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
 
+# Function to make viewport able to handle the humap
+vp <- function(x_range, y_range, li_margin, longest_label, half) {
+    la_margin <- grid::stringWidth(longest_label)
+    the_layout <- function (x_range, y_range, li_margin, la_margin, half) {
+        the_widths <- switch(
+            half,
+            left = grid::unit.c(unit(diff(x_range) + li_margin$main, "null"), la_margin),
+            # mirror = , # disabled
+            right = grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null")),
+            grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null"), la_margin))
 
+        ncols <- if (half == "both") 3 else 2
+        grid::grid.layout(1, ncols, widths = the_widths,
+                          heights = diff(y_range), respect = TRUE)
+    }
+
+    main <- grid::viewport(width = 0.9, height = 0.9,
+                           layout = the_layout(x_range, y_range, li_margin,
+                                               la_margin, half),
+                           gp = h_env$anno_gp)
+
+    map <- grid::viewport(layout.pos.row = 1,
+                          layout.pos.col = switch(half, left = 1, 2),
+                          xscale = x_range + li_margin$map,
+                          yscale = y_range)
+
+    grid::vpStack(main, map)
+}
