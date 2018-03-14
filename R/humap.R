@@ -56,15 +56,13 @@
 #' @importFrom magrittr %>%
 
 humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
-                  proj = "simple", half = "both",
-                  annotate = "freq", anno_gp = NULL, bridge = NULL,
+                  proj = "simple", annotate = "freq", anno_gp = NULL, bridge = NULL,
                   na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
     if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
     housekeeping(match.call()[-c(1, 2)], formals()[-1])
-        # In here, we save a viewport-creation function to the h_env
         # We also force half = "both" regardless of input, to simplify
         # Likewise, forces controls$mid_include = FALSE
 
@@ -98,7 +96,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
         guides(fill = if (h_env$annotate == "none") NULL else FALSE) +
-        geom_humap(stat = "count", na.rm = h_env$na_rm, h_env = h_env) +
+        geom_humap(stat = "count", na.rm = h_env$na_rm) +
         theme(axis.title = element_blank(),
                        axis.text = element_blank(),
                        axis.line = element_blank(),
