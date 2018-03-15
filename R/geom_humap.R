@@ -132,12 +132,12 @@ browser()
                                          id.lengths = rep(3, nrow(local_coords)))
 
              # Create label grob
-             labels <- list()
-             for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
-                                                                     local_coords,
-                                                                     label_pad)
+             # labels <- list()
+             # for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
+             #                                                         local_coords,
+             #                                                         label_pad)
              labels <- sapply(label_data$label, function(.)
-                 make_label(., label_data, local_coords, label_pad))
+                 make_label(., label_data, local_coords, label_pad), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
 
              # Find longest label, and use it to define the area for margins
