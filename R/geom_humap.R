@@ -38,18 +38,11 @@ GeomHumap <- ggproto("GeomHumap", Geom,
          }
 
          # Prepping data for plotting and creating labels, if requested by user
-         # data <- dplyr::mutate(data, label = if (h_env$half == "mirror") paste0("right_", label) else label)
          data$label <- ifelse(h_env$half == "mirror", paste0("right_", data$label), data$label)
          if (h_env$half == "mirror") {
              data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
                                    y = 0, count = 0, prop = 0) %>%
-                 dplyr::bind_rows(data)
-             # data <- data %>%
-             #     dplyr::mutate(label = paste0("left_", rm_lr(label)),
-             #            y = 0,
-             #            count = 0,
-             #            prop = 0) %>%
-             #     rbind(data)
+                 rbind(data)
          }
 
          # Make "local" copies of map and mapdf objects
@@ -89,8 +82,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                  local_coords <- h_env$anno_coords
                  local_coords$side <-  ifelse(grepl("left_", row.names(local_coords)),
                                               "left", "right")
-                 # local_coords$x0 <- with(local_coords, ifelse(side == "left", xscale[2] - x0, x0))
-                 # local_coords$x1 <- with(local_coords, ifelse(side == "left", xscale[2] - x1, x1))
              }
              label_pad <- diff(xscale) / 10
              lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
@@ -113,38 +104,24 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
 
              # Prepare data to feed into vps()
-             li_margin <- list(main = 2 * lines_margin,
-                               map = lines_margin * c(-1, 1))
-             # if (h_env$half %in% c("right", "left")) { # disabled
-             #     li_margin$main <- lines_margin
-             #     li_margin$map <- lines_margin *
-             #         if (h_env$half == "right") c(-1, 0) else c(0, 1)
-             # }
+             li_margin <- list(main = 2 * lines_margin, map = lines_margin * c(-1, 1))
 
              # Adjust the viewports in s to make room for annotations
              yscale <- c(min(yscale[1], min(local_coords$y1)),
                          max(yscale[2], max(local_coords$y1)))
-browser()
+
              # Create lines grob
              lines <- grid::polylineGrob(x = line_coords(local_coords, c("x0", "x1", "x2")),
                                          y = line_coords(local_coords, c("y0", "y1", "y1")),
                                          default.units = "native",
                                          id.lengths = rep(3, nrow(local_coords)))
 
-             # Create label grob
-             # labels <- list()
-             # for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
-             #                                                         local_coords,
-             #                                                         label_pad)
+             # Create labels grob
              labels <- sapply(label_data$label, function(.)
                  make_label(., label_data, local_coords, label_pad), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
 
              # Find longest label, and use it to define the area for margins
-             # label_text <- list()
-             # for (lab in labels$children) label_text[[lab$name]] <- lab$label
-             # label_text <- do.call(c, label_text)
-             # long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
              long_label <- max(sapply(labels$children, function(.) nchar(.$label)))
 
              # Make viewport
