@@ -145,8 +145,7 @@ browser()
              # for (lab in labels$children) label_text[[lab$name]] <- lab$label
              # label_text <- do.call(c, label_text)
              # long_label <- label_text[nchar(label_text) == max(nchar(label_text))][[1]]
-             long_label <- sapply(labels$children, function(.) nchar(.$label)) %>%
-                 sort(decreasing = TRUE)[1] %>% unname()
+             long_label <- max(sapply(labels$children, function(.) nchar(.$label)))
 
              # Make viewport
              the_vp <- vp(xscale, yscale, li_margin, long_label, h_env$half)
