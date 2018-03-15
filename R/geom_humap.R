@@ -55,6 +55,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                            fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Used to fill the polygons
+         browser()
          first_rows <- mapdf[!duplicated(mapdf$id), ] %>%
              dplyr::left_join(data, by = c("id" = "label"))
 
@@ -65,7 +66,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                 gp = grid::gpar(col = first_rows$colour,
                                                 fill = scales::alpha(first_rows$fill,
                                                                      first_rows$alpha)))
-         browser()
 
          # Define x and y scales, as they're used repeatedly in the code
          xscale <- sp::bbox(map)["x", ]
