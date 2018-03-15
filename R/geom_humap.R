@@ -124,7 +124,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              # Adjust the viewports in s to make room for annotations
              yscale <- c(min(yscale[1], min(local_coords$y1)),
                          max(yscale[2], max(local_coords$y1)))
-
+browser()
              # Create lines grob
              lines <- grid::polylineGrob(x = line_coords(local_coords, c("x0", "x1", "x2")),
                                          y = line_coords(local_coords, c("y0", "y1", "y1")),
@@ -132,10 +132,10 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                          id.lengths = rep(3, nrow(local_coords)))
 
              # Create label grob
-             # labels <- list()
-             # for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
-             #                                                         local_coords,
-             #                                                         label_pad)
+             labels <- list()
+             for (id in label_data$label) labels[[id]] <- make_label(id, label_data,
+                                                                     local_coords,
+                                                                     label_pad)
              labels <- sapply(label_data$label, function(.)
                  make_label(., label_data, local_coords, label_pad))
              labels <- do.call(grid::grobTree, labels)
