@@ -124,7 +124,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              # Adjust the viewports in s to make room for annotations
              yscale <- c(min(yscale[1], min(local_coords$y1)),
                          max(yscale[2], max(local_coords$y1)))
-
+browser()
              # Create lines grob
              lines <- grid::polylineGrob(x = line_coords(local_coords, c("x0", "x1", "x2")),
                                          y = line_coords(local_coords, c("y0", "y1", "y1")),
