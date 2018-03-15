@@ -65,7 +65,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                 gp = grid::gpar(col = first_rows$colour,
                                                 fill = scales::alpha(first_rows$fill,
                                                                      first_rows$alpha)))
-         browser()
 
          # Define x and y scales, as they're used repeatedly in the code
          xscale <- sp::bbox(map)["x", ]
