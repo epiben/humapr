@@ -39,7 +39,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
          }
 
          # Prepping data for plotting and creating labels, if requested by user
-         data$label <- ifelse(h_env$half == "mirror", paste0("right_", data$label), data$label)
+         if (h_env$half == "mirror") data$label <- paste0("right_", data$label)
          if (h_env$half == "mirror") {
              data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
                                    y = 0, count = 0, prop = 0) %>%
