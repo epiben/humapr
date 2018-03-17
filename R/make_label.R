@@ -27,14 +27,15 @@ make_label <- function (id, data, local_coords, label_pad) {
         #     paste0(regmatches(lab, gregexpr("_", lab),
         #                       invert = TRUE)[[1]][-1], collapse = " ")
         # }
-        # Convert first letter to capital, and combine with frequencies
+        # Capital first letter and concatenate frequencies
         label <- paste0(toupper(substr(lab, 1, 1)), substring(lab, 2), ": ", label)
     }
 
     if (h_env$half == "mirror") id <- paste0("right_", id)
-    x_coord <- unit(local_coords[id, "x2"], "native") +
-        unit(1, "strwidth", "  ") * if (local_coords[id, "side"] == "left") 1 else -1
+    x_coord <- grid::unit(local_coords[id, "x2"], "native") +
+        grid::unit(1, "strwidth", "  ") * if (local_coords[id, "side"] == "left") 1 else -1
 
-    textGrob(label, default.units = "native", just = local_coords[id, "side"], x = x_coord,
-             y = unit(local_coords[id, "y1"], "native") + unit(0.1, "lines"))
+    grid::textGrob(label, default.units = "native", just = local_coords[id, "side"],
+                   x = x_coord,
+                   y = grid::unit(local_coords[id, "y1"], "native") + grid::unit(0.1, "lines"))
 }
