@@ -28,8 +28,8 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                      for (old_loc in old_locs) {
                          # if (h_env$half == "mirror") old_loc <- paste0(c("right_", "left_"), old_loc)
                          if (!data[i, "label"] == old_loc) {
-                             new_data[[length(new_data) + 1]] <- data[i, ] %>%
-                                 dplyr::mutate(label = old_loc, y = 0, count = 0, prop = 0)
+                             new_data[[length(new_data) + 1]] <-
+                                 dplyr::mutate(data[i, ], label = old_loc, y = 0, count = 0, prop = 0)
                          }
                      }
                  }
@@ -44,12 +44,11 @@ GeomHumap <- ggproto("GeomHumap", Geom,
          #                           y = 0, count = 0, prop = 0) %>%
          #         rbind(data)
          # }
-         if (h_env$half == "mirror") {
-             data$label <- paste0("right_", data$label)
-             data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
-                                   y = 0, count = 0, prop = 0) %>%
-                 rbind(data)
-         }
+         if (h_env$half == "mirror")
+             # Essentially, row-bind two modified versions of the 'data' df
+             data <- dplyr::mutate(data, label = paste0("left_", label), y = 0,
+                                   count = 0, prop = 0) %>%
+                 rbind(dplyr::mutate(data, label = paste0("right_", label)))
 
          # Make "local" copies of map and mapdf objects
          map <- h_env$map
@@ -57,20 +56,19 @@ GeomHumap <- ggproto("GeomHumap", Geom,
 
          # Give missing regions default NA fill
          data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
-             dplyr::mutate(label = Layer,
-                           fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
+             dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
-         # Used to fill the polygons
-         first_rows <- mapdf[!duplicated(mapdf$id), ] %>%
+         # Yield fill colours for each polygon
+         fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>% # mapdf[!duplicated(mapdf$id), ] %>%
              dplyr::left_join(data, by = c("id" = "label"))
 
          # Start building the output, first off is the polygon map
          m <- grid::polygonGrob(x = grid::unit(mapdf$long, "native"),
                                 y = grid::unit(mapdf$lat, "native"),
                                 id = as.factor(mapdf$id),
-                                gp = grid::gpar(col = first_rows$colour,
-                                                fill = scales::alpha(first_rows$fill,
-                                                                     first_rows$alpha)))
+                                gp = grid::gpar(col = fill_df$colour,
+                                                fill = scales::alpha(fill_df$fill,
+                                                                     fill_df$alpha)))
 
          # Define x and y scales, as they're used repeatedly in the code
          xscale <- sp::bbox(map)["x", ]
@@ -80,27 +78,28 @@ GeomHumap <- ggproto("GeomHumap", Geom,
          if (h_env$annotate %in% c("all", "freq")) {
              # Generate coordinates for annotations
              if (!h_env$controls$vert_adj == "smart") {
+                 # I should probably just go for the "smart" version; it's better
                  local_coords <- subset(h_env$anno_coords, !is.na(x0) & !is.na(offset))
                  local_coords$side <-  ifelse(grepl("left_", local_coords$region), "left", "right")
                  local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
              }
-             if (h_env$controls$vert_adj == "smart") {
-                 local_coords <- h_env$anno_coords
-                 local_coords$side <-  ifelse(grepl("left_", row.names(local_coords)),
-                                              "left", "right")
-             }
+             if (h_env$controls$vert_adj == "smart")
+                 # local_coords <- h_env$anno_coords
+                 # local_coords$side <- ifelse(grepl("left_", row.names(local_coords)),
+                 #                             "left", "right")
+                 local_coords <- h_env$anno_coords %>%
+                     dplyr::mutate(side = ifelse(grepl("left_", row.names(.)), "left", "right"))
              label_pad <- diff(xscale) / 10
              lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
                                  max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
              local_coords$x2 <- ifelse(local_coords$side == "left",
                                        xscale[2] + lines_margin,
                                        xscale[1] - lines_margin)
-             local_coords <- switch(
-                 h_env$half,
-                 mirror = , # uses the following (= right)
-                 right = subset(local_coords, side == "right"),
-                 left = subset(local_coords, side == "left"),
-                 local_coords)
+             local_coords <- switch(h_env$half,
+                                    mirror = , # uses the following (= right)
+                                    right = subset(local_coords, side == "right"),
+                                    left = subset(local_coords, side == "left"),
+                                    local_coords)
              # local_coords <- local_coords[row.names(local_coords) %in% data$label, ]
              temp_labels <- if (h_env$half == "mirror") {
                  paste0("right_", label_data$label)
@@ -109,10 +108,10 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              }
              local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
 
-             # Prepare data to feed into vp()
+             # Prepare data to feed into humap_vp()
              li_margin <- list(main = 2 * lines_margin, map = lines_margin * c(-1, 1))
 
-             # Adjust the viewports in s to make room for annotations
+             # Adjust yscale to make sure all annotations fit
              yscale <- c(min(yscale[1], min(local_coords$y1)),
                          max(yscale[2], max(local_coords$y1)))
 
@@ -122,7 +121,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                          default.units = "native",
                                          id.lengths = rep(3, nrow(local_coords)))
 
-             # Create labels grob
+             # Create labels grob, using list with named elements
              labels <- sapply(label_data$label, function(.)
                  make_label(., label_data, local_coords, label_pad), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
@@ -131,15 +130,15 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              long_label <- max(sapply(labels$children, function(.) nchar(.$label)))
 
              # Make viewport
-             the_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
+             map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
 
              # Return final grob tree
-             grid::grobTree(m, lines, labels, vp = the_vp)
+             grid::grobTree(m, lines, labels, vp = map_vp)
          } else {
-             the_vp <- humap_vp(x_range = xscale, y_range = yscale,
+             map_vp <- humap_vp(x_range = xscale, y_range = yscale,
                                 li_margin = list(main = 0, map = c(0, 0)),
                                 longest_label = "", h_env$half)
-             grid::grobTree(m, vp = the_vp)
+             grid::grobTree(m, vp = map_vp)
          }
      }
 )
