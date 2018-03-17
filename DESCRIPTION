@@ -1,19 +1,19 @@
 Package: humapr
 Type: Package
-Title: Creates Visualisations of Topographic Human Data
+Title: Visualise Topographic Human Data
 Version: 0.0.0.9000
 Authors@R:
-    c(person("Kaas-Hansen", "Benjamin Skov", email = "bskk@regionsjaelland.dk", role = c("cre", "aut")),
+    c(person("Kaas-Hansen", "Benjamin Skov", email = "benskov@gmail.com", role = c("cre", "aut")),
       person("Thomsen", "Asser", email = "aht@forens.au.dk", role = "aut"))
 Maintainer: Benjamin Skov Kaas-Hansen <benskov@gmail.com>
 Description: An extension of ggplot2 that plots topographic human data on simple "body maps", to visualise data.
 Depends:
     ggplot2 (>= 2.2.1),
-    grid (>= 3.3.2),
     R (>= 3.3.2)
 Imports:
     broom (>= 0.4.2),
-    dplyr (>= 0.5.0),
+    dplyr (>= 0.5.0), 
+    grid (>= 3.3.2),
     maptools (>= 0.8-39),
     magrittr (>= 1.5),
     sp (>= 1.2-3)
