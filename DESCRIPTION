@@ -2,7 +2,7 @@ Package: humapr
 Type: Package
 Title: Creates Visualisations of Topographic Human Data
 Version: 0.0.0.9000
-Authors@R: 
+Authors@R:
     c(person("Kaas-Hansen", "Benjamin Skov", email = "bskk@regionsjaelland.dk", role = c("cre", "aut")),
       person("Thomsen", "Asser", email = "aht@forens.au.dk", role = "aut"))
 Maintainer: Benjamin Skov Kaas-Hansen <benskov@gmail.com>
@@ -21,3 +21,6 @@ License: GPL-3
 LazyData: TRUE
 BugReports: https://github.com/benskov/humapr/issues
 RoxygenNote: 6.0.1
+Suggests: knitr,
+    rmarkdown
+VignetteBuilder: knitr
