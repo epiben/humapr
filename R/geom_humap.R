@@ -3,7 +3,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
      default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
-         browser()
          # Transform data and append a label column to the data frame
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
@@ -38,9 +37,15 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              data <- do.call(rbind, new_data)
          }
 
-         # Prepping data for plotting and creating labels, if requested by user
-         if (h_env$half == "mirror") data$label <- paste0("right_", data$label)
+         # Prep data for plotting and create labels, if requested by user
+         # if (h_env$half == "mirror") data$label <- paste0("right_", data$label)
+         # if (h_env$half == "mirror") {
+         #     data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
+         #                           y = 0, count = 0, prop = 0) %>%
+         #         rbind(data)
+         # }
          if (h_env$half == "mirror") {
+             data$label <- paste0("right_", data$label)
              data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
                                    y = 0, count = 0, prop = 0) %>%
                  rbind(data)
@@ -56,7 +61,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                            fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Used to fill the polygons
-         browser()
          first_rows <- mapdf[!duplicated(mapdf$id), ] %>%
              dplyr::left_join(data, by = c("id" = "label"))
 
@@ -105,7 +109,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              }
              local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
 
-             # Prepare data to feed into vps()
+             # Prepare data to feed into vp()
              li_margin <- list(main = 2 * lines_margin, map = lines_margin * c(-1, 1))
 
              # Adjust the viewports in s to make room for annotations
@@ -127,14 +131,14 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              long_label <- max(sapply(labels$children, function(.) nchar(.$label)))
 
              # Make viewport
-             the_vp <- vp(xscale, yscale, li_margin, long_label, h_env$half)
+             the_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
 
              # Return final grob tree
              grid::grobTree(m, lines, labels, vp = the_vp)
          } else {
-             the_vp <- vp(x_range = xscale, y_range = yscale,
-                          li_margin = list(main = 0, map = c(0, 0)),
-                          longest_label = "", h_env$half)
+             the_vp <- humap_vp(x_range = xscale, y_range = yscale,
+                                li_margin = list(main = 0, map = c(0, 0)),
+                                longest_label = "", h_env$half)
              grid::grobTree(m, vp = the_vp)
          }
      }
