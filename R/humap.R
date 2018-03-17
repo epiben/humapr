@@ -50,11 +50,8 @@
 #'   used in \code{humap}.
 #'
 #' @export
-#' @import ggplot2
-#' @import grid
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select, filter, mutate, summarise, rename
 
 humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
                   proj = "simple", half = "both", annotate = "freq", anno_gp = NULL,
