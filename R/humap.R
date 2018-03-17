@@ -54,6 +54,7 @@
 #' @import grid
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
+#' @importFrom dplyr select, filter, mutate, summarise, rename
 
 humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
                   proj = "simple", half = "both", annotate = "freq", anno_gp = NULL,
@@ -67,7 +68,6 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
         # Likewise, forces controls$mid_include = FALSE
 
     # Import map as SpatialPolygon object
-    # fetch_map(h_env$type, h_env$gender, h_env$proj, h_env$half)
     mapname <- sprintf("%s_%s_%s", h_env$type, h_env$gender, h_env$proj)
     h_env$map <- humapr:::maps[[mapname]]$map # maps object is in R/sysdata.rda
     h_env$mapdf <- humapr:::maps[[mapname]]$mapdf # data frame with grouped polygon coordinates
