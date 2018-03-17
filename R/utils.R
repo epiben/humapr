@@ -31,29 +31,21 @@ line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
 
 # Function to make viewport able to handle the humap
 vp <- function(x_range, y_range, li_margin, longest_label, half) {
-    la_margin <- grid::stringWidth(longest_label)
+    la_margin <- stringWidth(longest_label)
+    # Set up layout for the viewport with appropriate settings
     the_layout <- function (x_range, y_range, li_margin, la_margin, half) {
         the_widths <- switch(
             half,
-            left = grid::unit.c(unit(diff(x_range) + li_margin$main, "null"), la_margin),
-            # mirror = , # disabled
-            right = grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null")),
-            grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null"), la_margin))
-
+            left = unit.c(unit(diff(x_range) + li_margin$main, "null"), la_margin),
+            mirror = ,
+            right = unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null")),
+            unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null"), la_margin))
         ncols <- if (half == "both") 3 else 2
-        grid::grid.layout(1, ncols, widths = the_widths,
-                          heights = diff(y_range), respect = TRUE)
+        grid.layout(1, ncols, widths = the_widths, heights = diff(y_range), respect = TRUE)
     }
-
-    main <- grid::viewport(width = 0.9, height = 0.9,
-                           layout = the_layout(x_range, y_range, li_margin,
-                                               la_margin, half),
-                           gp = h_env$anno_gp)
-
-    map <- grid::viewport(layout.pos.row = 1,
-                          layout.pos.col = switch(half, left = 1, 2),
-                          xscale = x_range + li_margin$map,
-                          yscale = y_range)
-
-    grid::vpStack(main, map)
+    main <- viewport(width = 0.9, height = 0.9, gp = h_env$anno_gp,
+                     layout = the_layout(x_range, y_range, li_margin, la_margin, half))
+    map <- viewport(layout.pos.row = 1, layout.pos.col = switch(half, left = 1, 2),
+                    xscale = x_range + li_margin$map, yscale = y_range)
+    vpStack(main, map)
 }
