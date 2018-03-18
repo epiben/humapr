@@ -118,10 +118,13 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              labels <- do.call(grid::grobTree, labels)
 
              # Find longest label, and use it to define the area for margins
-             max_label_length <- max(sapply(labels$children, function(.) nchar(.$label)))
+             # max_label_length <- max(sapply(labels$children, function(.) nchar(.$label)))
+             browser()
+             label_text <- sapply(labels$children, function(.) .$label)
+             long_label <- label_text[order(nchar(label_text), decreasing = TRUE)][1]
 
              # Return final grob tree with appropriate viewport
-             map_vp <- humap_vp(xscale, yscale, li_margin, max_label_length, h_env$half)
+             map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
              grid::grobTree(m, lines, labels, vp = map_vp)
          } else {
              map_vp <- humap_vp(x_range = xscale, y_range = yscale,
