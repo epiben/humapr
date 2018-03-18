@@ -3,7 +3,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
      default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
-         browser()
          # Transform data and append a label column to the data frame
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
@@ -39,12 +38,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
          }
 
          # Prep data for plotting and create labels, if requested by user
-         # if (h_env$half == "mirror") data$label <- paste0("right_", data$label)
-         # if (h_env$half == "mirror") {
-         #     data <- dplyr::mutate(data, label = paste0("left_", rm_lr(label)),
-         #                           y = 0, count = 0, prop = 0) %>%
-         #         rbind(data)
-         # }
          if (h_env$half == "mirror")
              # Essentially, row-bind two modified versions of the 'data' df
              data <- dplyr::mutate(data, label = paste0("left_", label), y = 0,
@@ -85,9 +78,6 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                  local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
              }
              if (h_env$controls$vert_adj == "smart")
-                 # local_coords <- h_env$anno_coords
-                 # local_coords$side <- ifelse(grepl("left_", row.names(local_coords)),
-                 #                             "left", "right")
                  local_coords <- h_env$anno_coords %>%
                      dplyr::mutate(label = row.names(.),
                                    side = ifelse(grepl("left_", label), "left", "right"))
@@ -102,13 +92,11 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                                     right = subset(local_coords, side == "right"),
                                     left = subset(local_coords, side == "left"),
                                     local_coords)
-             # local_coords <- local_coords[row.names(local_coords) %in% data$label, ]
              temp_labels <- if (h_env$half == "mirror") {
                  paste0("right_", label_data$label)
              } else {
                  label_data$label
              }
-             # local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
              local_coords <- dplyr::filter(local_coords, label %in% temp_labels)
 
              # Prepare data to feed into humap_vp()
@@ -131,11 +119,10 @@ GeomHumap <- ggproto("GeomHumap", Geom,
 
              # Find longest label, and use it to define the area for margins
              long_label <- max(sapply(labels$children, function(.) nchar(.$label)))
+             print(long_label)
 
-             # Make viewport
+             # Return final grob tree with appropriate viewport
              map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
-
-             # Return final grob tree
              grid::grobTree(m, lines, labels, vp = map_vp)
          } else {
              map_vp <- humap_vp(x_range = xscale, y_range = yscale,
