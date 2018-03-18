@@ -117,9 +117,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                  make_label(., label_data, local_coords, label_pad), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
 
-             # Find longest label, and use it to define the area for margins
-             # max_label_length <- max(sapply(labels$children, function(.) nchar(.$label)))
-             browser()
+             # Find longest label, and use it to define the lateral margins
              label_text <- sapply(labels$children, function(.) .$label)
              long_label <- label_text[order(nchar(label_text), decreasing = TRUE)][1]
 
