@@ -4,9 +4,9 @@ make_label <- function (id, data, local_coords, label_pad) {
     tid <- if (!h_env$half == "mirror") id else substring(id, regexpr("_", id) + 1)
 
     # Base label with absolute and relative frequencies
-    label <- sprintf("%s (%s%%)", # "%s (%s%s)",
+    label <- sprintf("%s (%s%%)",
                      data[data$label == tid, "count"] / (if (h_env$controls$mid_include) 2 else 1),
-                     round(data[data$label == tid, "prop"] * 100, 0)) #, "%")
+                     round(data[data$label == tid, "prop"] * 100, 0))
 
     # If desired by user, expand label to include also name of region
     if (h_env$annotate == "all") {
@@ -20,14 +20,6 @@ make_label <- function (id, data, local_coords, label_pad) {
         lab <- regmatches(lab, gregexpr("_", lab), invert = TRUE)[[1]]
         if (!h_env$half == "mirror") lab <- lab[-1] # Remove "left"/"right"
         lab <- paste0(lab, collapse = " ") # Join using wide spaces
-        # lab <- if (h_env$half == "mirror") {
-        #     paste0(regmatches(lab, gregexpr("_", lab),
-        #                       invert = TRUE)[[1]], collapse = " ")
-        # } else {
-        #     paste0(regmatches(lab, gregexpr("_", lab),
-        #                       invert = TRUE)[[1]][-1], collapse = " ")
-        # }
-        # Capital first letter and concatenate frequencies
         label <- paste0(toupper(substr(lab, 1, 1)), substring(lab, 2), ": ", label)
     }
 
@@ -37,8 +29,6 @@ make_label <- function (id, data, local_coords, label_pad) {
     x <- grid::unit(coords$x2, "native") +
         grid::unit(1, "strwidth", "  ") * if (coords$side == "left") 1 else -1
     y <- grid::unit(coords$y1, "native") + grid::unit(0.1, "lines")
-    # x_coord <- grid::unit(local_coords[id, "x2"], "native") +
-    #     grid::unit(1, "strwidth", "  ") * if (local_coords[id, "side"] == "left") 1 else -1
 
     grid::textGrob(label, x = x, y = y, default.units = "native", just = coords$side)
 }
