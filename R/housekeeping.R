@@ -3,7 +3,7 @@ housekeeping <- function(user, defs) {
     # defs = default argument values
 
     # Set up new environment for the humap
-    # h_env <<- new.env(parent = emptyenv())
+    h_env <<- new.env(parent = emptyenv())
 
     # Syncing user-supplied and default arguments
     defs[names(defs) %in% names(user)] <- user
