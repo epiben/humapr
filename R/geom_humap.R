@@ -89,7 +89,8 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                  # local_coords$side <- ifelse(grepl("left_", row.names(local_coords)),
                  #                             "left", "right")
                  local_coords <- h_env$anno_coords %>%
-                     dplyr::mutate(side = ifelse(grepl("left_", row.names(.)), "left", "right"))
+                     dplyr::mutate(label = row.names(.),
+                                   side = ifelse(grepl("left_", label), "left", "right"))
              label_pad <- diff(xscale) / 10
              lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
                                  max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
@@ -107,7 +108,8 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              } else {
                  label_data$label
              }
-             local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
+             # local_coords <- local_coords[row.names(local_coords) %in% temp_labels, ]
+             local_coords <- dplyr::filter(local_coords, label %in% temp_labels)
 
              # Prepare data to feed into humap_vp()
              li_margin <- list(main = 2 * lines_margin, map = lines_margin * c(-1, 1))
