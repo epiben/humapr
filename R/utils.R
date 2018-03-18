@@ -30,8 +30,9 @@ inverse_coords <- function (x, cols = "x0", patt = "left_") {
 line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
 
 # Function to make viewport able to handle the humap
-vp <- function(x_range, y_range, li_margin, longest_label, half) {
-    la_margin <- grid::stringWidth(longest_label)
+vp <- function(x_range, y_range, li_margin, max_label_length, half) {
+    la_margin <- grid::stringWidth(rep(" ", max_label_length))
+        # Consider sending in all labels, and use grid::unit.pmax() on the string widths
     # Set up layout for the viewport with appropriate settings
     the_layout <- function (x_range, y_range, li_margin, la_margin, half) {
         the_widths <- switch(
