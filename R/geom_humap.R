@@ -81,14 +81,15 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
                  local_coords <- h_env$anno_coords %>%
                      dplyr::mutate(label = row.names(.),
                                    side = ifelse(grepl("left_", label), "left", "right"))
-             lines_margin <- max(diff(xscale) / 10, min(local_coords$x1) - xscale[1],
-                                 max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
+             lines_margin <- max(diff(xscale) / 10,
+                                 min(local_coords$x1) - xscale[1],
+                                 max(local_coords$x1) - xscale[2])
              local_coords$x2 <- ifelse(local_coords$side == "left",
                                        xscale[2] + lines_margin,
                                        xscale[1] - lines_margin)
              local_coords <- switch(h_env$body_halves,
-                                    join = , # uses the following (= right)
-                                    right = subset(local_coords, side == "right"),
+                                    right = , # uses the following (= join)
+                                    join = subset(local_coords, side == "right"),
                                     left = subset(local_coords, side == "left"),
                                     local_coords)
              temp_labels <- if (h_env$body_halves == "join") {

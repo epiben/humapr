@@ -36,9 +36,9 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
     # Computing vertical positions of labels
     if (h_env$controls$vert_adj == "smart") {
         coords <- switch(body_halves,
-                    "left" = h_env$anno_coords[paste0("left_", mapped_regions), ],
-                    "join" = , # Takes the next value
-                    "right" = h_env$anno_coords[paste0("right_", mapped_regions), ],
+                    left = h_env$anno_coords[paste0("left_", mapped_regions), ],
+                    right = , # Takes the next value
+                    join = h_env$anno_coords[paste0("right_", mapped_regions), ],
                     rbind(h_env$anno_coords[paste0("left_", mapped_regions), ],
                        h_env$anno_coords[paste0("right_", mapped_regions), ])) %>%
             inverse_coords("x0", "left_")
