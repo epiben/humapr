@@ -3,7 +3,6 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
-         print(h_env2$test)
          # Transform data and append a label column to the data frame
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
