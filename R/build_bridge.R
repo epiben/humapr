@@ -37,10 +37,7 @@ build_bridge <- function (d, bridge, type) {
         switch(type,
                female =,
                male = ,
-               simple = c("head", "neck", "chest", "abdomen", "genitalia",
-                        "shoulder", "arm", "elbow", "forearm", "wrist", "hand",
-                        "fingers", "hip", "thigh", "knee", "leg", "ankle",
-                        "foot", "toes"),
+               simple = c("head", "neck", "chest", "abdomen", "arm", "forearm", "hand", "thigh", "leg", "foot"),
                stop("Invalid map chosen"))
 
     d[!d[, h_env$loc] %in% valid_regions, ] <- NA
