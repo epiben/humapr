@@ -1,3 +1,10 @@
+#' Initial housekeeping in \code{humap} call
+#'
+#' Internal function. I cannot think of any scenario in which a user would need to call this function
+#'
+#' @param user argument values from user, essentially useful stuff from match.call()
+#' @param defs default values, essentially useful stuff from formals().
+
 housekeeping <- function(user, defs) {
     # user = user-specified argument values
     # defs = default argument values
@@ -17,7 +24,6 @@ housekeeping <- function(user, defs) {
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])
     }
     h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black", fontsize = 9)
-    # Not sure this gives the desired result! Need to investigate more
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
