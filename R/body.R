@@ -71,7 +71,7 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body
 
     # Ensure valid user-supplied regions in "combine", if relevant
     if (!is.null(h_env$combine))
-        test_combined(h_env$half, h_env$combine, h_env$pids)
+        test_combined(h_env$body_halves, h_env$combine, h_env$pids)
 
     # Convert user formats with bridge argument, if relevant
     if (!is.null(h_env$bridge))
@@ -79,12 +79,12 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body
 
     # Add mapped_loc variable to user's data frame
     data <- generate_mapped_loc(data, h_env$loc, h_env$side,
-                                h_env$regions, h_env$half, h_env$combine)
+                                h_env$regions, h_env$body_halves, h_env$combine)
 
     # Generate (preliminary) data for annotations, if relevant
     if (h_env$annotate %in% c("all", "freq"))
         prep_annotations(data$mapped_loc, h_env$combine, h_env$type,
-                         h_env$gender, h_env$proj, h_env$half)
+                         h_env$gender, h_env$proj, h_env$body_halves)
 
     # Removing missing data, if so desired by user
     if (h_env$na_rm)
