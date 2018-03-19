@@ -127,7 +127,7 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
          } else {
              map_vp <- humap_vp(x_range = xscale, y_range = yscale,
                                 li_margin = list(main = 0, map = c(0, 0)),
-                                longest_label = "", h_env$body_halves)
+                                long_label = "", h_env$body_halves)
              grid::grobTree(m, vp = map_vp)
          }
      }
