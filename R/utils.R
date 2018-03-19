@@ -34,14 +34,21 @@ vp <- function(x_range, y_range, li_margin, long_label, half) {
     la_margin <- grid::stringWidth(long_label)
     # Set up layout for the viewport with appropriate settings
     the_layout <- function (x_range, y_range, li_margin, la_margin, half) {
-        the_widths <- switch(
+        mid_width <- grid::unit(diff(x_range) + li_margin$main, "null")
+        widths <- switch(
             half,
-            left = grid::unit.c(unit(diff(x_range) + li_margin$main, "null"), la_margin),
+            left = grid::unit.c(mid_width, la_margin),
             mirror = ,
-            right = grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null")),
-            grid::unit.c(la_margin, unit(diff(x_range) + li_margin$main, "null"), la_margin))
+            right = grid::unit.c(la_margin, mid_width),
+            grid::unit.c(la_margin, mid_width, la_margin))
+        # the_widths <- switch(
+        #     half,
+        #     left = grid::unit.c(grid::unit(diff(x_range) + li_margin$main, "null"), la_margin),
+        #     mirror = ,
+        #     right = grid::unit.c(la_margin, grid::unit(diff(x_range) + li_margin$main, "null")),
+        #     grid::unit.c(la_margin, grid::unit(diff(x_range) + li_margin$main, "null"), la_margin))
         ncols <- if (half == "both") 3 else 2
-        grid::grid.layout(1, ncols, widths = the_widths, heights = diff(y_range), respect = TRUE)
+        grid::grid.layout(1, ncols, widths = widths, heights = diff(y_range), respect = TRUE)
     }
     main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$anno_gp,
                            layout = the_layout(x_range, y_range, li_margin, la_margin, half))
