@@ -11,8 +11,10 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
         h_env$anno_coords <- h_env$mapdf %>%
             dplyr::group_by(id) %>%
             dplyr::summarise(
-                x0 = mean(c(max(long), min(long))),
-                y0 = mean(c(max(lat), min(lat)))
+                # x0 = mean(c(max(long), min(long))),
+                # y0 = mean(c(max(lat), min(lat)))
+                x0 = mean(range(long)),
+                y0 = mean(range(lat)))
             ) %>%
             dplyr::rename(region = id) %>%
             as.data.frame()
