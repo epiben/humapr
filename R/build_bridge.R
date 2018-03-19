@@ -16,6 +16,9 @@ build_bridge <- function (d, bridge, type) {
             flank = 69, chest = 70, abdomen = 71, buttocks = 72,
             genitalia = 73:74, hip = 75, thigh = 76, knee = 77, leg = 78,
             ankle = 79, foot = 80, toes = 81),
+        ais_simple = list(
+            head = 51:58, neck = 59, arm = 60:62, forearm = 62:64, hand = 65:66, chest = c(68, 70),
+            abdomen = c(69, 71:74), thigh = 75:77, leg = 78:79, foot = 80:81),
         simple = list(
             head = 11:12, neck = 21:22, chest = 31:32, abdomen = 41:42,
             pelvis = 51:52, arm = 61:62, forearm = 64:65, hand = 71:72,
@@ -43,7 +46,7 @@ build_bridge <- function (d, bridge, type) {
     # converted <- d[, h_env$loc] %in% valid_regions
     converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
     if (sum(converted) != nrow(d))
-        message(sprintf("%s of %s could could not be mapped to valid region of the chosen map",
+        message(sprintf("%s of %s data points could could not be mapped a region in the chosen map.",
                         sum(converted), nrow(d)))
 
     d[converted, ] # Return updated data frame
