@@ -43,7 +43,7 @@ housekeeping <- function(user, defs) {
         h_env$body_halves <- "join"
         message("`side` argument missing. Defaults to body_halves = \"join\".")
     }
-    if (h_env$type == "simple") {
+    if (h_env$type == "simple" && h_env$proj != "neutral") {
         # Ignore projection if type = "simple"
         h_env$proj <- "neutral"
         message("Projections not available for the simple body map; ignores `proj` argument.")
