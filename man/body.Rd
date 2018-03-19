@@ -4,9 +4,9 @@
 \alias{body}
 \title{Create a humap body plot}
 \usage{
-body(data, loc, side = NULL, type = "body", gender = "neutral",
-  proj = "simple", half = "both", annotate = "freq", anno_gp = NULL,
-  bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL)
+body(data, loc, side = NULL, type = "simple", proj = "neutral",
+  body_halves = "separate", annotate = "freq", bridge = NULL,
+  na_rm = FALSE, combine = NULL, controls = NULL)
 }
 \arguments{
 \item{data}{tidy data frame (more under details)}
@@ -15,27 +15,23 @@ body(data, loc, side = NULL, type = "body", gender = "neutral",
 observations. Character string.}
 
 \item{side}{variable indication left and right side of observations. Values
-must be "left" or "right". May also be a list that defines the variable (=
+must be "left" or "right". May also be a named *list* that defines the variable (=
 data frame column) holding the variables, and which value(s) in that column
-correspond(s) to left and right. So, side = "xx" or side = list(var =
-"xx", left = c("left", "l"), right = "r")}
+correspond(s) to left and right. Valid specifications are, i.a., \code{side = "xx"} and \code{side = list(var = "xx",
+left = c("left", "l"), right = "r")}}
 
-\item{type}{body}
+\item{type}{simple, (default), f(emale), m(male)}
 
-\item{gender}{n(eutral) (default), f(emale), m(male)}
+\item{proj}{"front" or "back". Ignored if \code{type = "simple"}.}
 
-\item{proj}{character string defining the projected front, back}
-
-\item{half}{character string defining how to deal with body halves. "both"
-discriminates the left half from the right; "mirror" merges observations
-in, e.g., right and left side of the chest; "left"/"right" yields only the
-indicated half and ignores observations on the other half.}
+\item{body_halves}{character string defining how to deal with body halves.
+"separate" (default) discriminates the left half from the right; "join" merges
+observations in, e.g., right and left side of the chest.}
 
 \item{annotate}{\code{freq} (defaults) shows only absolute and relative
 frequencies. \code{all} include region names. \code{none} omits labels
-altogether.}
-
-\item{anno_gp}{grid::gpar object. Default is fontsize = 9 and col = "black".}
+altogether. More elaborate argument may be given in \code{list} form, see
+Details below.}
 
 \item{bridge}{used to bridge between the user's data format and the native
 format of humapr. Further explanations to follow}
@@ -43,13 +39,14 @@ format of humapr. Further explanations to follow}
 \item{na_rm}{should missing data be removed? Defaults is \code{FALSE}.}
 
 \item{combine}{a \emph{list} of vectors naming the regions to be combined and
-mapped as one. E.g., list(arm = c("shoulder", "arm", "elbow", "wrist"))}
+mapped as one. E.g., \code{list(arm = c("shoulder", "arm", "elbow",
+"wrist"))}}
 
 \item{controls}{list of controls for fine-tuning. See details.}
 }
 \value{
-A ggplot object with layout settings suitable for the kinds of geoms
-  used in \code{humap}.
+A ggplot object with suitable layout settings for the purpose of
+  \code{body}.
 }
 \description{
 \code{body} creates a ggplot object, using its own set of "geoms", i.e.,
@@ -59,8 +56,8 @@ the \code{humap} function can be modified with standard ggplot2
 setting--e.g., calls to \code{theme()}.
 }
 \details{
-If you don't supply a \code{body_halves} argument humapr will assume default to \code{pool}
-mode.
+If you don't supply a \code{body_halves} argument humapr will assume default
+to \code{pool} mode.
 
 \code{controls} is a list of more specific parameters to modify details in
 the apperance of the humap. These controls are currently available:
