@@ -97,7 +97,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
     # Build ggplot object
     ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
         ggplot2::guides(fill = if (h_env$annotate == "none") NULL else FALSE) +
-        humapr::geom_humap(stat = "count", na.rm = h_env$na_rm) +
+        geom_humap(stat = "count", na.rm = h_env$na_rm) +
         ggplot2::theme(axis.title = element_blank(),
                        axis.text = element_blank(),
                        axis.line = element_blank(),
