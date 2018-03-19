@@ -1,54 +1,54 @@
-generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
+generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
     # Convert from user's left/right/mid indication to those of humapr
-    if (is.list(lr)) {
+    if (is.list(side)) {
         test <- c("left", "right")
         if (h_env$controls$mid_include) test <- c(test, "mid")
 
-        if (!all(c("var", test) %in% names(lr)))
+        if (!all(c("var", test) %in% names(side)))
             stop("Please, supply valid 'side' argument.",
                  call. = FALSE)
-            # consider something like if(any(is.na(match(c("var", "left", "right"), names(lr)))))
+            # consider something like if(any(is.na(match(c("var", "left", "right"), names(side)))))
             # may also complain when a non-used list element supplied, although it's not too important
-        d[!is.na(match(d[, lr$var], lr$left)), lr$var] <- "left"
-        d[!is.na(match(d[, lr$var], lr$right)), lr$var] <- "right"
+        d[!is.na(match(d[, side$var], side$left)), side$var] <- "left"
+        d[!is.na(match(d[, side$var], side$right)), side$var] <- "right"
         # This is disabled by forcing mid_include = FALSE in housekeeping.R
-        if (h_env$controls$mid_include) d[!is.na(match(d[, lr$var], lr$mid)), lr$var] <- "mid"
-        d[, lr$var] <- ifelse(d[, lr$var] %in% test, d[, lr$var], NA)
-        lr <- lr$var
+        if (h_env$controls$mid_include) d[!is.na(match(d[, side$var], side$mid)), side$var] <- "mid"
+        d[, side$var] <- ifelse(d[, side$var] %in% test, d[, side$var], NA)
+        side <- side$var
     }
 
     # Inelegant "hack" to allow 50% weight of mid-line observations on each side
     # This is disabled by forcing mid_include = FALSE in housekeeping.R
     if (h_env$controls$mid_include) {
         # Basically, we make the data twice as long as originally...
-        d <- rbind(d, d[!d[, lr] == "mid", ])
+        d <- rbind(d, d[!d[, side] == "mid", ])
         for (x in c("left", "right")) {
-            t <- d[d[, lr] == "mid", ]
-            t[, lr] <- x
+            t <- d[d[, side] == "mid", ]
+            t[, side] <- x
             d <- rbind(d, t)
         }
-        d <- d[!d[, lr] == "mid", ]
+        d <- d[!d[, side] == "mid", ]
     }
 
     d[is.na(d[, loc]), ] <- NA # to remove NAs
 
     # Generate "loc_long" based on user inputs
     if (h == "mirror") {
-        d$loc_long <- if (!is.null(lr)) {
-            ifelse(d[, lr] %in% c("left", "right"), as.character(d[, loc]), NA)
+        d$loc_long <- if (!is.null(side)) {
+            ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc]), NA)
         } else {
             as.character(d[, loc])
         }
-        h_env$regions <- paste0("right_", unique(rm_lr(regions)))
+        h_env$regions <- paste0("right_", unique(rm_side(regions)))
     } else if (h %in% c("left", "right")) {
-        d <- dplyr::filter(d, lr == h) # To keep only relevant observations in d
-        d$loc_long <- ifelse(d[, lr] == h,
+        d <- dplyr::filter(d, side == h) # To keep only relevant observations in d
+        d$loc_long <- ifelse(d[, side] == h,
                              as.character(paste0(h, "_", d[, loc])),
                              NA)
         h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
     } else {
-        d$loc_long <- ifelse(d[, lr] %in% c("left", "right"),
-                             as.character(paste0(d[, lr], "_", d[, loc])),
+        d$loc_long <- ifelse(d[, side] %in% c("left", "right"),
+                             as.character(paste0(d[, side], "_", d[, loc])),
                              NA)
     }
 
