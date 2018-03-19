@@ -6,9 +6,6 @@
 #' @param defs default argument values; essentially useful stuff from \code{formals()}
 
 housekeeping <- function(user, defs) {
-    # Set up new environment for the humap
-    # h_env <<- new.env(parent = emptyenv())
-
     # Sync user-supplied and default arguments
     defs[names(defs) %in% names(user)] <- user
     for (arg in names(defs)) assign(arg, eval(defs[[arg]]), h_env)

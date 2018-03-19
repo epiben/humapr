@@ -30,7 +30,7 @@ build_bridge <- function (d, bridge, type) {
              call. = FALSE)
 
     for (hreg in names(bridge)) {
-        d[d[, h_env$loc.var] %in% bridge[[hreg]], h_env$loc.var] <- hreg
+        d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
     }
 
     valid_regions <-
@@ -41,7 +41,7 @@ build_bridge <- function (d, bridge, type) {
                         "foot", "toes"),
                stop("Invalid map chosen"))
 
-    d[!d[, h_env$loc.var] %in% valid_regions, ] <- NA
+    d[!d[, h_env$loc] %in% valid_regions, ] <- NA
 
     d # Return updated data frame
 }

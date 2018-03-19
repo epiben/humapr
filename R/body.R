@@ -1,16 +1,13 @@
-#' Create a humap plot
+#' Create a humap body plot
 #'
-#' \code{humap} creates a ggplot object, using its own set of "geoms", i.e.,
+#' \code{body} creates a ggplot object, using its own set of "geoms", i.e.,
 #' human body oulines on which your data are projected in a heatmap-like
 #' fashion. \code{humapr} is an extension of ggplot2, and objects created with
 #' the \code{humap} function can be modified with standard ggplot2
 #' setting--e.g., calls to \code{theme()}.
 #'
-#' If you don't supply a `side` argument humapr will assume default to mirroring
-#' mode. If `side` argument is supplied, it will default to left/right
-#' discrimate mode and show both body halves
-#'
-#' If proj = "both" you cannot map right/left-discrimate data.
+#' If you don't supply a \code{body_halves} argument humapr will assume default to \code{pool}
+#' mode.
 #'
 #' \code{controls} is a list of more specific parameters to modify details in
 #' the apperance of the humap. These controls are currently available:
@@ -22,12 +19,12 @@
 #' an observations on each side. Default is FALSE.
 #'
 #' @param data tidy data frame (more under details)
-#' @param loc.var column in data frame containing localisation codes for
+#' @param loc column in data frame containing localisation codes for
 #'   observations. Character string.
-#' @param lr.var variable indication left and right side of observations. Values
+#' @param side variable indication left and right side of observations. Values
 #'   must be "left" or "right". May also be a list that defines the variable (=
 #'   data frame column) holding the variables, and which value(s) in that column
-#'   correspond(s) to left and right. So, lr.var = "xx" or lr.var = list(var =
+#'   correspond(s) to left and right. So, side = "xx" or side = list(var =
 #'   "xx", left = c("left", "l"), right = "r")
 #' @param gender n(eutral) (default), f(emale), m(male)
 #' @param type body
@@ -46,6 +43,7 @@
 #'   format of humapr. Further explanations to follow
 #' @param na_rm should missing data be removed? Defaults is \code{FALSE}.
 #' @param controls list of controls for fine-tuning. See details.
+#'
 #' @return A ggplot object with layout settings suitable for the kinds of geoms
 #'   used in \code{humap}.
 #'
@@ -54,21 +52,19 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral",
+body <- function(data, loc, side = NULL, type = "body", gender = "neutral",
                   proj = "simple", half = "both", annotate = "freq", anno_gp = NULL,
                   bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    if (missing(loc.var)) stop("Please, specify a 'loc.var'.")
+    if (missing(loc)) stop("Please, specify a 'loc'.")
     housekeeping(match.call()[-c(1, 2)], formals()[-1])
         # Forces controls$mid_include = FALSE (for now, let's see later)
 
-    # Import relevant map (as SpatialPolygon from R/sysdata.rda)
+    # Import relevant map (maps object in R/sysdata.rda)
     mapname <- sprintf("%s_%s_%s", h_env$type, h_env$gender, h_env$proj)
-    # h_env$map <- humapr:::maps[[mapname]]$map
-    # h_env$mapdf <- humapr:::maps[[mapname]]$mapdf # df with grouped polygon coordinates
-    h_env$map <- maps[[mapname]]$map
+    h_env$map <- maps[[mapname]]$map # SpatialPolygons object
     h_env$mapdf <- maps[[mapname]]$mapdf # df with grouped polygon coordinates
     h_env$pids <- as.data.frame(h_env$map)$Layer %>% # polygon ids
         setNames(seq(.))
@@ -84,7 +80,7 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
         data <- build_bridge(data, h_env$bridge, h_env$type)
 
     # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc.var, h_env$lr.var,
+    data <- generate_mapped_loc(data, h_env$loc, h_env$side,
                                 h_env$regions, h_env$half, h_env$combine)
 
     # Generate (preliminary) data for annotations, if relevant
