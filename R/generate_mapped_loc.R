@@ -5,7 +5,7 @@ generate_mapped_loc <- function(d, loc, lr, regions, h, combine) {
         if (h_env$controls$mid_include) test <- c(test, "mid")
 
         if (!all(c("var", test) %in% names(lr)))
-            stop("Please, supply valid specification 'lr.var' argument.",
+            stop("Please, supply valid 'side' argument.",
                  call. = FALSE)
             # consider something like if(any(is.na(match(c("var", "left", "right"), names(lr)))))
             # may also complain when a non-used list element supplied, although it's not too important

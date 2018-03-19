@@ -28,8 +28,8 @@ housekeeping <- function(user, defs) {
         # I'm disabling this whole half business, people need to give useful data
 
     # Pool left- and right-sided data if no way to discriminate them
-    if (is.null(h_env$lr.var) & h_env$half != "mirror") {
+    if (is.null(h_env$side) & h_env$half != "mirror") {
         h_env$half <- "mirror"
-        message("`lr.var` argument missing. Defaults to half = \"mirror\".")
+        message("`side` argument missing. Defaults to half = \"mirror\".")
     }
 }

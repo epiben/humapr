@@ -1,8 +1,8 @@
 build_bridge <- function (d, bridge, type) {
     if (is.character(bridge)) {
         if (bridge == "ais") {
-            if (!is.list(h_env$lr.var)) { # If list, user should have given correct info
-                h_env$lr.var <- list(var = h_env$lr.var, left = c(2, 20:29),
+            if (!is.list(h_env$side)) { # If list, user should have given correct info
+                h_env$side <- list(var = h_env$side, left = c(2, 20:29),
                                      right = c(1, 10:19), mid = c(0, 3))
                 # Used by generate_mapped_loc()
             }
