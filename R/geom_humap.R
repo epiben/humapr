@@ -1,8 +1,9 @@
-GeomHumap <- ggproto("GeomHumap", Geom,
+GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      required_aes = c("x", "y", "fill"),
      default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
+         print(h_env2$test)
          # Transform data and append a label column to the data frame
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
@@ -16,7 +17,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              }
          }
 
-         # Labels should use original data (i.e., before combining and expanding data df)
+         # Labels neded original data (i.e., before combining and expanding data df)
          label_data <- data
 
          # Here, we make sure to fill all regions included in the combine statement
@@ -37,14 +38,14 @@ GeomHumap <- ggproto("GeomHumap", Geom,
              data <- do.call(rbind, new_data)
          }
 
-         # Prep data for plotting and create labels, if requested by user
+         # Prepare data for plotting and create labels, if requested by user
          if (h_env$half == "mirror")
              # Essentially, row-bind two modified versions of the 'data' df
              data <- dplyr::mutate(data, label = paste0("left_", label), y = 0,
                                    count = 0, prop = 0) %>%
                  rbind(dplyr::mutate(data, label = paste0("right_", label)))
 
-         # Make "local" copies of map and mapdf objects
+         # Make "local" copies of map and mapdf objects, to simplify subsequent code
          map <- h_env$map
          mapdf <- h_env$mapdf
 
@@ -136,7 +137,7 @@ geom_humap <- function(mapping = NULL, data = NULL, stat = "sum", # stat = "coun
                        position = "identity", na.rm = FALSE, show.legend = NA,
                        inherit.aes = TRUE, ...) {
 
-    layer(
+    ggplot2::layer(
         geom = GeomHumap, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend, inherit.aes = inherit.aes,
         params = list(na.rm = na.rm, ...)
