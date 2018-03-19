@@ -40,7 +40,11 @@ build_bridge <- function (d, bridge, type) {
                simple = c("head", "neck", "chest", "abdomen", "arm", "forearm", "hand", "thigh", "leg", "foot"),
                stop("Invalid map chosen"))
 
-    d[!d[, h_env$loc] %in% valid_regions, ] <- NA
+    # converted <- d[, h_env$loc] %in% valid_regions
+    converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
+    if (sum(converted) != nrow(d))
+        message(sprintf("%s of %s could could not be mapped to valid region of the chosen map",
+                        sum(converted), nrow(d)))
 
-    d # Return updated data frame
+    d[converted, ] # Return updated data frame
 }
