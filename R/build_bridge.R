@@ -35,7 +35,9 @@ build_bridge <- function (d, bridge, type) {
 
     valid_regions <-
         switch(type,
-               body = c("head", "neck", "chest", "abdomen", "genitalia",
+               female =,
+               male = ,
+               simple = c("head", "neck", "chest", "abdomen", "genitalia",
                         "shoulder", "arm", "elbow", "forearm", "wrist", "hand",
                         "fingers", "hip", "thigh", "knee", "leg", "ankle",
                         "foot", "toes"),
