@@ -38,10 +38,10 @@ humap_vp <- function(x_range, y_range, li_margin, long_label, half) {
         widths <- switch(
             half,
             left = grid::unit.c(mid_width, la_margin),
-            mirror = ,
+            join = ,
             right = grid::unit.c(la_margin, mid_width),
             grid::unit.c(la_margin, mid_width, la_margin))
-        ncols <- if (half == "both") 3 else 2
+        ncols <- if (half == "separate") 3 else 2
         grid::grid.layout(1, ncols, widths = widths, heights = diff(y_range), respect = TRUE)
     }
     main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$anno_gp,
