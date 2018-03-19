@@ -30,8 +30,8 @@ housekeeping <- function(user, defs) {
     # Test argument combinations, and make necessary changes
     if (is.null(h_env$side) & h_env$body_halves != "join") {
         # Pool left- and right-sided data if no way to discriminate them
-        h_env$side <- "join"
-        message("`side` argument missing. Defaults to side = \"join\".")
+        h_env$body_halves <- "join"
+        message("`side` argument missing. Defaults to body_halves = \"join\".")
     }
     if (h_env$type == "simple") {
         # Ignore projection if type = "simple"
