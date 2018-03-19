@@ -40,7 +40,7 @@ generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
         } else {
             as.character(d[, loc])
         }
-        h_env$regions <- paste0("right_", unique(rm_side(regions)))
+        h_env$regions <- paste0("right_", unique(rm_lr(regions)))
     } else if (h %in% c("left", "right")) {
         d <- dplyr::filter(d, side == h) # To keep only relevant observations in d
         d$loc_long <- ifelse(d[, side] == h,
