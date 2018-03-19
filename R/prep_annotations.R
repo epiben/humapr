@@ -56,7 +56,7 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
                   def_dist(coords[grepl("right_", row.names(coords)), ]))
         }
 
-        if (body_halves %in% c("both", "left"))
+        if (body_halves %in% c("separate", "left"))
             coords <- inverse_coords(coords, c("x0", "x1"), "left_")
         h_env$anno_coords <- coords
     } else {
@@ -65,7 +65,7 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
                        row.names(h_env$anno_coords[paste0(lr, mapped_regions), ]))
         y1 <- distribute_coords(y0, h_env$controls$label_pad, h_env$controls$vert_adj)
         h_env$anno_coords$y1 <- 0
-        if (body_halves == "both") {
+        if (body_halves == "separate") {
             h_env$anno_coords[paste0("right_", mapped_regions), "y1"] <-
                 h_env$anno_coords[paste0("left_", mapped_regions), "y1"] <-
                 y1[paste0("right_", mapped_regions)]
