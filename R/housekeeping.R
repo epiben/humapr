@@ -30,8 +30,8 @@ housekeeping <- function(user, defs) {
         h_env$gp <- h_env$annotate$gp %||% grid::gpar(col = "black", fontsize = 9)
         h_env$annotate <- if (h_env$annotate$detail %in% c(NA, NULL)) {
             NA
-        } else {
-            h_env$annotate$detail
+        } else { # use annotate = "freq" as default
+            h_env$annotate$detail %||% "freq"
         }
     }
 
