@@ -27,7 +27,7 @@ housekeeping <- function(user, defs) {
     h_env$annotate <- h_env$annotate %||% NA
     if (!h_env$annotate %in% valid_annotate)
         stop(sprintf("Make sure your 'annotate' argument is one of the following: %s",
-                     paste0(valid_annotate, collapse = ", ")))
+                     paste0(valid_annotate, collapse = ", ")), call. = FALSE)
 
     # Set necessary defaults, if none given by user
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
