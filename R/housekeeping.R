@@ -22,8 +22,7 @@ housekeeping <- function(user, defs) {
     h_env$gp <- grid::gpar(col = "black", fontsize = 9)
     if (is.list(h_env$annotate)) {
         h_env$gp <- h_env$annotate$gp %||% h_env$gp
-        h_env$annotate$detail <- h_env$annotate$detail %||% "freq" # give default
-        h_env$annotate <- h_env$annotate$detail
+        h_env$annotate <- h_env$annotate$detail %||% "freq" # give default
     }
     if (h_env$annotate %in% c(NULL, FALSE)) h_env$annotate <- NA
     if (!h_env$annotate %in% valid_annotate)
