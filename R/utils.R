@@ -41,12 +41,6 @@ vp <- function(x_range, y_range, li_margin, long_label, half) {
             mirror = ,
             right = grid::unit.c(la_margin, mid_width),
             grid::unit.c(la_margin, mid_width, la_margin))
-        # the_widths <- switch(
-        #     half,
-        #     left = grid::unit.c(grid::unit(diff(x_range) + li_margin$main, "null"), la_margin),
-        #     mirror = ,
-        #     right = grid::unit.c(la_margin, grid::unit(diff(x_range) + li_margin$main, "null")),
-        #     grid::unit.c(la_margin, grid::unit(diff(x_range) + li_margin$main, "null"), la_margin))
         ncols <- if (half == "both") 3 else 2
         grid::grid.layout(1, ncols, widths = widths, heights = diff(y_range), respect = TRUE)
     }
