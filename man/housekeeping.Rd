@@ -7,10 +7,10 @@
 housekeeping(user, defs)
 }
 \arguments{
-\item{user}{argument values from user, essentially useful stuff from match.call()}
+\item{user}{user-given argument; essentially useful stuff from \code{match.call()}}
 
-\item{defs}{default values, essentially useful stuff from formals().}
+\item{defs}{default argument values; essentially useful stuff from \code{formals()}}
 }
 \description{
-Internal function. I cannot think of any scenario in which a user would need to call this function
+Internal function. Sets up an environment with settings; tests argument values. I cannot think of any scenario in which a user would need to call this function
 }
