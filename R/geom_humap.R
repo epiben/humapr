@@ -81,8 +81,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
                  local_coords <- h_env$anno_coords %>%
                      dplyr::mutate(label = row.names(.),
                                    side = ifelse(grepl("left_", label), "left", "right"))
-             label_pad <- diff(xscale) / 10
-             lines_margin <- max(label_pad, min(local_coords$x1) - xscale[1],
+             lines_margin <- max(diff(xscale) / 10, min(local_coords$x1) - xscale[1],
                                  max(local_coords$x1) - xscale[2]) # I think this is the right calculation now
              local_coords$x2 <- ifelse(local_coords$side == "left",
                                        xscale[2] + lines_margin,
@@ -114,7 +113,7 @@ GeomHumap <- ggproto("GeomHumap", Geom,
 
              # Create labels grob, using list with named elements
              labels <- sapply(label_data$label, function(.)
-                 make_label(., label_data, local_coords, label_pad), simplify = FALSE)
+                 make_label(., label_data, local_coords), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
 
              # Find longest label, and use it to define the lateral margins
