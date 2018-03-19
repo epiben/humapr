@@ -66,8 +66,8 @@ humap <- function(data, loc.var, lr.var = NULL, type = "body", gender = "neutral
 
     # Import relevant map (as SpatialPolygon from R/sysdata.rda)
     mapname <- sprintf("%s_%s_%s", h_env$type, h_env$gender, h_env$proj)
-    h_env$map <- humapr:::maps[[mapname]]$map
-    h_env$mapdf <- humapr:::maps[[mapname]]$mapdf # df with grouped polygon coordinates
+    h_env$map <- humapr::maps[[mapname]]$map
+    h_env$mapdf <- humapr::maps[[mapname]]$mapdf # df with grouped polygon coordinates
     h_env$pids <- as.data.frame(h_env$map)$Layer %>% # polygon ids
         setNames(seq(.))
     h_env$regions <- grep("_outline", h_env$pids, value = TRUE, invert = TRUE)
