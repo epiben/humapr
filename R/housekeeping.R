@@ -27,9 +27,15 @@ housekeeping <- function(user, defs) {
     if (h_env$half %in% c("right", "left")) h_env$half <- "mirror"
         # I'm disabling this whole half business, people need to give useful data
 
-    # Pool left- and right-sided data if no way to discriminate them
+    # Test argument combinations, and make necessary changes
     if (is.null(h_env$side) & h_env$half != "mirror") {
-        h_env$half <- "mirror"
-        message("`side` argument missing. Defaults to half = \"mirror\".")
+        # Pool left- and right-sided data if no way to discriminate them
+        h_env$side <- "join"
+        message("`side` argument missing. Defaults to side = \"join\".")
+    }
+    if (h_env$type == "simple") {
+        # Ignore projection if type = "simple"
+        h_env$proj <- "neutral"
+        message("Projections not available for the simple body map; ignores `proj` argument.")
     }
 }
