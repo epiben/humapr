@@ -26,7 +26,7 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
                  if (data[i, "label"] %in% names(h_env$combine_key)) {
                      old_locs <- names(h_env$combine_key[h_env$combine_key == h_env$combine_key[data[i, "label"]]])
                      for (old_loc in old_locs) {
-                         # if (h_env$half == "mirror") old_loc <- paste0(c("right_", "left_"), old_loc)
+                         # if (h_env$body_halves == "join") old_loc <- paste0(c("right_", "left_"), old_loc)
                          if (!data[i, "label"] == old_loc) {
                              new_data[[length(new_data) + 1]] <-
                                  dplyr::mutate(data[i, ], label = old_loc, y = 0, count = 0, prop = 0)
@@ -38,7 +38,7 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
          }
 
          # Prepare data for plotting and create labels, if requested by user
-         if (h_env$half == "mirror")
+         if (h_env$body_halves == "join")
              # Essentially, row-bind two modified versions of the 'data' df
              data <- dplyr::mutate(data, label = paste0("left_", label), y = 0,
                                    count = 0, prop = 0) %>%
@@ -86,12 +86,12 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
              local_coords$x2 <- ifelse(local_coords$side == "left",
                                        xscale[2] + lines_margin,
                                        xscale[1] - lines_margin)
-             local_coords <- switch(h_env$half,
-                                    mirror = , # uses the following (= right)
+             local_coords <- switch(h_env$body_halves,
+                                    join = , # uses the following (= right)
                                     right = subset(local_coords, side == "right"),
                                     left = subset(local_coords, side == "left"),
                                     local_coords)
-             temp_labels <- if (h_env$half == "mirror") {
+             temp_labels <- if (h_env$body_halves == "join") {
                  paste0("right_", label_data$label)
              } else {
                  label_data$label
@@ -121,12 +121,12 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
              long_label <- label_text[order(nchar(label_text), decreasing = TRUE)][1]
 
              # Return final grob tree with appropriate viewport
-             map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$half)
+             map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$body_halves)
              grid::grobTree(m, lines, labels, vp = map_vp)
          } else {
              map_vp <- humap_vp(x_range = xscale, y_range = yscale,
                                 li_margin = list(main = 0, map = c(0, 0)),
-                                longest_label = "", h_env$half)
+                                longest_label = "", h_env$body_halves)
              grid::grobTree(m, vp = map_vp)
          }
      }

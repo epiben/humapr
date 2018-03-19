@@ -24,11 +24,11 @@ housekeeping <- function(user, defs) {
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
     h_env$controls$mid_include <- FALSE
-    if (h_env$half %in% c("right", "left")) h_env$half <- "mirror"
+    if (h_env$body_halves %in% c("right", "left")) h_env$body_halves <- "join"
         # I'm disabling this whole half business, people need to give useful data
 
     # Test argument combinations, and make necessary changes
-    if (is.null(h_env$side) & h_env$half != "mirror") {
+    if (is.null(h_env$side) & h_env$body_halves != "join") {
         # Pool left- and right-sided data if no way to discriminate them
         h_env$side <- "join"
         message("`side` argument missing. Defaults to side = \"join\".")

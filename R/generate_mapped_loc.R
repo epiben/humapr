@@ -1,4 +1,5 @@
 generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
+    # h = body_halves
     # Convert from user's left/right/mid indication to those of humapr
     if (is.list(side)) {
         test <- c("left", "right")
@@ -33,7 +34,7 @@ generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
     d[is.na(d[, loc]), ] <- NA # to remove NAs
 
     # Generate "loc_long" based on user inputs
-    if (h == "mirror") {
+    if (h == "join") {
         d$loc_long <- if (!is.null(side)) {
             ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc]), NA)
         } else {
@@ -57,7 +58,7 @@ generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
         combine_key <- list()
         for (new_loc in names(combine)) {
             for (old_loc in combine[[new_loc]]) {
-                if (h == "mirror") {
+                if (h == "join") {
                     combine_key[[old_loc]] <- new_loc
                 } else {
                     combine_key[[paste0("right_", old_loc)]] <- paste0("right_", new_loc)

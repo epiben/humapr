@@ -12,7 +12,7 @@
 make_label <- function (id, data, local_coords) {
     # The data input is the label_data data frame (= original data produced by ggplot)
     # Temporary id, tid
-    tid <- if (!h_env$half == "mirror") id else substring(id, regexpr("_", id) + 1)
+    tid <- if (!h_env$body_halves == "join") id else substring(id, regexpr("_", id) + 1)
 
     # Base label with absolute and relative frequencies
     label <- sprintf("%s (%s%%)",
@@ -29,12 +29,12 @@ make_label <- function (id, data, local_coords) {
         }
         # Divide string by underscores
         lab <- regmatches(lab, gregexpr("_", lab), invert = TRUE)[[1]]
-        if (!h_env$half == "mirror") lab <- lab[-1] # Remove "left"/"right"
+        if (!h_env$body_halves == "join") lab <- lab[-1] # Remove "left"/"right"
         lab <- paste0(lab, collapse = " ") # Join using wide spaces
         label <- paste0(toupper(substr(lab, 1, 1)), substring(lab, 2), ": ", label)
     }
 
-    if (h_env$half == "mirror") id <- paste0("right_", id)
+    if (h_env$body_halves == "join") id <- paste0("right_", id)
     coords <- dplyr::filter(local_coords, label == id) %>%
         dplyr::select(y1, x2, side)
     x <- grid::unit(coords$x2, "native") +
