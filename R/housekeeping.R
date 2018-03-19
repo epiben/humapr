@@ -12,14 +12,29 @@ housekeeping <- function(user, defs) {
 
     # Choose default and prompt user if invalid argument supplied
     vargs <- list(type = c("simple", "female", "male"),
-                  proj = c("front", "back", "neutral"),
-                  annotate = c("freq", "all", "none"))
+                  proj = c("front", "back", "neutral"))
     for (arg in names(vargs)) {
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])
     }
 
+    # Check annotation settings
+    valid_annotate <- c("freq", "all", NA, NULL)
+    if (!is.list(h_env$annotate)) {
+        stopifnot(h_env$annotate %in% valid_annotate)
+        if (is.null(h_env$annotate))
+            h_env$annotate <- NA # simplify subsequent code
+    } else {
+        stopifnot(h_env$annotate$detail %in% valid_annotate)
+        h_env$gp <- h_env$annotate$gp %||% grid::gpar(col = "black", fontsize = 9)
+        h_env$annotate <- if (h_env$annotate$detail %in% c(NA, NULL)) {
+            NA
+        } else {
+            h_env$annotate$detail
+        }
+    }
+
     # Set necessary defaults, if none given by user
-    h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black", fontsize = 9)
+    # h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black", fontsize = 9)
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE

@@ -51,8 +51,9 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body_halves = "separate", annotate = "freq", anno_gp = NULL,
-                  bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL) {
+body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
+                 body_halves = "separate", annotate = "freq", bridge = NULL,
+                 na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
