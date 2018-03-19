@@ -37,9 +37,12 @@ build_bridge <- function (d, bridge, type) {
     }
 
     converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
-    if (sum(!converted) > 0)
-        message(sprintf("%s of %s data points could could not be mapped a region in the chosen map.",
+    if (sum(!converted) > 0) {
+        message(sprintf("%s data points (of %s) could not be mapped a region in the chosen map.",
                         sum(!converted), nrow(d)))
+        message(springt("Problematic 'loc' values: %s.",
+                        paste0(unique(d[!converted, h_env$loc]), collapse = ", ")))
+    }
 
     d[converted, ] # Return updated data frame
 }
