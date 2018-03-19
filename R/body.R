@@ -92,7 +92,7 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
         data <- data[!is.na(data$mapped_loc), ]
 
     # Build ggplot object
-    ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
+    ggplot2::ggplot(data, aes(x = mapped_loc, fill = -..count.., group = 1)) +
         ggplot2::guides(fill = if (is.na(h_env$annotate)) NULL else FALSE) +
         geom_humap(stat = "count", na.rm = h_env$na_rm) +
         ggplot2::theme(axis.title = element_blank(),
@@ -100,6 +100,5 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
                        axis.line = element_blank(),
                        axis.ticks = element_blank(),
                        panel.grid = element_blank(),
-                       legend.title = element_blank()) +
-        ggplot2::scale_fill_gradient(low = "#56B1F7", high = "#132B43")
+                       legend.title = element_blank())
 }
