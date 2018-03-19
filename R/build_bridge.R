@@ -40,7 +40,7 @@ build_bridge <- function (d, bridge, type) {
     if (sum(!converted) > 0) {
         message(sprintf("%s data points (of %s) could not be mapped a region in the chosen map.",
                         sum(!converted), nrow(d)))
-        message(sprintf("Problematic %s values: %s.",
+        message(sprintf("Problematic values in '%s' variable: %s.",
                         h_env$loc, paste0(unique(d[!converted, h_env$loc]), collapse = ", ")))
     }
 
