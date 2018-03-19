@@ -19,10 +19,12 @@ housekeeping <- function(user, defs) {
 
     # Check annotation settings
     valid_annotate <- c("freq", "all", NA, NULL)
+    default_gp <-
     if (!is.list(h_env$annotate)) {
         stopifnot(h_env$annotate %in% valid_annotate)
         if (is.null(h_env$annotate))
             h_env$annotate <- NA # simplify subsequent code
+        h_env$gp <- grid::gpar(col = "black", fontsize = 9)
     } else {
         stopifnot(h_env$annotate$detail %in% valid_annotate)
         h_env$gp <- h_env$annotate$gp %||% grid::gpar(col = "black", fontsize = 9)

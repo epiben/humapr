@@ -44,7 +44,7 @@ humap_vp <- function(x_range, y_range, li_margin, long_label, half) {
         ncols <- if (half == "separate") 3 else 2
         grid::grid.layout(1, ncols, widths = widths, heights = diff(y_range), respect = TRUE)
     }
-    main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$anno_gp,
+    main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$gp,
                            layout = the_layout(x_range, y_range, li_margin, la_margin, half))
     map <- grid::viewport(layout.pos.row = 1, layout.pos.col = switch(half, left = 1, 2),
                           xscale = x_range + li_margin$map, yscale = y_range)
