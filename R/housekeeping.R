@@ -11,8 +11,8 @@ housekeeping <- function(user, defs) {
     for (arg in names(defs)) assign(arg, eval(defs[[arg]]), h_env)
 
     # Choose default and prompt user if invalid argument supplied
-    vargs <- list(type = c("body"),
-                  proj = c("front", "back", "simple"),
+    vargs <- list(type = c("simple", "female", "male"),
+                  proj = c("front", "back", "neutral"),
                   annotate = c("freq", "all", "none"))
     for (arg in names(vargs)) {
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])

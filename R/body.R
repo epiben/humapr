@@ -51,7 +51,7 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-body <- function(data, loc, side = NULL, type = "simple", proj = "simple", body_halves = "pooled", annotate = "freq", anno_gp = NULL,
+body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body_halves = "pooled", annotate = "freq", anno_gp = NULL,
                   bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
