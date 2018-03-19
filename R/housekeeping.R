@@ -18,25 +18,19 @@ housekeeping <- function(user, defs) {
     }
 
     # Check annotation settings
-    valid_annotate <- c("freq", "all", NA, NULL)
-    default_gp <-
-    if (!is.list(h_env$annotate)) {
-        stopifnot(h_env$annotate %in% valid_annotate)
-        if (is.null(h_env$annotate))
-            h_env$annotate <- NA # simplify subsequent code
-        h_env$gp <- grid::gpar(col = "black", fontsize = 9)
-    } else {
-        stopifnot(h_env$annotate$detail %in% valid_annotate)
-        h_env$gp <- h_env$annotate$gp %||% grid::gpar(col = "black", fontsize = 9)
-        h_env$annotate <- if (h_env$annotate$detail %in% c(NA, NULL)) {
-            NA
-        } else { # use annotate = "freq" as default
-            h_env$annotate$detail %||% "freq"
-        }
+    valid_annotate <- c("freq", "all", NA, NULL, FALSE)
+    h_env$gp <- grid::gpar(col = "black", fontsize = 9)
+    if (is.list(h_env$annotate)) {
+        h_env$gp <- h_env$annotate$gp %||% h_env$gp
+        h_env$annotate$detail <- h_env$annotate$detail %||% "freq" # give default
+        h_env$annotate <- h_env$annotate$detail
     }
+    if (h_env$annotate %in% c(NULL, FALSE)) h_env$annotate <- NA
+    if (!h_env$annotate %in% valid_annotate)
+        stop(sprintf("Make sure your 'annotate' argument is one of the following: %s",
+                     paste0(valid_annotate, collapse = ", ")))
 
     # Set necessary defaults, if none given by user
-    # h_env$anno_gp <- h_env$anno_gp %||% grid::gpar(col = "black", fontsize = 9)
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
