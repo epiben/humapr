@@ -29,7 +29,7 @@
 #' @param type simple, (default), f(emale), m(male)
 #' @param proj "front" or "back". Ignored if \code{type = "simple"}.
 #' @param body_halves character string defining how to deal with body halves.
-#'   "separate" discriminates the left half from the right; "join" (default) merges
+#'   "separate" (default) discriminates the left half from the right; "join" merges
 #'   observations in, e.g., right and left side of the chest.
 #' @param annotate \code{freq} (defaults) shows only absolute and relative
 #'   frequencies. \code{all} include region names. \code{none} omits labels
@@ -51,7 +51,7 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body_halves = "join", annotate = "freq", anno_gp = NULL,
+body <- function(data, loc, side = NULL, type = "simple", proj = "neutral", body_halves = "separate", annotate = "freq", anno_gp = NULL,
                   bridge = NULL, na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
