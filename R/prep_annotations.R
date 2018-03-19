@@ -5,7 +5,7 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
     h_env$controls$vert_adj <- h_env$controls$vert_adj %||% "smart"
 
     # Importing file with predefined (x0, y0)'s or just compute them
-    if (gender == "neutral" && type == "body" && proj == "simple") {
+    if (type == "simple" && proj == "neutral") {
         # This one should check that the computed (x0, y0) is actually inside
         # the relevant region, and find a new one if it isn't
         h_env$anno_coords <- h_env$mapdf %>%
