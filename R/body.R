@@ -22,19 +22,22 @@
 #' @param loc column in data frame containing localisation codes for
 #'   observations. Character string.
 #' @param side variable indication left and right side of observations. Values
-#'   must be "left" or "right". May also be a named *list* that defines the variable (=
-#'   data frame column) holding the variables, and which value(s) in that column
-#'   correspond(s) to left and right. Valid specifications are, i.a., \code{side = "xx"} and \code{side = list(var = "xx",
-#'   left = c("left", "l"), right = "r")}
+#'   must be "left" or "right". May also be a named *list* that defines the
+#'   variable (= data frame column) holding the variables, and which value(s) in
+#'   that column correspond(s) to left and right. Valid specifications are,
+#'   i.a., \code{side = "xx"} and \code{side = list(var = "xx", left = c("left",
+#'   "l"), right = "r")}
 #' @param type simple, (default), f(emale), m(male)
 #' @param proj "front" or "back". Ignored if \code{type = "simple"}.
 #' @param body_halves character string defining how to deal with body halves.
-#'   "separate" (default) discriminates the left half from the right; "join" merges
-#'   observations in, e.g., right and left side of the chest.
+#'   "separate" (default) discriminates the left half from the right; "join"
+#'   merges observations in, e.g., right and left side of the chest.
 #' @param annotate \code{freq} (defaults) shows only absolute and relative
-#'   frequencies. \code{all} include region names. \code{none} omits labels
-#'   altogether. More elaborate argument may be given in \code{list} form, see
-#'   Details below.
+#'   frequencies. \code{all} include region names. \code{NA} omits labels
+#'   altogether. More elaborate argument may be given as a named \code{list},
+#'   consisting of a \code{details} element (optional, but can be any of the
+#'   values for the string argument mode) and a \code{gp} element holding a
+#'   \code{grid::gpar}-object (see ?grid::gpar)
 #' @param combine a \emph{list} of vectors naming the regions to be combined and
 #'   mapped as one. E.g., \code{list(arm = c("shoulder", "arm", "elbow",
 #'   "wrist"))}
