@@ -37,10 +37,10 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
             ref <- if(length(refs) == 0) { # when the first point (usually the hand)
                 tent # at this point, tent just has one element
             } else if (length(refs2) == 0) {
-                sort(abs(abs(refs) - abs(tent[curr])))[1]
+                sort(abs(refs - tent[curr]))[1]
                 # vertically closest point
             } else {
-                sort(abs(abs(unlist(x0s)[names(refs2)]) - abs(x0s[curr])))[1]
+                sort(abs(unlist(x0s)[names(refs2)] - x0s[curr]))[1]
                 # horisontally closest point
             }
             # Return the appropriate x0 value, unnamed
