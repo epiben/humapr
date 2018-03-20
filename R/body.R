@@ -1,9 +1,9 @@
 #' Create a humap body plot
 #'
-#' \code{body} creates a ggplot object, using its own set of "geoms", i.e.,
+#' \code{humap_body} creates a ggplot object, using its own set of "geoms", i.e.,
 #' human body oulines on which your data are projected in a heatmap-like
 #' fashion. \code{humapr} is an extension of ggplot2, and objects created with
-#' the \code{humap} function can be modified with standard ggplot2
+#' the \code{humap_*} functions can be modified with standard ggplot2
 #' setting--e.g., calls to \code{theme()}.
 #'
 #' If you don't supply a \code{body_halves} argument humapr will assume default
@@ -54,9 +54,9 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
-                 body_halves = "separate", annotate = "freq", bridge = NULL,
-                 na_rm = FALSE, combine = NULL, controls = NULL) {
+humap_body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
+                       body_halves = "separate", annotate = "freq", bridge = NULL,
+                       na_rm = FALSE, combine = NULL, controls = NULL) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
