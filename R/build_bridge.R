@@ -17,8 +17,9 @@ build_bridge <- function (d, bridge, type) {
             genitalia = 73:74, hip = 75, thigh = 76, knee = 77, leg = 78,
             ankle = 79, foot = 80, toes = 81),
         ais_simple = list(
-            head = 51:58, neck = 59, arm = 60:62, forearm = 62:64, hand = 65:66, chest = c(68, 70),
-            abdomen = c(69, 71:74), thigh = 75:77, leg = 78:79, foot = 80:81),
+            head = 51:58, neck = 59, arm = 60:61, forearm = 62:63, hand = 64:66,
+            chest = c(68, 70), abdomen = c(69, 71:74), thigh = 75:76, leg = 77:78,
+            foot = 79:81),
         simple = list(
             head = 11:12, neck = 21:22, chest = 31:32, abdomen = 41:42,
             pelvis = 51:52, arm = 61:62, forearm = 64:65, hand = 71:72,
