@@ -26,6 +26,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
+            if (curr == "right_abdomen") browser()
             print(curr)
             # y1s of all other points so far
             refs <- tent[!names(tent) == curr]
