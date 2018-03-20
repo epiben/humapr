@@ -26,6 +26,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
+            print(curr)
             # y1s of all other points so far
             refs <- tent[!names(tent) == curr]
             # Only points with y0s and y1s between the y0 and y1 of current point
@@ -41,6 +42,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                 # horisontally closest point
             }
             # Return the appropriate x0 value, unnamed
+            print(names(ref))
             unname(x0s[names(ref)])
         }
 
