@@ -92,7 +92,7 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
         data <- data[!is.na(data$mapped_loc), ]
 
     # Build ggplot object
-    ggplot2::ggplot(data, aes(x = mapped_loc, fill = -..count.., group = 1)) +
+    ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
         ggplot2::guides(fill = if (is.na(h_env$annotate)) NULL else FALSE) +
         geom_humap(stat = "count", na.rm = h_env$na_rm) +
         ggplot2::theme(axis.title = element_blank(),
