@@ -1,13 +1,13 @@
-#' Create textGrob for humap annotation
-#'
-#' Internal function called within \code{geom_humap}. I cannot think of any
-#' scenario in which a user would need to call this function.
-#'
-#' @param id internal id (e.g., right_abdomen) of label for which to create
-#'   textGrob
-#' @param data the original data sent into \code{humap} by \code{ggplot2}
-#' @param local_coords data fram holding coordinates for all annotations;
-#'   \code{id} is used to pick appropriate coordinates
+# Create textGrob for humap annotation
+#
+# Internal function called within \code{geom_humap}. I cannot think of any
+# scenario in which a user would need to call this function.
+#
+# @param id internal id (e.g., right_abdomen) of label for which to create
+#   textGrob
+# @param data the original data sent into \code{humap} by \code{ggplot2}
+# @param local_coords data fram holding coordinates for all annotations;
+#   \code{id} is used to pick appropriate coordinates
 
 make_label <- function (id, data, local_coords) {
     # The data input is the label_data data frame (= original data produced by ggplot)

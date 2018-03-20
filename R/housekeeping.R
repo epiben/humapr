@@ -1,9 +1,9 @@
-#' Initial housekeeping in \code{humap} call
-#'
-#' Internal function. Sets up an environment with settings; tests argument values. I cannot think of any scenario in which a user would need to call this function
-#'
-#' @param user user-given argument; essentially useful stuff from \code{match.call()}
-#' @param defs default argument values; essentially useful stuff from \code{formals()}
+# Initial housekeeping in \code{humap} call
+#
+# Internal function. Sets up an environment with settings; tests argument values. I cannot think of any scenario in which a user would need to call this function
+#
+# user: user-given argument; essentially useful stuff from \code{match.call()}
+# defs: default argument values; essentially useful stuff from \code{formals()}
 
 housekeeping <- function(user, defs) {
     # h_env is an internal object in R/sysdata.rda, and is reset here
