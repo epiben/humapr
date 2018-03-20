@@ -26,12 +26,19 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
-            refs <- tent[!names(tent) == curr] # choose y1s of all other points so far
-            refs <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
-                # choose only points with y1s between the y0 and y1 of current point
-            if (length(refs) == 0) return(unname(x0s[curr]))
-            refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
-            ref <- if (length(refs2) == 0) refs[length(refs)] else refs2[length(refs2)]
+            refs <- tent[!names(tent) == curr] # y1s of all other points so far
+            refs2 <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
+                # only points with y1s between the y0 and y1 of current point
+            # if (length(refs) == 0) return(unname(x0s[curr]))
+            # refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
+            ref <- if(length(refs2) == 0) {
+                sort(abs(abs(refs) - abs(tent[curr])))[1]
+                # vertically closest point
+            } else {
+                sort(abs(abs(unlist(x0s)[names(refs)]) - abs(x0s[curr])))[1]
+                # horisontally closest point
+            }
+            # ref <- if (length(refs2) == 0) refs[length(refs)] else refs2[length(refs2)]
             unname(x0s[names(ref)])
         }
 
