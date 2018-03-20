@@ -23,10 +23,10 @@ housekeeping <- function(user, defs) {
     # Check annotation settings
     valid_annotate <- c("freq", "all", NA, NULL)
     # h_env$gp <- h_env$gp_text <- h_env$gp_lines <- grid::gpar(col = "black", fontsize = 9)
-    h_env$gp <- grid::gpar(col = "black", fontsize = 9)
+    h_env$gp <- h_env$annotate$gp %||% grid::gpar(col = "black", fontsize = 9)
     if (is.list(h_env$annotate)) {
-        h_env$gp_text <- h_env$annotate$gp_text %||% h_env$annotate$gp %||% h_env$gp
-        h_env$gp_lines <- h_env$annotate$gp_lines %||% h_env$annotate$gp %||% h_env$gp
+        h_env$gp_text <- h_env$annotate$gp_text %||% h_env$gp
+        h_env$gp_lines <- h_env$annotate$gp_lines %||% h_env$gp
         h_env$annotate <- h_env$annotate$detail %||% "freq" # give default
     }
     h_env$annotate <- h_env$annotate %||% NA
