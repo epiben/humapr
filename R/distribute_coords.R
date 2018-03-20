@@ -26,13 +26,10 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
-            if (curr == "right_abdomen") browser()
-            print(curr)
             # y1s of all other points so far
             refs <- tent[!names(tent) == curr]
             # Only points with y0s and y1s between the y0 and y1 of current point
             refs2 <- refs[dplyr::between(refs, y0s[[curr]], y1s[[curr]])]
-            print(refs2)
             # ref is the point whose x0 value to use as x1 for curr
             ref <- if(length(refs) == 0) { # when the first point (usually the hand)
                 tent # at this point, tent just has one element
@@ -44,7 +41,6 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                 # horisontally closest point
             }
             # Return the appropriate x0 value, unnamed
-            print(names(ref))
             unname(x0s[names(ref)])
         }
 
