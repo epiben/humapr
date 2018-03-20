@@ -49,7 +49,7 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
          mapdf <- h_env$mapdf
 
          # Give missing regions default NA fill
-         data <- dplyr::left_join(sp::as.data.frame(map), data, by = c("Layer" = "label")) %>%
+         data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
              dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Yield fill colours for each polygon
