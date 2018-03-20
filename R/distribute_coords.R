@@ -31,13 +31,13 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
             # Only points with y1s between the y0 and y1 of current point
             refs2 <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
             # ref is the point whose x0 value to use as x1 for curr
-            ref <- if(length(refs) == 0) {
+            ref <- if(length(refs) == 0) { # when the first point (usually the hand)
                 tent # at this point, tent just has one element
-            } else if (length(refs2) == 0) { # when the first point (usually the hand)
+            } else if (length(refs2) == 0) {
                 sort(abs(abs(refs) - abs(tent[curr])))[1]
                 # vertically closest point
             } else {
-                sort(abs(abs(unlist(x0s)[names(refs)]) - abs(x0s[curr])))[1]
+                sort(abs(abs(unlist(x0s)[names(refs2)]) - abs(x0s[curr])))[1]
                 # horisontally closest point
             }
             # Return the appropriate x0 value, unnamed
