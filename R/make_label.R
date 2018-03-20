@@ -42,5 +42,6 @@ make_label <- function (id, data, local_coords) {
             # ensure distance to annotation line
     y <- grid::unit(coords$y1, "native") + grid::unit(0.1, "lines")
 
-    grid::textGrob(label, x = x, y = y, default.units = "native", just = coords$side)
+    grid::textGrob(label, x = x, y = y, default.units = "native", just = coords$side ,
+                   gp = h_env$gp_text)
 }

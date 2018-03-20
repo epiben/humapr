@@ -110,7 +110,8 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
              lines <- grid::polylineGrob(x = line_coords(local_coords, c("x0", "x1", "x2")),
                                          y = line_coords(local_coords, c("y0", "y1", "y1")),
                                          default.units = "native",
-                                         id.lengths = rep(3, nrow(local_coords)))
+                                         id.lengths = rep(3, nrow(local_coords)),
+                                         gp = h_env$gp_lines)
 
              # Create labels grob, using list with named elements
              labels <- sapply(label_data$label, function(.)
