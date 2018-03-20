@@ -28,8 +28,10 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         seek_hori <- function() {
             # y1s of all other points so far
             refs <- tent[!names(tent) == curr]
-            # Only points with y1s between the y0 and y1 of current point
-            refs2 <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
+            refs_y0s <- unlist(y0s)[names(refs)]
+            # Only points with y0s and y1s between the y0 and y1 of current point
+            refs2 <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr]) &
+                              abs(refs_y0s) >= abs(y0s[[curr]]) & abs(refs_y0s) <= abs(tent[curr])]
             # ref is the point whose x0 value to use as x1 for curr
             ref <- if(length(refs) == 0) { # when the first point (usually the hand)
                 tent # at this point, tent just has one element
