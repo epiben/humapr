@@ -71,13 +71,14 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
          # If the user wants annotations, the relevant grobs are made here
          if (h_env$annotate %in% c("all", "freq")) {
              # Generate coordinates for annotations
-             if (!h_env$controls$vert_adj == "smart") {
-                 # I should probably just go for the "smart" version; it's better
-                 local_coords <- subset(h_env$anno_coords, !is.na(x0) & !is.na(offset))
-                 local_coords$side <-  ifelse(grepl("left_", local_coords$region), "left", "right")
-                 local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
-             }
-             if (h_env$controls$vert_adj == "smart")
+             # if (!h_env$controls$vert_adj == "smart") {
+             #     # I should probably just go for the "smart" version; it's better
+             #     local_coords <- subset(h_env$anno_coords, !is.na(x0) & !is.na(offset))
+             #     local_coords$side <-  ifelse(grepl("left_", local_coords$region), "left", "right")
+             #     local_coords$x1 <- with(local_coords, ifelse(side == "left", x0 + abs(offset), x0 - abs(offset)))
+             # }
+             # if (h_env$controls$vert_adj == "smart")
+             # From now on, always use the same (good) distribution procedure
                  local_coords <- h_env$anno_coords %>%
                      dplyr::mutate(label = row.names(.),
                                    side = ifelse(grepl("left_", label), "left", "right"))
