@@ -26,7 +26,6 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
-            browser()
             refs <- tent[!names(tent) == curr] # choose y1s of all other points so far
             refs <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
                 # choose only points with y1s between the y0 and y1 of current point
@@ -77,6 +76,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
             x1s[[curr]] <- seek_hori()
         }
 
+        browser()
         sort_key <- row.names(coords)
         o <- data.frame(x0 = x0s[sort_key], y0 = y0s[sort_key],
                         x1 = unlist(x1s)[sort_key],
