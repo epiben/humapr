@@ -26,12 +26,11 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
         }
 
         seek_hori <- function() {
-            browser()
-            refs <- tent[!names(tent) == curr] # y1s of all other points so far
+            # y1s of all other points so far
+            refs <- tent[!names(tent) == curr]
+            # Only points with y1s between the y0 and y1 of current point
             refs2 <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
-                # only points with y1s between the y0 and y1 of current point
-            # if (length(refs) == 0) return(unname(x0s[curr]))
-            # refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
+            # ref is the point whose x0 value to use as x1 for curr
             ref <- if(length(refs) == 0) {
                 tent # at this point, tent just has one element
             } else if (length(refs2) == 0) { # when the first point (usually the hand)
@@ -41,7 +40,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                 sort(abs(abs(unlist(x0s)[names(refs)]) - abs(x0s[curr])))[1]
                 # horisontally closest point
             }
-            # ref <- if (length(refs2) == 0) refs[length(refs)] else refs2[length(refs2)]
+            # Return the appropriate x0 value, unnamed
             unname(x0s[names(ref)])
         }
 
