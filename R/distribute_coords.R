@@ -1,4 +1,4 @@
-distribute_coords <- function(coords, pad, type = "minimal", sort = TRUE) {
+distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
     # type %in% c("minimal", "even", "smart")
     if (type == "smart") {
         x0s <- setNames(coords$x0, row.names(coords))
@@ -6,8 +6,9 @@ distribute_coords <- function(coords, pad, type = "minimal", sort = TRUE) {
         x0s <- sort(x0s)
         y0s <- setNames(coords$y0, row.names(coords))[names(x0s)]
 
-        seek_vert <- function (d) {
-            pos_top <- y0s[curr] > mean(c(min(tent), max(tent)))
+        seek_vert <- function (d) { # d = differences
+            # pos_top <- y0s[curr] > mean(c(min(tent), max(tent)))
+            pos_top <- y0s[curr] > mean(range(tent))
             cp <- round(length(d) / 2) # cut point
             d <- d[if (pos_top) 1:cp else cp:length(d)]
             # This should be a bit more elegant; it shouldn't just cut the diffs
@@ -21,16 +22,16 @@ distribute_coords <- function(coords, pad, type = "minimal", sort = TRUE) {
                 ref <- min(abs(cands - y0s[curr]))[1]
                 y1 <- cands[abs(cands - y0s[curr]) == ref][1]
             }
-
             unname(y1)
         }
 
         seek_hori <- function() {
-            refs <- tent[!names(tent) == curr]
+            refs <- tent[!names(tent) == curr] # choose y1s of all other points so far
+            refs <- refs[refs[abs(refs) >= abs(y0s[[curr]])] & abs(refs) <= abs(tent[curr])]
+                # choose only points with y1s between the y0 and y1 of current point
             if (length(refs) == 0) return(unname(x0s[curr]))
             refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
             ref <- if (length(refs2) == 0) refs[length(refs)] else refs2[length(refs2)]
-
             unname(x0s[names(ref)])
         }
 
@@ -41,7 +42,7 @@ distribute_coords <- function(coords, pad, type = "minimal", sort = TRUE) {
             # Vertical distribution (= y1 value)
             curr <- names(y0s[i])
             tent <- c(unlist(y1s), y0s[curr]) # y1s so far ("tentative" vector)
-            if (i == 1) {
+            if (i == 1) { # first point shouldn't move
                 y1s[[curr]] <- unname(y0s[curr])
             } else if (tent[curr] == max(tent)) {
                 y1s[[curr]] <- if (y0s[curr] - max(tent[!names(tent) == curr]) >= pad) {
