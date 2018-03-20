@@ -27,7 +27,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
 
         seek_hori <- function() {
             refs <- tent[!names(tent) == curr] # choose y1s of all other points so far
-            refs <- refs[refs[abs(refs) >= abs(y0s[[curr]])] & abs(refs) <= abs(tent[curr])]
+            refs <- refs[abs(refs) >= abs(y0s[[curr]]) & abs(refs) <= abs(tent[curr])]
                 # choose only points with y1s between the y0 and y1 of current point
             if (length(refs) == 0) return(unname(x0s[curr]))
             refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
