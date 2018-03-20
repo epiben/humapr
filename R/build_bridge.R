@@ -33,7 +33,7 @@ build_bridge <- function (d, bridge, type) {
                     names(built_in), "."),
              call. = FALSE)
 
-    d[, h_env$loc] <- as.character(d[, h_env$loc]) # make sure it's not a factor
+    d <- d %>% dplyr::mutate(h_env$loc = as.character(.[, h_env$loc])) # make sure it's not a factor
     for (hreg in names(bridge)) {
         d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
     }
