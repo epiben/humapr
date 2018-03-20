@@ -100,5 +100,6 @@ body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
                        axis.line = element_blank(),
                        axis.ticks = element_blank(),
                        panel.grid = element_blank(),
+                       panel.background = element_blank(),
                        legend.title = element_blank())
 }
