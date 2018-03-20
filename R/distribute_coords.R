@@ -32,11 +32,11 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                 # only points with y1s between the y0 and y1 of current point
             # if (length(refs) == 0) return(unname(x0s[curr]))
             # refs2 <- refs[if (y1s[[curr]] >= y0s[curr]) refs >= y0s[curr] else refs <= y0s[curr]]
-            ref <- if(length(refs2) == 0) {
+            ref <- if(length(refs) == 0) {
+                tent # at this point, tent just has one element
+            } else if (length(refs2) == 0) { # when the first point (usually the hand)
                 sort(abs(abs(refs) - abs(tent[curr])))[1]
                 # vertically closest point
-            } else if (length(refs) == 0) { # when the first point (usually the hand)
-                tent
             } else {
                 sort(abs(abs(unlist(x0s)[names(refs)]) - abs(x0s[curr])))[1]
                 # horisontally closest point
