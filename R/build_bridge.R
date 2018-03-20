@@ -34,9 +34,8 @@ build_bridge <- function (d, bridge, type) {
              call. = FALSE)
 
     d <- d %>% dplyr::mutate(!!h_env$loc := as.character(.[, h_env$loc])) # make sure it's not a factor
-    for (hreg in names(bridge)) {
+    for (hreg in names(bridge))
         d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
-    }
 
     converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
     if (sum(!converted) > 0) {
