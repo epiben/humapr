@@ -6,6 +6,8 @@
 #' @param defs default argument values; essentially useful stuff from \code{formals()}
 
 housekeeping <- function(user, defs) {
+    # h_env is an internal object in R/sysdata.rda
+
     # Sync user-supplied and default arguments
     defs[names(defs) %in% names(user)] <- user
     for (arg in names(defs)) assign(arg, eval(defs[[arg]]), h_env)
