@@ -30,7 +30,7 @@ housekeeping <- function(user, defs) {
                      paste0(valid_annotate, collapse = ", ")), call. = FALSE)
 
     # Set necessary defaults, if none given by user
-    h_env$controls$na_fill <- h_env$controls$na_fill %||% "#FFFFFF"
+    h_env$controls$na_fill <- h_env$controls$na_fill %||% "#000000"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
     h_env$controls$mid_include <- FALSE
