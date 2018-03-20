@@ -6,7 +6,8 @@
 #' @param defs default argument values; essentially useful stuff from \code{formals()}
 
 housekeeping <- function(user, defs) {
-    # h_env is an internal object in R/sysdata.rda
+    # h_env is an internal object in R/sysdata.rda, and is reset here
+    rm(list = ls(envir = h_env), envir = h_env)
 
     # Sync user-supplied and default arguments
     defs[names(defs) %in% names(user)] <- user
@@ -21,7 +22,8 @@ housekeeping <- function(user, defs) {
 
     # Check annotation settings
     valid_annotate <- c("freq", "all", NA, NULL)
-    h_env$gp <- h_env$gp_text <- h_env$gp_lines <- grid::gpar(col = "black", fontsize = 9)
+    # h_env$gp <- h_env$gp_text <- h_env$gp_lines <- grid::gpar(col = "black", fontsize = 9)
+    h_env$gp <- grid::gpar(col = "black", fontsize = 9)
     if (is.list(h_env$annotate)) {
         h_env$gp_text <- h_env$annotate$gp_text %||% h_env$annotate$gp %||% h_env$gp
         h_env$gp_lines <- h_env$annotate$gp_lines %||% h_env$annotate$gp %||% h_env$gp
