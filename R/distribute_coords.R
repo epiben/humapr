@@ -1,13 +1,12 @@
 distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
     # type %in% c("minimal", "even", "smart")
-    if (type == "smart") {
+    # if (type == "smart") {
         x0s <- setNames(coords$x0, row.names(coords))
         if (!length(unique(x0s)) == length(x0s)) x0s <- jitter(x0s, 1, 1)
         x0s <- sort(x0s)
         y0s <- setNames(coords$y0, row.names(coords))[names(x0s)]
 
         seek_vert <- function (d) { # d = differences
-            # pos_top <- y0s[curr] > mean(c(min(tent), max(tent)))
             pos_top <- y0s[curr] > mean(range(tent))
             cp <- round(length(d) / 2) # cut point
             d <- d[if (pos_top) 1:cp else cp:length(d)]
@@ -94,59 +93,59 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                                x1)) # To ensure all slopes >= 45 degrees
 
         o # Returning data frame with coords
-    } else if (type == "minimal") {
-        if (sort == TRUE) coords <- sort(coords, decreasing = TRUE)
-        start_mid <- mean(c(min(coords), max(coords)))
-        pad <- unname(pad)
-        curr <- 1
-
-        repeat {
-            d_up <- if (curr == 1) {
-                Inf
-            } else {
-                coords[curr - 1] - coords[curr]
-            }
-            d_down <- if (curr == length(coords)) {
-                Inf
-            } else {
-                coords[curr] - coords[curr + 1]
-            }
-
-            if (d_down < 0) {
-                coords[curr] <- coords[curr - 1] + 1.1 * pad
-                curr <- 1
-                next
-            } else {
-                if (d_down < pad) {
-                    coords[curr] <- coords[curr] + (1.1 * pad - d_down)
-                    curr <- 1
-                    next
-                } else if (d_up < pad) {
-                    if (d_down > 2 * pad) {
-                        coords[curr] <- coords[curr] + dir * (1.1 * pad - d_up)
-                        curr <- 1
-                        next
-                    } else {
-                        curr <- curr + 1
-                        next
-                    }
-                } else if (curr == length(coords)) {
-                    break
-                } else {
-                    curr <- curr + 1
-                    next
-                }
-            }
-        }
-        return(coords - (mean(c(min(coords), max(coords))) - start_mid))
-    } else if (type == "even") {
-        coords <- sort(coords, decreasing = FALSE)
-        range <- max(coords) - min(coords)
-        step <- range / (length(coords) - 1)
-        i <- seq(length(coords) - 1)
-        coords[i] <- min(coords) + (i - 1) * step
-        return(coords)
-    } else {
-        stop("Please, supply valid `type` argument.")
-    }
+    # } else if (type == "minimal") {
+    #     if (sort == TRUE) coords <- sort(coords, decreasing = TRUE)
+    #     start_mid <- mean(c(min(coords), max(coords)))
+    #     pad <- unname(pad)
+    #     curr <- 1
+    #
+    #     repeat {
+    #         d_up <- if (curr == 1) {
+    #             Inf
+    #         } else {
+    #             coords[curr - 1] - coords[curr]
+    #         }
+    #         d_down <- if (curr == length(coords)) {
+    #             Inf
+    #         } else {
+    #             coords[curr] - coords[curr + 1]
+    #         }
+    #
+    #         if (d_down < 0) {
+    #             coords[curr] <- coords[curr - 1] + 1.1 * pad
+    #             curr <- 1
+    #             next
+    #         } else {
+    #             if (d_down < pad) {
+    #                 coords[curr] <- coords[curr] + (1.1 * pad - d_down)
+    #                 curr <- 1
+    #                 next
+    #             } else if (d_up < pad) {
+    #                 if (d_down > 2 * pad) {
+    #                     coords[curr] <- coords[curr] + dir * (1.1 * pad - d_up)
+    #                     curr <- 1
+    #                     next
+    #                 } else {
+    #                     curr <- curr + 1
+    #                     next
+    #                 }
+    #             } else if (curr == length(coords)) {
+    #                 break
+    #             } else {
+    #                 curr <- curr + 1
+    #                 next
+    #             }
+    #         }
+    #     }
+    #     return(coords - (mean(c(min(coords), max(coords))) - start_mid))
+    # } else if (type == "even") {
+    #     coords <- sort(coords, decreasing = FALSE)
+    #     range <- max(coords) - min(coords)
+    #     step <- range / (length(coords) - 1)
+    #     i <- seq(length(coords) - 1)
+    #     coords[i] <- min(coords) + (i - 1) * step
+    #     return(coords)
+    # } else {
+    #     stop("Please, supply valid `type` argument.")
+    # }
 }
