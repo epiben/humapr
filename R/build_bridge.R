@@ -46,5 +46,5 @@ build_bridge <- function (d, bridge, type) {
                         h_env$loc, paste0(unique(d[!converted, h_env$loc]), collapse = ", ")))
     }
 
-    d[converted, ] # Return updated data frame
+    d[converted, , drop = FALSE] # Return updated data frame
 }
