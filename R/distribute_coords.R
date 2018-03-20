@@ -34,6 +34,8 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
             ref <- if(length(refs2) == 0) {
                 sort(abs(abs(refs) - abs(tent[curr])))[1]
                 # vertically closest point
+            } else if (length(refs) == 0) { # when the first point (usually the hand)
+                tent
             } else {
                 sort(abs(abs(unlist(x0s)[names(refs)]) - abs(x0s[curr])))[1]
                 # horisontally closest point
