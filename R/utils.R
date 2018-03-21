@@ -15,8 +15,8 @@ prompt_inv <- function(arg, val){
     assign(arg, val, h_env)
 }
 
-def_dist <- function (x, p = h_env$controls$label_pad, a = h_env$controls$vert_adj) {
-    distribute_coords(x, p, a)
+def_dist <- function (x, p = h_env$controls$label_pad) {
+    distribute_coords(x, p)
 }
 
 inverse_coords <- function (x, cols = "x0", patt = "left_") {
