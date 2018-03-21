@@ -53,7 +53,7 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
              dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Yield fill colours for each polygon
-         fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>% # mapdf[!duplicated(mapdf$id), ] %>%
+         fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>%
              dplyr::left_join(data, by = c("id" = "label"))
 
          # Start building the output, first off is the polygon map
