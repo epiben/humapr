@@ -1,5 +1,6 @@
 # Use default, if no other value specified
 `%||%` <- function(a, b) if(!is.null(a)) a else b
+    # heavily inspired by the utility function used in the Tidyverse
 
 line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
 
