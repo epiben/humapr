@@ -58,7 +58,7 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
         lr <- if (h_env$body_halves == "left") "left_" else "right_"
         y0 <- setNames(h_env$anno_coords[paste0(lr, mapped_regions), "y0"],
                        row.names(h_env$anno_coords[paste0(lr, mapped_regions), ]))
-        y1 <- distribute_coords(y0, h_env$controls$label_pad, h_env$controls$vert_adj)
+        y1 <- distribute_coords(y0, h_env$controls$label_pad)
         h_env$anno_coords$y1 <- 0
         if (body_halves == "separate") {
             h_env$anno_coords[paste0("right_", mapped_regions), "y1"] <-
