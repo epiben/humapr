@@ -37,8 +37,7 @@ housekeeping <- function(user, defs) {
     # Set necessary defaults, if none given by user
     h_env$controls$na_fill <- h_env$controls$na_fill %||% "#000000"
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
-    # h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
-    h_env$controls$mid_include <- FALSE
+    h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
     # controls$vert_adj needs bounding box of map, so defined in prep_annotations.R
     if (h_env$body_halves %in% c("right", "left")) h_env$body_halves <- "join"
         # I'm disabling this whole half business, people need to give useful data
