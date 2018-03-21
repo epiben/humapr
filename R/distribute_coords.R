@@ -1,43 +1,56 @@
-distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
+distribute_coords <- function(coords, pad) {
     x0s <- setNames(coords$x0, row.names(coords))
-    if (!length(unique(x0s)) == length(x0s)) x0s <- jitter(x0s, 1, 1)
-    x0s <- sort(x0s)
+    if (!length(unique(x0s)) == length(x0s)) {
+        # If some x0s are the same, deterministically (alphabetically) add "jitter"
+        # so it will always give the same result
+        x0s <- x0s[sort(names(x0s))]
+        for (i in seq(length(x0s) -1)) {
+            x0s[i] <- x0s[i] - 1 * sum(x0s[i] == x0s[-(1:i)])
+        }
+    }
+    x0s <- sort(x0s) # to make sure we start from the lowest x0 (= from lateral)
     y0s <- setNames(coords$y0, row.names(coords))[names(x0s)]
 
+    # Helper function to seek appropriate y1 value (~ vertical offset) for curr
     seek_vert <- function (d) { # d = differences
+        # Should new y1 seek empty room at the top or bottom?
         pos_top <- y0s[curr] > mean(range(tent))
-        cp <- round(length(d) / 2) # cut point
-        d <- d[if (pos_top) 1:cp else cp:length(d)]
-        # This should be a bit more elegant; it shouldn't just cut the diffs
-        # in half, but actually find those with values over or below the mean between
-        # max and min
-        cands <- d[d >= 2 * pad]
-        if (length(cands) == 0) { # must go outside the bounds of y1s so far
+        # Find indices of differences with y1 in the upper
+        d_index <- tent[names(d)] > mean(range(tent[names(d)]))
+        d <- d[d_index == pos_top] # choose just relevant differences
+        cands <- d[d >= 2 * pad] # differences with enough room to fit another label
+        if (length(cands) == 0) {
+            # No label pair can fit a third between them, so y1 must go outside
+            # the bounds of the tentative list
             y1 <- if (pos_top) max(tent) + pad else min(tent) - pad
         } else {
+            # Re-define cands to include 1 padding size
             cands <- tent[names(cands)] + pad
-            ref <- min(abs(cands - y0s[curr]))[1]
+            ref <- min(abs(cands - y0s[curr]))[1] # point yielding smallest offset
+            # Index in case >1 candidate difference satisfy the criterion
             y1 <- cands[abs(cands - y0s[curr]) == ref][1]
         }
-        unname(y1)
+        unname(y1) # return unnamed to yield a simple "scalar"
     }
 
+    # Helper function to seek appropriate x1 value (~ horisontal offset) for curr
     seek_hori <- function() {
         # y1s of all other points so far
         refs <- tent[!names(tent) == curr]
-        # Only points with y0s and y1s between the y0 and y1 of current point
+        # y1s between the y0 and y1 of curr
         refs2 <- refs[dplyr::between(refs, y0s[[curr]], y1s[[curr]])]
-        # ref is the point whose x0 value to use as x1 for curr
-        ref <- if(length(refs) == 0) { # when the first point (usually the hand)
+        # ref is the point whose x0 value is used as x1 for curr
+        ref <- if(length(tent) == 1) { # when the first point (= most lateral)
             tent # at this point, tent just has one element
         } else if (length(refs2) == 0) {
-            sort(abs(refs - tent[curr]))[1]
-            # vertically closest point
+            # Use vertically-closest point of curr's y1
+            sort(abs(refs - y1s[[curr]]))[1]
+
         } else {
+            # Use horisontally-closest point
             sort(abs(unlist(x0s)[names(refs2)] - x0s[curr]))[1]
-            # horisontally closest point
         }
-        # Return the appropriate x0 value, unnamed
+        # Return the appropriate x0 value, unnamed to yield simple "scalar"
         unname(x0s[names(ref)])
     }
 
@@ -77,8 +90,7 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
                 seek_vert(diffs)
             }
         }
-
-        # Find break point
+        # Find x coordinate of break point (= corner) of line
         x1s[[curr]] <- seek_hori()
     }
 
@@ -89,6 +101,5 @@ distribute_coords <- function(coords, pad, type = "smart", sort = TRUE) {
     o$x1 <- with(o, ifelse(!y1 == y0 & abs(y1 - y0) < abs(x1 - x0),
                            (x0 + ifelse(x1 - x0 < 0, -1, 1) * abs(y1 - y0)),
                            x1)) # To ensure all slopes >= 45 degrees
-
     o # Returning data frame with coords
 }
