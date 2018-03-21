@@ -100,6 +100,6 @@ distribute_coords <- function(coords, pad) {
                     y1 = unlist(y1s)[sort_key])
     o$x1 <- with(o, ifelse(!y1 == y0 & abs(y1 - y0) < abs(x1 - x0),
                            (x0 + ifelse(x1 - x0 < 0, -1, 1) * abs(y1 - y0)),
-                           x1)) # To ensure all slopes >= 45 degrees
+                           x1)) # ensure all slopes >= 45 degrees
     o # Returning data frame with coords
 }
