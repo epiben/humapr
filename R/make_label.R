@@ -15,8 +15,7 @@ make_label <- function (id, data, local_coords) {
     tid <- if (!h_env$body_halves == "join") id else substring(id, regexpr("_", id) + 1)
 
     # Base label with absolute and relative frequencies
-    label <- sprintf("%s (%s%%)",
-                     data[data$label == tid, "count"] / (if (h_env$controls$mid_include) 2 else 1),
+    label <- sprintf("%s (%s%%)", data[data$label == tid, "count"],
                      round(data[data$label == tid, "prop"] * 100, 0))
 
     # If desired by user, expand label to include also name of region

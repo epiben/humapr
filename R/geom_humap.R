@@ -4,6 +4,8 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
          # Transform data and append a label column to the data frame
+         if (h_env$controls$mid_include)
+             data <- dplyr::mutate(data, y = y / 2, count = count / 2)
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
          data <- dplyr::filter(data, !is.na(label))
@@ -126,14 +128,12 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      }
 )
 
-geom_humap <- function(mapping = NULL, data = NULL, stat = "sum", # stat = "count" (right?)
+geom_humap <- function(mapping = NULL, data = NULL, stat = "count",
                        position = "identity", na.rm = FALSE, show.legend = NA,
                        inherit.aes = TRUE, ...) {
-
     ggplot2::layer(
         geom = GeomHumap, mapping = mapping, data = data, stat = stat,
         position = position, show.legend = show.legend, inherit.aes = inherit.aes,
         params = list(na.rm = na.rm, ...)
     )
-    # remove h_env here?
 }
