@@ -6,7 +6,7 @@
 \usage{
 geom_body(mapping = NULL, data = NULL, type = "simple",
   proj = "neutral", body_halves = "separate", annotate = "freq",
-  loc_bridge = NULL, side_bridge = NULL, combine = NULL,
+  bridge_loc = NULL, bridge_side = NULL, combine = NULL,
   controls = NULL, na.rm = FALSE, show.legend = FALSE,
   inherit.aes = TRUE, ...)
 }
@@ -15,7 +15,7 @@ geom_body(mapping = NULL, data = NULL, type = "simple",
 functions. \code{humapr::geom_*} can take to aesthetics: \code{loc} is the
 name of the data frame column containing localisation codes for
 observations; and \code{side} the column holding the laterality data (must
-be either "left" or "right, although see \code{side_bridge}).}
+be either "left" or "right, although see \code{bridge_side}).}
 
 \item{data}{tidy data frame, like the type you'd feed into ggplot() when
 producing a histogram}
@@ -35,11 +35,11 @@ chest.}
 frequencies, \code{"all"} includes region names, and \code{NA} omits labels
 altogether. See Details for ways to fine-tune the apperance of annotations.}
 
-\item{loc_bridge}{named \emph{list} specifying the bridge from your data
+\item{bridge_loc}{named \emph{list} specifying the bridge from your data
 format to the native format of \code{geom_body}, e.g., \code{list(head =
 c("head", "face", "scalp"))}. See Details.}
 
-\item{side_bridge}{names \emph{list}, specyfing the bridge from your
+\item{bridge_side}{names \emph{list}, specyfing the bridge from your
 laterality values for each of the native values of \code{geom_body}, e.g.
 \code{list(left = c("left", "l"), right = c("right", "r"), mid = c("mid",
 "m"))}. The \code{mid} element is only required if mid-line observation are
