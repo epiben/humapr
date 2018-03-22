@@ -177,8 +177,8 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @param proj \code{"front"} or \code{"back"}. Ignored if \code{type =
 #'   "simple"}, so currently not in use.
 #' @param body_halves character string defining how to deal with body halves.
-#'   \code{"separate"} (default) discriminates the left half from the right;
-#'   \code{"join"} merges observations in, e.g., right and left side of the
+#'   \code{"separate"} discriminates the left half from the right;
+#'   \code{"join"} (default) merges observations in, e.g., right and left side of the
 #'   chest.
 #' @param annotate \code{"freq"} (defaults) shows only absolute and relative
 #'   frequencies, \code{"all"} includes region names, and \code{NA} omits labels
@@ -214,7 +214,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @export
 
 geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neutral",
-                      body_halves = "separate", annotate = "freq", bridge_loc = NULL,
+                      body_halves = "joined", annotate = "freq", bridge_loc = NULL,
                       bridge_side = NULL, combine = NULL, controls = NULL,
                       # Standard arguments to layer()
                       na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {

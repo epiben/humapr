@@ -18,8 +18,16 @@ housekeeping <- function(user, defs) {
     h_env$loc <- as.character(user[[1]]$loc)
     h_env$side <- user[[1]]$side %||% NULL
     if (!is.null(h_env$side)) h_env$side <- as.character(h_env$side)
-    if (h_env$side == h_env$loc)
-        stop("Your loc and side aesthetics are the same; please, change one of them.")
+    if (exists("side", envir = h_env)) {
+        if (is.null(h_env$side)) {
+            # do nothing
+        } else if (h_env$side == h_env$loc) {
+            stop("Your loc and side aesthetics are the same; change one of them.",
+                 call. = FALSE)
+        } else {
+            h_env$body_halves <- "separate"
+        }
+    }
 
     # Choose default and prompt user if invalid argument supplied
     vargs <- list(type = c("simple", "female", "male"),
