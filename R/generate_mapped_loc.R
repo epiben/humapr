@@ -1,16 +1,16 @@
-generate_mapped_loc <- function(d, loc, side, side_bridge, regions, h, combine) {
+generate_mapped_loc <- function(d, loc, side, bridge_side, regions, h, combine) {
     # h = body_halves
     # Convert from user's left/right/mid indication to those of humapr
-    if (is.list(side_bridge)) {
+    if (is.list(bridge_side)) {
         test <- c("left", "right")
         if (h_env$controls$mid_include)
             test <- c(test, "mid")
-        if (!all(test %in% names(side_bridge)))
+        if (!all(test %in% names(bridge_side)))
             stop("Please, supply valid 'side' argument.", call. = FALSE)
-        d[!is.na(match(d[, side], side_bridge$left)), side] <- "left"
-        d[!is.na(match(d[, side], side_bridge$right)), side] <- "right"
+        d[!is.na(match(d[, side], bridge_side$left)), side] <- "left"
+        d[!is.na(match(d[, side], bridge_side$right)), side] <- "right"
         if (h_env$controls$mid_include)
-            d[!is.na(match(d[, side], side_bridge$mid)), side] <- "mid"
+            d[!is.na(match(d[, side], bridge_side$mid)), side] <- "mid"
         d[, side] <- ifelse(d[, side] %in% test, d[, side], NA)
     }
 

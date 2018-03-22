@@ -169,7 +169,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #'   functions. \code{humapr::geom_*} can take to aesthetics: \code{loc} is the
 #'   name of the data frame column containing localisation codes for
 #'   observations; and \code{side} the column holding the laterality data (must
-#'   be either "left" or "right, although see \code{side_bridge}).
+#'   be either "left" or "right, although see \code{bridge_side}).
 #' @param data tidy data frame, like the type you'd feed into ggplot() when
 #'   producing a histogram
 #' @param type currently, only \code{"simple"} is available, but we're working
@@ -186,10 +186,10 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @param combine named \emph{list} of vectors naming the regions to be combined and
 #'   mapped as one, e.g., \code{list(arm = c("shoulder", "arm", "elbow",
 #'   "wrist"))}. See Details.
-#' @param loc_bridge named \emph{list} specifying the bridge from your data
+#' @param bridge_loc named \emph{list} specifying the bridge from your data
 #'   format to the native format of \code{geom_body}, e.g., \code{list(head =
 #'   c("head", "face", "scalp"))}. See Details.
-#' @param side_bridge names \emph{list}, specyfing the bridge from your
+#' @param bridge_side names \emph{list}, specyfing the bridge from your
 #'   laterality values for each of the native values of \code{geom_body}, e.g.
 #'   \code{list(left = c("left", "l"), right = c("right", "r"), mid = c("mid",
 #'   "m"))}. The \code{mid} element is only required if mid-line observation are
@@ -214,8 +214,8 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @export
 
 geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neutral",
-                      body_halves = "separate", annotate = "freq", loc_bridge = NULL,
-                      side_bridge = NULL, combine = NULL, controls = NULL,
+                      body_halves = "separate", annotate = "freq", bridge_loc = NULL,
+                      bridge_side = NULL, combine = NULL, controls = NULL,
                       # Standard arguments to layer()
                       na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
@@ -239,11 +239,11 @@ geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neut
         test_combined(h_env$body_halves, h_env$combine, h_env$pids)
 
     # Convert user formats with bridge argument, if relevant
-    if (!is.null(h_env$loc_bridge))
-        data <- build_bridge(data, h_env$loc_bridge, h_env$type)
+    if (!is.null(h_env$bridge_loc))
+        data <- build_bridge(data, h_env$bridge_loc, h_env$type)
 
     # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc, h_env$side, h_env$side_bridge,
+    data <- generate_mapped_loc(data, h_env$loc, h_env$side, h_env$bridge_side,
                                 h_env$regions, h_env$body_halves, h_env$combine)
 
     # Generate (preliminary) data for annotations, if relevant
