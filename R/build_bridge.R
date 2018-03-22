@@ -39,7 +39,7 @@ build_bridge <- function (d, bridge, type) {
 
     converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
     if (sum(!converted) > 0) {
-        message(sprintf("%s data points (of %s) could not be mapped a region in the chosen map; they will be removed.",
+        message(sprintf("%s data points (of %s) could not be associated with a region in the chosen map; they will be ignored",
                         sum(!converted), nrow(d)))
         message(sprintf("Problematic values in '%s' variable: %s.",
                         h_env$loc, paste0(unique(d[!converted, h_env$loc]), collapse = ", ")))
