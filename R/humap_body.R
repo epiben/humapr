@@ -96,43 +96,13 @@ humap_body <- function(data, loc, side = NULL, type = "simple", proj = "neutral"
     if (missing(data)) stop("Please, include data.")
     if (missing(loc)) stop("Please, specify a 'loc'.")
     housekeeping(match.call()[-c(1, 2)], formals()[-1])
-        # Forces controls$mid_include = FALSE (for now, let's see later)
-
-    # Import relevant map (maps object in R/sysdata.rda)
-    mapname <- sprintf("%s_%s", h_env$type, h_env$proj)
-    h_env$map <- maps[[mapname]]$map # SpatialPolygons object
-    h_env$mapdf <- maps[[mapname]]$mapdf # df with grouped polygon coordinates
-    h_env$pids <- as.data.frame(h_env$map)$Layer %>% # polygon ids
-        setNames(seq(.))
-    h_env$regions <- grep("_outline", h_env$pids, value = TRUE, invert = TRUE)
-        # exclude potential outline polygons/lines from 'regions'
-
-    # Ensure valid user-supplied regions in "combine", if relevant
-    if (!is.null(h_env$combine))
-        test_combined(h_env$body_halves, h_env$combine, h_env$pids)
-
-    # Convert user formats with bridge argument, if relevant
-    if (!is.null(h_env$bridge))
-        data <- build_bridge(data, h_env$bridge, h_env$type)
-
-    # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc, h_env$side,
-                                h_env$regions, h_env$body_halves, h_env$combine)
-
-    # Generate (preliminary) data for annotations, if relevant
-    if (h_env$annotate %in% c("all", "freq"))
-        prep_annotations(data$mapped_loc, h_env$combine, h_env$type,
-                         h_env$gender, h_env$proj, h_env$body_halves)
-
-    # Removing missing data, if so desired by user
-    if (h_env$na_rm)
-        data <- data[!is.na(data$mapped_loc), ]
 
     # Build ggplot object
-    ggplot2::ggplot() +
+    # ggplot2::ggplot() +
+    ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
         ggplot2::guides(fill = if (is.na(h_env$annotate)) NULL else FALSE) +
-        geom_humap(aes(x = mapped_loc, fill = ..count.., group = 1), data,
-                   stat = "count", na.rm = h_env$na_rm) +
+        # geom_humap(aes(x = mapped_loc, fill = ..count.., group = 1), data,
+                   # stat = "count", na.rm = h_env$na_rm) +
         ggplot2::theme(axis.title = element_blank(),
                        axis.text = element_blank(),
                        axis.line = element_blank(),
