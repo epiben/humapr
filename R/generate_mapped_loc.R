@@ -6,14 +6,11 @@ generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
         if (h_env$controls$mid_include) test <- c(test, "mid")
 
         if (!all(c("var", test) %in% names(side)))
-            stop("Please, supply valid 'side' argument.",
-                 call. = FALSE)
-            # consider something like if(any(is.na(match(c("var", "left", "right"), names(side)))))
-            # may also complain when a non-used list element supplied, although it's not too important
+            stop("Please, supply valid 'side' argument.", call. = FALSE)
         d[!is.na(match(d[, side$var], side$left)), side$var] <- "left"
         d[!is.na(match(d[, side$var], side$right)), side$var] <- "right"
-        # This is disabled by forcing mid_include = FALSE in housekeeping.R
-        if (h_env$controls$mid_include) d[!is.na(match(d[, side$var], side$mid)), side$var] <- "mid"
+        if (h_env$controls$mid_include)
+            d[!is.na(match(d[, side$var], side$mid)), side$var] <- "mid"
         d[, side$var] <- ifelse(d[, side$var] %in% test, d[, side$var], NA)
         side <- side$var
     }
