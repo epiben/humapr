@@ -88,19 +88,13 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-humap_body <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
-                       body_halves = "separate", annotate = "freq", bridge = NULL,
-                       combine = NULL, na_rm = FALSE, controls = NULL) {
+humap_body <- function() {
 
-    # Safety moves and housekeeping
-    if (missing(data)) stop("Please, include data.")
-    if (missing(loc)) stop("Please, specify a 'loc'.")
-    housekeeping(match.call()[-c(1, 2)], formals()[-1])
 
     # Build ggplot object
-    # ggplot2::ggplot() +
-    ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
-        ggplot2::guides(fill = if (is.na(h_env$annotate)) NULL else FALSE) +
+    ggplot2::ggplot() +
+    # ggplot2::ggplot(data, aes(x = mapped_loc, fill = ..count.., group = 1)) +
+        # ggplot2::guides(fill = if (is.na(h_env$annotate)) NULL else FALSE) +
         # geom_humap(aes(x = mapped_loc, fill = ..count.., group = 1), data,
                    # stat = "count", na.rm = h_env$na_rm) +
         ggplot2::theme(axis.title = element_blank(),

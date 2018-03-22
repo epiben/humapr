@@ -130,9 +130,20 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      }
 )
 
-geom_humap <- function(mapping = NULL, data = NULL, stat = "count",
+geom_humap <- function(data, loc, side = NULL, type = "simple", proj = "neutral",
+                       body_halves = "separate", annotate = "freq", bridge = NULL,
+                       combine = NULL, na_rm = FALSE, controls = NULL,
+                        mapping = NULL, stat = "count",
                        position = "identity", na.rm = FALSE, show.legend = NA,
                        inherit.aes = TRUE, ...) {
+    browser()
+
+
+    # Safety moves and housekeeping
+    if (missing(data)) stop("Please, include data.")
+    if (missing(loc)) stop("Please, specify a 'loc'.")
+    housekeeping(match.call()[-c(1, 2)], formals()[-1])
+
     # Import relevant map (maps object in R/sysdata.rda)
     mapname <- sprintf("%s_%s", h_env$type, h_env$proj)
     h_env$map <- maps[[mapname]]$map # SpatialPolygons object
