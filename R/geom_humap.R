@@ -5,7 +5,9 @@ GeomHumap <- ggplot2::ggproto("GeomHumap", Geom,
      draw_group = function(data, panel_scales, coord, ...) {
          # Transform data and append a label column to the data frame
          if (h_env$controls$mid_include)
-             data <- dplyr::mutate(data, y = y / 2, count = count / 2)
+             data <- dplyr::mutate(data,
+                                   y = if (h_env$controls$round_counts) ceiling(y / 2) else y / 2,
+                                   count = if (h_env$controls$round_counts) ceiling(count / 2) else count / 2)
          coords <- coord$transform(data, panel_scales)
          data$label <- panel_scales$x.labels[data$x]
          data <- dplyr::filter(data, !is.na(label))

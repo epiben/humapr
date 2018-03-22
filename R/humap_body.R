@@ -70,10 +70,15 @@
 #' @param na_rm logical indicating whether to remove missing data. Default is
 #'   \code{FALSE}.
 #' @param controls named \emph{list} of more specific parameters for fine-tuning
-#'   the appereance of the humap. Currently, only two controls are available
-#'   (more will follow in the fuuture): \code{na_fill} specifies the fill of
-#'   zero-count regions (default: "black"), \code{label_pad} is the padding
-#'   between labels, in percent of map height (default: \code{3.5}).
+#'   the appereance of the humap. Currently, these controls are available (more
+#'   will follow in the fuuture): \code{na_fill} should be a string or function
+#'   specifying the fill of zero-count regions (default: "black"),
+#'   \code{label_pad} a numeric defining the padding between labels, in percent
+#'   of map height (default: \code{3.5}), \code{mid_include} a logical defining
+#'   whether to include mid-line observations and split them equally between
+#'   left and right (default: \code{FALSE}), and \code{round_counts} a logical
+#'   indicating whether to round (up) half-counts in annotation labels when splitting
+#'   mid-line observations between left and right (default: \code{FALSE}).
 #'
 #' @return A ggplot object with suitable layout settings for the purpose of
 #'   \code{hump_body}.
