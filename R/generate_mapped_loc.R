@@ -1,18 +1,17 @@
-generate_mapped_loc <- function(d, loc, side, regions, h, combine) {
+generate_mapped_loc <- function(d, loc, side, side_bridge, regions, h, combine) {
     # h = body_halves
     # Convert from user's left/right/mid indication to those of humapr
-    if (is.list(side)) {
+    if (is.list(side_bridge)) {
         test <- c("left", "right")
-        if (h_env$controls$mid_include) test <- c(test, "mid")
-
-        if (!all(c("var", test) %in% names(side)))
-            stop("Please, supply valid 'side' argument.", call. = FALSE)
-        d[!is.na(match(d[, side$var], side$left)), side$var] <- "left"
-        d[!is.na(match(d[, side$var], side$right)), side$var] <- "right"
         if (h_env$controls$mid_include)
-            d[!is.na(match(d[, side$var], side$mid)), side$var] <- "mid"
-        d[, side$var] <- ifelse(d[, side$var] %in% test, d[, side$var], NA)
-        side <- side$var
+            test <- c(test, "mid")
+        if (!all(test %in% names(side_bridge)))
+            stop("Please, supply valid 'side' argument.", call. = FALSE)
+        d[!is.na(match(d[, side], side_bridge$left)), side] <- "left"
+        d[!is.na(match(d[, side], side_bridge$right)), side] <- "right"
+        if (h_env$controls$mid_include)
+            d[!is.na(match(d[, side], side_bridge$mid)), side] <- "mid"
+        d[, side] <- ifelse(d[, side] %in% test, d[, side], NA)
     }
 
     # Inelegant "hack" to allow 50% weight of mid-line observations on each side
