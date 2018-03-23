@@ -4,8 +4,9 @@
 #
 # user: user-given argument; essentially useful stuff from \code{match.call()}
 # defs: default argument values; essentially useful stuff from \code{formals()}
+# vargs: list of arguments with valid values, specific to each geom_*
 
-housekeeping <- function(user, defs) {
+housekeeping <- function(user, defs, vargs) {
     # h_env is an internal object in R/sysdata.rda, and is reset here
     rm(list = ls(envir = h_env), envir = h_env)
 
@@ -35,8 +36,6 @@ housekeeping <- function(user, defs) {
     }
 
     # Choose default and prompt user if invalid argument supplied
-    vargs <- list(type = c("simple", "female", "male"),
-                  proj = c("front", "back", "neutral"))
     for (arg in names(vargs))
         # Prompts and sets first of each vargs element as default
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])
@@ -69,9 +68,9 @@ housekeeping <- function(user, defs) {
         h_env$body_halves <- "join"
         message("`side` aesthetic missing. Defaults to body_halves = \"join\".")
     }
-    if (h_env$type == "simple" && h_env$proj != "neutral") {
-        # Ignore projection if type = "simple"
-        h_env$proj <- "neutral"
-        message("Projections not available for the simple body map; ignores `proj` argument.")
-    }
+    # if (h_env$type == "simple" && h_env$proj != "neutral") {
+    #     # Ignore projection if type = "simple"
+    #     h_env$proj <- "neutral"
+    #     message("Projections not available for the simple body map; ignores `proj` argument.")
+    # }
 }

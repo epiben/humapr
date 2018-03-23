@@ -53,8 +53,11 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
          mapdf <- h_env$mapdf
 
          # Give missing regions default NA fill
-         data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
+         data <- dplyr::mutate(as.data.frame(map), Layer = as.character(Layer)) %>%
+             dplyr::left_join(data, by = c("Layer" = "label")) %>%
              dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
+         # data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
+         #     dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Yield fill colours for each polygon
          fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>%
@@ -221,7 +224,9 @@ geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neut
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    housekeeping(match.call()[-1], formals())
+    vargs <- list(type = c("simple", "female", "male"),
+                  proj = c("front", "back", "neutral"))
+    housekeeping(match.call()[-1], formals(), vargs)
 
     # Import relevant map (maps object in R/sysdata.rda)
     map_name <- sprintf("%s_%s", h_env$type, h_env$proj)
