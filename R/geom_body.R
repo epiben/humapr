@@ -177,9 +177,9 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @param proj \code{"front"} or \code{"back"}. Ignored if \code{type =
 #'   "simple"}, so currently not in use.
 #' @param body_halves character string defining how to deal with body halves.
-#'   \code{"separate"} discriminates the left half from the right;
-#'   \code{"join"} (default) merges observations in, e.g., right and left side of the
-#'   chest.
+#'   \code{"separate"} (default with side aesthetic) discriminates the left half
+#'   from the right; \code{"join"} (default without side aesthetic) merges
+#'   observations in, e.g., right and left side of the chest.
 #' @param annotate \code{"freq"} (defaults) shows only absolute and relative
 #'   frequencies, \code{"all"} includes region names, and \code{NA} omits labels
 #'   altogether. See Details for ways to fine-tune the apperance of annotations.
@@ -214,46 +214,31 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @export
 
 geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neutral",
-                      body_halves = "joined", annotate = "freq", bridge_loc = NULL,
+                      body_halves = NULL, annotate = "freq", bridge_loc = NULL,
                       bridge_side = NULL, combine = NULL, controls = NULL,
                       # Standard arguments to layer()
                       na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    if (is.null(mapping)) stop("Please, specify a mapping.")
-    if (is.null(mapping$loc)) stop("Please, specify a 'loc'.")
     housekeeping(match.call()[-1], formals())
 
     # Import relevant map (maps object in R/sysdata.rda)
-    mapname <- sprintf("%s_%s", h_env$type, h_env$proj)
-    h_env$map <- maps[[mapname]]$map # SpatialPolygons object
-    h_env$mapdf <- maps[[mapname]]$mapdf # df with grouped polygon coordinates
-    h_env$pids <- as.data.frame(h_env$map)$Layer %>% # polygon ids
-        setNames(seq(.))
-    h_env$regions <- grep("_outline", h_env$pids, value = TRUE, invert = TRUE)
-    # exclude potential outline polygons/lines from 'regions'
+    map_name <- sprintf("%s_%s", h_env$type, h_env$proj)
+    fetch_map(map_name)
 
     # Ensure valid user-supplied regions in "combine", if relevant
-    if (!is.null(h_env$combine))
-        test_combined(h_env$body_halves, h_env$combine, h_env$pids)
+    test_combined()
 
     # Convert user formats with bridge argument, if relevant
-    if (!is.null(h_env$bridge_loc))
-        data <- build_bridge(data, h_env$bridge_loc, h_env$type)
+    data <- build_bridge(data)
 
     # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc, h_env$side, h_env$bridge_side,
-                                h_env$regions, h_env$body_halves, h_env$combine)
+    data <- generate_mapped_loc(data)
 
     # Generate (preliminary) data for annotations, if relevant
-    if (h_env$annotate %in% c("all", "freq"))
-        prep_annotations(data$mapped_loc, h_env$combine, h_env$type,
-                         h_env$gender, h_env$proj, h_env$body_halves)
-
-    # Removing missing data, if so desired by user
-    if (h_env$na.rm)
-        data <- data[!is.na(data$mapped_loc), , drop = FALSE]
+    prep_annotations(data$mapped_loc, map_name)
+        # map_name might be useful later for pre-specified annotation coordinates
 
     # Update aes() object to reflect changes
     mapping$x <- as.symbol("mapped_loc")

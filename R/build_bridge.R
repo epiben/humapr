@@ -1,4 +1,9 @@
-build_bridge <- function (d, bridge, type) {
+build_bridge <- function(d) { # function (d, bridge, type) {
+    if (is.null(h_env$bridge_loc)) return(d) # return unaltered data frame if no bridge_loc
+
+    bridge <- h_env$bridge_loc # to simplify subsequent code
+
+    # Apply bridge_side for built-it bridges?
     if (is.character(bridge)) {
         if (bridge %in% c("ais", "ais_simple")) {
             if (!is.list(h_env$bridge_side)) { # If list, user should have given correct info
@@ -32,17 +37,22 @@ build_bridge <- function (d, bridge, type) {
                     names(built_in), "."),
              call. = FALSE)
 
-    d <- d %>% dplyr::mutate(!!h_env$loc := as.character(.[, h_env$loc])) # make sure it's not a factor
+    d[, h_env$loc] <- as.character(d[, h_env$loc]) # make sure it's not a factor
     for (hreg in names(bridge))
         d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
 
-    converted <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
-    if (sum(!converted) > 0) {
-        message(sprintf("%s data points (of %s) could not be associated with a region in the chosen map; they will be ignored",
-                        sum(!converted), nrow(d)))
+
+    valid_locs <- d[, h_env$loc] %in% c(unique(rm_lr(h_env$regions)), NA)
+        # include NA, as it's not an error, just a missing value
+    if (sum(!valid_locs) > 0) {
+        message(sprintf("%s data points (of %s) could not be associated with a region in the chosen map; they will be ignored.",
+                        sum(!valid_locs), nrow(d)))
         message(sprintf("Problematic values in '%s' variable: %s.",
-                        h_env$loc, paste0(unique(d[!converted, h_env$loc]), collapse = ", ")))
+                        h_env$loc, paste0(unique(d[!valid_locs, h_env$loc]), collapse = ", ")))
     }
 
-    d[converted, , drop = FALSE] # Return updated data frame
+    # Return updated d, with non-valid region converted to NA
+    valid_regions <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
+    dplyr::mutate(d, !!h_env$loc := ifelse(valid_regions, !!as.symbol(h_env$loc), NA))
+    # d[converted, , drop = FALSE] # Return updated data frame
 }

@@ -1,11 +1,17 @@
-prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halves) {
+prep_annotations <- function(mapped_loc, map_name = NULL) {
+    if (!h_env$annotate %in% c("all", "freq")) return() # do nothing
+
+    combine <- h_env$combine
+    proj <- h_env$proj
+    body_halves <- h_env$body_halves
+
     # Applying defaults
     h_env$controls$label_pad <- diff(sp::bbox(h_env$map)["y", ]) *
         (h_env$controls$label_pad %||% 3.5) / 100
     h_env$controls$vert_adj <- h_env$controls$vert_adj %||% "smart"
 
     # Importing file with predefined (x0, y0)'s or just compute them
-    if (type == "simple" && proj == "neutral") {
+    # if (type == "simple" && proj == "neutral") {
         # This one should check that the computed (x0, y0) is actually inside
         # the relevant region, and find a new one if it isn't
         h_env$anno_coords <- h_env$mapdf %>%
@@ -14,12 +20,12 @@ prep_annotations <- function(mapped_loc, combine, type, gender, proj, body_halve
             dplyr::rename(region = id) %>%
             as.data.frame()
         rownames(h_env$anno_coords) <- h_env$anno_coords$region
-    } else {
+    # } else {
         # h_env$anno_coords <- read.csv2(sprintf("data/coords_%s_%s_%s_%s.csv", type,
         #                                        map, gender, proj), row.names = 1)
         # h_env$anno_coords <- h_env$anno_coords[h_env$regions, ]
         # If we want to use pre-defined (x0, y0)'s, we should keep them in R/sysdata.rda
-    }
+    # }
 
     # In the end, which regions are actually mapped?
     mapped_regions <- if (body_halves == "join") mapped_loc else rm_lr(mapped_loc)
