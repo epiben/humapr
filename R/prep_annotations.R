@@ -8,7 +8,6 @@ prep_annotations <- function(mapped_loc, map_name = NULL, symmetric_map = TRUE) 
     # Applying defaults
     h_env$controls$label_pad <- diff(sp::bbox(h_env$map)["y", ]) *
         (h_env$controls$label_pad %||% 3.5) / 100
-    h_env$controls$vert_adj <- h_env$controls$vert_adj %||% "smart"
 
     # Importing file with predefined (x0, y0)'s or just compute them
     # if (type == "simple" && proj == "neutral") {
