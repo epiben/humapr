@@ -2,12 +2,15 @@
 `%||%` <- function(a, b) if(!is.null(a)) a else b
     # heavily inspired by the utility function used in the Tidyverse
 
-line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
+line_coords <- function(df, cols)
+    c(apply(df[, cols], 1, c))
 
 # Remove "left_" and "right_" from vector of localizers
-rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
+rm_lr <- function(x)
+    substring(x, regexpr("_", x) + 1)
 
-lr_conc <- function(x) c(paste0("left_", x), paste0("right_", x))
+lr_conc <- function(x)
+    c(paste0("left_", x), paste0("right_", x))
 
 # Prompt on invalid argument
 prompt_inv <- function(arg, val){
@@ -15,39 +18,51 @@ prompt_inv <- function(arg, val){
     assign(arg, val, h_env)
 }
 
-def_dist <- function (x, p = h_env$controls$label_pad) {
+def_dist <- function (x, p = h_env$controls$label_pad)
     distribute_coords(x, p)
-}
 
-inverse_coords <- function (x, cols = "x0", patt = "left_") {
-    patt <- grepl(patt, row.names(x))
-    if (all(patt == FALSE)) return(x)
-    xt <- x[patt, ]
-    for (col in cols) xt[patt, col] <- max(xt[, cols]) - xt[, col] + min(xt[, cols])
-    x[patt, ] <- xt
+inverse_coords <- function (x, cols = "x0") {
+    # i = index vector of those to convert
+    i <- x$x0 > mean(range(x$x0))
+    if (sum(i) == 0) return(x)
+    # temp_c <- coords[to_invert, ]
+    for (col in cols)
+        # temp_c[, col] <- max(temp_c[, cols]) - temp_c[, col] + min(temp_c[, cols])
+        x[i, col] <- max(x[i, cols]) - x[i, col] + min(x[i, cols])
+    # coords[to_invert, ] <- temp_c
     na.omit(x)
 }
 
-line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
+mirror_coord <- function(x, mid, side, side_ref)
+    ifelse(x < mid & side == side_ref, x + 2 * (mid - x), x)
+
+update_mapping <- function(m) { # m is an aes() object
+    m$x <- as.symbol("mapped_loc")
+    m$fill <- as.symbol("..count..")
+    m$group <- 1
+    m$loc <- m$side <- NULL
+    m
+}
 
 # Function to make viewport able to handle the humap
 humap_vp <- function(x_range, y_range, li_margin, long_label, half) {
+    # label margin, defined by width of widest label
     la_margin <- grid::stringWidth(long_label)
-    # Set up layout for the viewport with appropriate settings
-    the_layout <- function (x_range, y_range, li_margin, la_margin, half) {
-        mid_width <- grid::unit(diff(x_range) + li_margin$main, "null")
-        widths <- switch(
-            half,
-            left = grid::unit.c(mid_width, la_margin),
-            join = ,
-            right = grid::unit.c(la_margin, mid_width),
-            grid::unit.c(la_margin, mid_width, la_margin))
-        ncols <- if (half == "separate") 3 else 2
-        grid::grid.layout(1, ncols, widths = widths, heights = diff(y_range), respect = TRUE)
-    }
-    main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$gp,
-                           layout = the_layout(x_range, y_range, li_margin, la_margin, half))
-    map <- grid::viewport(layout.pos.row = 1, layout.pos.col = switch(half, left = 1, 2),
-                          xscale = x_range + li_margin$map, yscale = y_range)
+
+    # 3-element vector grid units
+    widths <- grid::unit.c(la_margin, grid::unit(diff(x_range) + li_margin$main, "null"), la_margin)
+
+    # Defines the layout of the main viewport
+    main_layout <- grid::grid.layout(1, 3, widths = widths, heights = diff(y_range),
+                                     respect = TRUE)
+
+    # Main map setting appropriate margins
+    main <- grid::viewport(width = 0.9, height = 0.9, gp = h_env$gp, layout = main_layout)
+
+    # Map viewport, placed in second column of main viewport
+    map <- grid::viewport(xscale = x_range + li_margin$map, yscale = y_range,
+                          layout.pos.row = 1, layout.pos.col = 2)
+
+    # Combine the two viewports into a stack
     grid::vpStack(main, map)
 }

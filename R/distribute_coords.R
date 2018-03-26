@@ -1,5 +1,5 @@
 distribute_coords <- function(coords, pad) {
-    x0s <- setNames(coords$x0, row.names(coords))
+    x0s <- setNames(coords$x0, coords$region)
     if (!length(unique(x0s)) == length(x0s)) {
         # If some x0s are the same, deterministically (alphabetically) add "jitter"
         # so it will always give the same result
@@ -9,7 +9,7 @@ distribute_coords <- function(coords, pad) {
         }
     }
     x0s <- sort(x0s) # to make sure we start from the lowest x0 (= from lateral)
-    y0s <- setNames(coords$y0, row.names(coords))[names(x0s)]
+    y0s <- setNames(coords$y0, coords$region)[names(x0s)]
 
     # Helper function to seek appropriate y1 value (~ vertical offset) for curr
     seek_vert <- function (d) { # d = differences
@@ -25,10 +25,16 @@ distribute_coords <- function(coords, pad) {
             y1 <- if (pos_top) max(tent) + pad else min(tent) - pad
         } else {
             # Re-define cands to include 1 padding size
-            cands <- tent[names(cands)] + pad
-            ref <- min(abs(cands - y0s[curr]))[1] # point yielding smallest offset
-            # Index in case >1 candidate difference satisfy the criterion
-            y1 <- cands[abs(cands - y0s[curr]) == ref][1]
+            # cands <- tent[names(cands)] + pad
+            # ref and ref2 are the two points between which to fit curr
+            ref <- names(sort(abs(cands - y0s[curr]))[1])
+            ref2 <- names(d[which(names(d) == ref) - 1])
+            # Distance between curr and the two reference points, minus padding
+            ref_dists <- c(setNames(tent[curr] - (y1s[[ref]] + pad), ref),
+                   setNames(tent[curr] - (y1s[[ref2]] - pad), ref2))
+            # Find the reference point closer to curr
+            closest_neighbour <- names(sort(abs(ref_dists))[1])
+            y1 <- tent[curr] - ref_dists[closest_neighbour]
         }
         unname(y1) # return unnamed to yield a simple "scalar"
     }
@@ -57,7 +63,7 @@ distribute_coords <- function(coords, pad) {
     x1s <- list()
     y1s <- list()
     # Consider removing unname() and save as y1curr, and then in the end y1s[[curr]] <- unname(y1curr)
-    for (i in seq(y0s)) {
+    for (i in seq(x0s)) {
         # Vertical distribution (= y1 value)
         curr <- names(y0s[i])
         tent <- c(unlist(y1s), y0s[curr]) # y1s so far ("tentative" vector)
@@ -77,7 +83,7 @@ distribute_coords <- function(coords, pad) {
             }
         } else {
             diffs <- -1 * diff(sort(tent, decreasing = TRUE))
-            nxt <- names(diffs)[which(names(diffs) == curr) + 1] # next point
+            nxt <- names(diffs)[which(names(diffs) == curr) + 1] # next point(= below)
             y1s[[curr]] <- if (diffs[curr] >= pad && diffs[nxt] >= pad) {
                 unname(y0s[curr])
             } else if (sum(diffs[c(curr, nxt)]) >= 2 * pad) {
@@ -94,12 +100,15 @@ distribute_coords <- function(coords, pad) {
         x1s[[curr]] <- seek_hori()
     }
 
-    sort_key <- row.names(coords)
-    o <- data.frame(x0 = x0s[sort_key], y0 = y0s[sort_key],
-                    x1 = unlist(x1s)[sort_key],
-                    y1 = unlist(y1s)[sort_key])
-    o$x1 <- with(o, ifelse(!y1 == y0 & abs(y1 - y0) < abs(x1 - x0),
-                           (x0 + ifelse(x1 - x0 < 0, -1, 1) * abs(y1 - y0)),
-                           x1)) # ensure all slopes >= 45 degrees
+    region <- coords$region
+    o <- data.frame(region, x0 = x0s[region], y0 = y0s[region],
+                    x1 = unlist(x1s)[region], y1 = unlist(y1s)[region],
+                    stringsAsFactors = FALSE) %>%
+        # Join with original coords input, except old (x0, y0)
+        dplyr::left_join(dplyr::select(coords, -x0, -y0), by = "region") %>%
+        # Ensure all slopes >= 45 degrees
+        dplyr::mutate(x1 = ifelse(!y1 == y0 & abs(y1 - y0) < abs(x1 - x0),
+                                  (x0 + ifelse(x1 - x0 < 0, -1, 1) * abs(y1 - y0)),
+                                  x1))
     o # Returning data frame with coords
 }
