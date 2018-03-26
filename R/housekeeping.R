@@ -60,7 +60,6 @@ housekeeping <- function(user, defs, vargs) {
     h_env$controls$outline_colour <- h_env$controls$outline_colour %||% "#343434"
     h_env$controls$mid_include <- h_env$controls$mid_include %||% FALSE
     h_env$controls$round_counts <- h_env$controls$round_counts %||% FALSE
-    # controls$vert_adj needs bounding box of map, so defined in prep_annotations.R
 
     # Test argument combinations, and make necessary changes
     if (is.null(h_env$side) & h_env$body_halves != "join") {
