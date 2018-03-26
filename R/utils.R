@@ -2,12 +2,15 @@
 `%||%` <- function(a, b) if(!is.null(a)) a else b
     # heavily inspired by the utility function used in the Tidyverse
 
-line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
+line_coords <- function(df, cols)
+    c(apply(df[, cols], 1, c))
 
 # Remove "left_" and "right_" from vector of localizers
-rm_lr <- function(x) substring(x, regexpr("_", x) + 1)
+rm_lr <- function(x)
+    substring(x, regexpr("_", x) + 1)
 
-lr_conc <- function(x) c(paste0("left_", x), paste0("right_", x))
+lr_conc <- function(x)
+    c(paste0("left_", x), paste0("right_", x))
 
 # Prompt on invalid argument
 prompt_inv <- function(arg, val){
@@ -15,14 +18,12 @@ prompt_inv <- function(arg, val){
     assign(arg, val, h_env)
 }
 
-def_dist <- function (x, p = h_env$controls$label_pad) {
+def_dist <- function (x, p = h_env$controls$label_pad)
     distribute_coords(x, p)
-}
 
 inverse_coords <- function (x, cols = "x0") {
     # i = index vector of those to convert
     i <- x$x0 > mean(range(x$x0))
-        # for symmetric plots, this will just be left-side annotations
     if (sum(i) == 0) return(x)
     # temp_c <- coords[to_invert, ]
     for (col in cols)
@@ -32,7 +33,16 @@ inverse_coords <- function (x, cols = "x0") {
     na.omit(x)
 }
 
-line_coords <- function(df, cols) c(apply(df[, cols], 1, c))
+mirror_coord <- function(x, mid, side, side_ref)
+    ifelse(x < mid & side == side_ref, x + 2 * (mid - x), x)
+
+update_mapping <- function(m) { # m is an aes() object
+    m$x <- as.symbol("mapped_loc")
+    m$fill <- as.symbol("..count..")
+    m$group <- 1
+    m$loc <- m$side <- NULL
+    m
+}
 
 # Function to make viewport able to handle the humap
 humap_vp <- function(x_range, y_range, li_margin, long_label, half) {
