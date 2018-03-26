@@ -1,5 +1,11 @@
-generate_mapped_loc <- function(d, loc, side, bridge_side, regions, h, combine) {
-    # h = body_halves
+generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regions, h, combine) {
+    loc <- h_env$loc
+    side <- h_env$side
+    bridge_side <- h_env$bridge_side
+    regions <- h_env$regions
+    h <- h_env$body_halves
+    combine <- h_env$combine
+
     # Convert from user's left/right/mid indication to those of humapr
     if (is.list(bridge_side)) {
         test <- c("left", "right")
@@ -27,7 +33,7 @@ generate_mapped_loc <- function(d, loc, side, bridge_side, regions, h, combine) 
         d <- d[!d[, side] == "mid", ]
     }
 
-    d[is.na(d[, loc]), ] <- NA # to remove NAs
+    # d[is.na(d[, loc]), ] <- NA # to remove NAs
 
     # Generate "loc_long" based on user inputs
     if (h == "join") {
@@ -37,12 +43,12 @@ generate_mapped_loc <- function(d, loc, side, bridge_side, regions, h, combine) 
             as.character(d[, loc])
         }
         h_env$regions <- paste0("right_", unique(rm_lr(regions)))
-    } else if (h %in% c("left", "right")) {
-        d <- dplyr::filter(d, side == h) # To keep only relevant observations in d
-        d$loc_long <- ifelse(d[, side] == h,
-                             as.character(paste0(h, "_", d[, loc])),
-                             NA)
-        h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
+    } else if (h %in% c("left", "right")) { # disabled, will be removed later on
+    #     d <- dplyr::filter(d, side == h) # To keep only relevant observations in d
+    #     d$loc_long <- ifelse(d[, side] == h,
+    #                          as.character(paste0(h, "_", d[, loc])),
+    #                          NA)
+    #     h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
     } else {
         d$loc_long <- ifelse(d[, side] %in% c("left", "right"),
                              as.character(paste0(d[, side], "_", d[, loc])),
@@ -71,6 +77,19 @@ generate_mapped_loc <- function(d, loc, side, bridge_side, regions, h, combine) 
         d$mapped_loc <- d$loc_long
     }
 
-    # Return the updated data frame
-    d
+    # Make sure mapped_loc is NA when necessary
+    d$mapped_loc <- ifelse(is.na(d[, h_env$loc]), NA, d$mapped_loc)
+
+    # Find missing values, and notify user if any such found
+    missing_mapped_loc <- is.na(d$mapped_loc)
+    if (sum(missing_mapped_loc) > 0) {
+        missing_loc <- is.na(d[, loc])
+        missing_side <- is.na(d[, side])
+        message(sprintf("Procesing your data yielded %s missing values: %s from the '%s' aesthetic, %s from the '%s' aesthetic, and %s from both.",
+            sum(missing_mapped_loc), sum(missing_loc & !missing_side), loc, sum(missing_side & !missing_loc),
+            side, sum(missing_loc & missing_side)))
+    }
+
+    # Return the updated data frame, with missing values removed
+    d[!missing_mapped_loc, , drop = FALSE]
 }

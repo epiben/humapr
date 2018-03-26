@@ -53,8 +53,11 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
          mapdf <- h_env$mapdf
 
          # Give missing regions default NA fill
-         data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
+         data <- dplyr::mutate(as.data.frame(map), Layer = as.character(Layer)) %>%
+             dplyr::left_join(data, by = c("Layer" = "label")) %>%
              dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
+         # data <- dplyr::left_join(as.data.frame(map), data, by = c("Layer" = "label")) %>%
+         #     dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Yield fill colours for each polygon
          fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>%
@@ -74,29 +77,29 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 
          # If the user wants annotations, the relevant grobs are made here
          if (h_env$annotate %in% c("all", "freq")) {
-             local_coords <- h_env$anno_coords %>%
-                 dplyr::mutate(label = row.names(.),
-                               side = ifelse(grepl("left_", label), "left", "right"))
+             local_coords <- dplyr::mutate(h_env$anno_coords, label = rm_lr(region))
+
+             # Find the lines margin (i.e., where the lines end)
              lines_margin <- max(diff(xscale) / 10,
                                  min(local_coords$x1) - xscale[1],
                                  max(local_coords$x1) - xscale[2])
-             local_coords$x2 <- ifelse(local_coords$side == "left",
-                                       xscale[2] + lines_margin,
-                                       xscale[1] - lines_margin)
-             local_coords <- switch(h_env$body_halves,
-                                    right = , # uses the following (= join)
-                                    join = subset(local_coords, side == "right"),
-                                    left = subset(local_coords, side == "left"),
-                                    local_coords)
+
+             # Align x2 values with left/right margins
+             local_coords$x2 <- ifelse(local_coords$label_side == "left",
+                                       xscale[1] - lines_margin,
+                                       xscale[2] + lines_margin)
+
+             # Define temp_labels to extract only relevant annotation coordinates
              temp_labels <- if (h_env$body_halves == "join") {
                  paste0("right_", label_data$label)
              } else {
                  label_data$label
              }
-             local_coords <- dplyr::filter(local_coords, label %in% temp_labels)
+             local_coords <- dplyr::filter(local_coords, region %in% temp_labels)
 
              # Prepare data to feed into humap_vp()
-             li_margin <- list(main = 2 * lines_margin, map = lines_margin * c(-1, 1))
+             li_margin <- list(main = 2 * lines_margin,
+                               map = lines_margin * c(-1, 1))
 
              # Adjust yscale to make sure all annotations fit
              yscale <- c(min(yscale[1], min(local_coords$y1)),
@@ -109,8 +112,10 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
                                          id.lengths = rep(3, nrow(local_coords)),
                                          gp = h_env$gp_lines)
 
-             # Create labels grob, using list with named elements
-             labels <- sapply(label_data$label, function(.)
+            labels <- sapply(label_data$label, function(.)
+                make_label(., label_data, local_coords), simplify = FALSE)
+
+            labels <- sapply(label_data$label, function(.)
                  make_label(., label_data, local_coords), simplify = FALSE)
              labels <- do.call(grid::grobTree, labels)
 
@@ -177,9 +182,9 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @param proj \code{"front"} or \code{"back"}. Ignored if \code{type =
 #'   "simple"}, so currently not in use.
 #' @param body_halves character string defining how to deal with body halves.
-#'   \code{"separate"} discriminates the left half from the right;
-#'   \code{"join"} (default) merges observations in, e.g., right and left side of the
-#'   chest.
+#'   \code{"separate"} (default with side aesthetic) discriminates the left half
+#'   from the right; \code{"join"} (default without side aesthetic) merges
+#'   observations in, e.g., right and left side of the chest.
 #' @param annotate \code{"freq"} (defaults) shows only absolute and relative
 #'   frequencies, \code{"all"} includes region names, and \code{NA} omits labels
 #'   altogether. See Details for ways to fine-tune the apperance of annotations.
@@ -214,52 +219,36 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' @export
 
 geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neutral",
-                      body_halves = "joined", annotate = "freq", bridge_loc = NULL,
+                      body_halves = NULL, annotate = "freq", bridge_loc = NULL,
                       bridge_side = NULL, combine = NULL, controls = NULL,
                       # Standard arguments to layer()
                       na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    if (is.null(mapping)) stop("Please, specify a mapping.")
-    if (is.null(mapping$loc)) stop("Please, specify a 'loc'.")
-    housekeeping(match.call()[-1], formals())
+    vargs <- list(type = c("simple", "female", "male"),
+                  proj = c("front", "back", "neutral"))
+    housekeeping(match.call()[-1], formals(), vargs)
 
     # Import relevant map (maps object in R/sysdata.rda)
-    mapname <- sprintf("%s_%s", h_env$type, h_env$proj)
-    h_env$map <- maps[[mapname]]$map # SpatialPolygons object
-    h_env$mapdf <- maps[[mapname]]$mapdf # df with grouped polygon coordinates
-    h_env$pids <- as.data.frame(h_env$map)$Layer %>% # polygon ids
-        setNames(seq(.))
-    h_env$regions <- grep("_outline", h_env$pids, value = TRUE, invert = TRUE)
-    # exclude potential outline polygons/lines from 'regions'
+    h_env$map_name <- sprintf("%s_%s", h_env$type, h_env$proj)
+    fetch_map(h_env$map_name)
 
     # Ensure valid user-supplied regions in "combine", if relevant
-    if (!is.null(h_env$combine))
-        test_combined(h_env$body_halves, h_env$combine, h_env$pids)
+    test_combined()
 
     # Convert user formats with bridge argument, if relevant
-    if (!is.null(h_env$bridge_loc))
-        data <- build_bridge(data, h_env$bridge_loc, h_env$type)
+    data <- build_bridge(data)
 
     # Add mapped_loc variable to user's data frame
-    data <- generate_mapped_loc(data, h_env$loc, h_env$side, h_env$bridge_side,
-                                h_env$regions, h_env$body_halves, h_env$combine)
+    data <- generate_mapped_loc(data)
 
     # Generate (preliminary) data for annotations, if relevant
-    if (h_env$annotate %in% c("all", "freq"))
-        prep_annotations(data$mapped_loc, h_env$combine, h_env$type,
-                         h_env$gender, h_env$proj, h_env$body_halves)
-
-    # Removing missing data, if so desired by user
-    if (h_env$na.rm)
-        data <- data[!is.na(data$mapped_loc), , drop = FALSE]
+    prep_annotations(data$mapped_loc, h_env$map_name)
+        # map_name might be useful later for pre-specified annotation coordinates
 
     # Update aes() object to reflect changes
-    mapping$x <- as.symbol("mapped_loc")
-    mapping$fill <- as.symbol("..count..")
-    mapping$group <- 1
-    mapping$loc <- mapping$side <- NULL
+    mapping <- update_mapping(mapping)
 
     ggplot2::layer(
         geom = GeomBody, mapping = mapping, data = data, stat = "count",

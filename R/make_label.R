@@ -34,13 +34,14 @@ make_label <- function (id, data, local_coords) {
     }
 
     if (h_env$body_halves == "join") id <- paste0("right_", id)
-    coords <- dplyr::filter(local_coords, label == id) %>%
-        dplyr::select(y1, x2, side)
+    coords <- dplyr::filter(local_coords, region == id) %>%
+        dplyr::select(y1, x2, label_side)
     x <- grid::unit(coords$x2, "native") +
-        grid::unit(1, "strwidth", "  ") * if (coords$side == "left") 1 else -1
+        grid::unit(1, "strwidth", "  ") * if (coords$label_side == "left") -1 else 1
             # ensure distance to annotation line
     y <- grid::unit(coords$y1, "native") + grid::unit(0.1, "lines")
+    just <- if (coords$label_side == "right") "left" else "right"
 
-    grid::textGrob(label, x = x, y = y, default.units = "native", just = coords$side ,
+    grid::textGrob(label, x = x, y = y, default.units = "native", just = just,
                    gp = h_env$gp_text)
 }
