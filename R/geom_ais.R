@@ -93,9 +93,6 @@ geom_ais <- function(mapping = NULL, data = NULL, type = "simple", with_back = T
                   with_back = c(TRUE, FALSE))
     housekeeping(match.call()[-1], formals(), vargs)
 
-    # To begin, this kind of plot will not allow annotations
-    h_env$annotate = NA
-
     # Import relevant map (maps object in R/sysdata.rda)
     map_name <- sprintf("ais_%s", h_env$type)
     if (h_env$with_back) map_name <- paste0(map_name, "_complete")
@@ -104,23 +101,20 @@ geom_ais <- function(mapping = NULL, data = NULL, type = "simple", with_back = T
     # Ensure valid user-supplied regions in "combine", if relevant
     test_combined()
 
-    # Convert user formats with bridge argument, if relevant
-    data <- build_bridge(data)
-    # use the AIS-laterality default
-    h_env$bridge_side <- list(left = c(2, 20:29), right = c(1, 10:19), mid = c(0, 3, 4, 6, 7, 30:33))
+    # Use built-in AIS bridge (by design)
+    h_env$bridge_loc <- sprintf("ais_%s", h_env$type)
+    data <- build_bridge(data, geom = "ais")
 
     # Add mapped_loc variable to user's data frame
     data <- generate_mapped_loc(data)
 
     # Generate (preliminary) data for annotations, if relevant
-    prep_annotations(data$mapped_loc, map_name)
+    map_symmetric <- if (h_env$with_back) FALSE else TRUE
+    prep_annotations(data$mapped_loc, map_name, map_symmetric)
         # map_name might be useful later for pre-specified annotation coordinates
 
     # Update aes() object to reflect changes
-    mapping$x <- as.symbol("mapped_loc")
-    mapping$fill <- as.symbol("..count..")
-    mapping$group <- 1
-    mapping$loc <- mapping$side <- NULL
+    mapping <- update_mapping(mapping)
 
     ggplot2::layer(
         geom = GeomBody, mapping = mapping, data = data, stat = "count",
