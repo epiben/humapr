@@ -1,7 +1,13 @@
 build_bridge <- function(d, geom = "body") { # function (d, bridge, type) {
-    if (is.null(h_env$bridge_loc)) return(d) # return unaltered data frame if no bridge_loc
+    if (is.null(h_env$bridge_loc))
+        return(d) # return unaltered data frame if no bridge_loc
 
     bridge <- h_env$bridge_loc # to simplify subsequent code
+    regions <- if (h_env$map_name %in% c("internal_organs")) {
+        h_env$regions
+    } else {
+        unique(rm_lr(h_env$regions))
+    }
 
     # Apply bridge_side for built-it bridges?
     if (is.character(bridge)) {
@@ -49,9 +55,8 @@ build_bridge <- function(d, geom = "body") { # function (d, bridge, type) {
     for (hreg in names(bridge))
         d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
 
+    valid_locs <- d[, h_env$loc] %in% c(regions, NA) # include NA, as it's not an error, just a missing value
 
-    valid_locs <- d[, h_env$loc] %in% c(unique(rm_lr(h_env$regions)), NA)
-        # include NA, as it's not an error, just a missing value
     if (sum(!valid_locs) > 0) {
         message(sprintf("%s data points (of %s) could not be associated with a region in the chosen map; they will be ignored.",
                         sum(!valid_locs), nrow(d)))
@@ -60,7 +65,7 @@ build_bridge <- function(d, geom = "body") { # function (d, bridge, type) {
     }
 
     # Return updated d, with non-valid region converted to NA
-    valid_regions <- d[, h_env$loc] %in% unique(rm_lr(h_env$regions))
+    valid_regions <- d[, h_env$loc] %in% regions
     dplyr::mutate(d, !!h_env$loc := ifelse(valid_regions, !!as.symbol(h_env$loc), NA))
     # d[converted, , drop = FALSE] # Return updated data frame
 }

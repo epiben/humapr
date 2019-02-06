@@ -70,7 +70,7 @@
 #' @export
 
 geom_organs <- function(mapping = NULL, data = NULL, type = "simple", annotate = "freq",
-                        bridge_loc = NULL, combine = NULL, controls = NULL, body_halves = "separate",
+                        bridge_loc = NULL, combine = NULL, controls = NULL,
                         # Standard arguments to layer()
                         na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
@@ -81,7 +81,8 @@ geom_organs <- function(mapping = NULL, data = NULL, type = "simple", annotate =
     if (missing(data)) stop("Please, include data.")
     vargs <- list() # list(type = c("simple", "detailed"),
                   # with_back = c(TRUE, FALSE))
-    housekeeping(match.call()[-1], formals(), vargs)
+    formals_mod <- c(formals(), body_halves = "separate") # so it doesn't appear as argument, but works downstream
+    housekeeping(match.call()[-1], formals_mod, vargs)
 
     # Import relevant map (maps object in R/sysdata.rda)
     fetch_map(h_env$map_name)

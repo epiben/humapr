@@ -43,7 +43,9 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
         }
         h_env$regions <- paste0("right_", unique(rm_lr(regions)))
     } else if (map_name %in% c("internal_organs")) {
-        d$loc_long <- as.character(d[, loc])
+        d$loc <- as.character(d[, loc])
+        d$loc <- ifelse(d$loc %in% regions, d$loc, NA)
+        d$loc_long <- ifelse(is.na(d$loc), NA, d$loc)
     } else {
         d$loc_long <- ifelse(d[, side] %in% c("left", "right"), as.character(paste0(d[, side], "_", d[, loc])), NA)
     }
@@ -71,16 +73,18 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
     }
 
     # Make sure mapped_loc is NA when necessary
-    d$mapped_loc <- ifelse(is.na(d[, h_env$loc]), NA, d$mapped_loc)
+    d$mapped_loc <- ifelse(is.na(d[, loc]), NA, d$mapped_loc)
 
     # Find missing values, and notify user if any such found
     missing_mapped_loc <- is.na(d$mapped_loc)
     if (sum(missing_mapped_loc) > 0) {
-        missing_loc <- is.na(d[, loc])
-        missing_side <- is.na(d[, side])
-        message(sprintf("Procesing your data yielded %s missing values: %s from the '%s' aesthetic, %s from the '%s' aesthetic, and %s from both.",
-            sum(missing_mapped_loc), sum(missing_loc & !missing_side), loc, sum(missing_side & !missing_loc),
-            side, sum(missing_loc & missing_side)))
+        missing_loc <- if (is.null(side)) sum(is.na(d[, loc])) else sum(is.na(d[, loc]) & !is.na(d[, side]))
+        missing_side <- sum(is.na(d[, side]) & !is.na(d[, loc]))
+        missing_both <- sum(is.na(d[, loc]) & is.na(d[, side]))
+        message(sprintf("Procesing your data yielded %s missing values:", sum(missing_mapped_loc)))
+        if (missing_loc > 0) message(sprintf("- %s from '%s'", missing_loc, loc))
+        if (missing_side > 0) message(sprintf("- %s from '%s'", missing_side, side))
+        if (missing_both > 0) message(sprintf("- %s from both", missing_both))
     }
 
     # Return the updated data frame, with missing values removed
