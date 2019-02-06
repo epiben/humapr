@@ -36,7 +36,7 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
     # d[is.na(d[, loc]), ] <- NA # to remove NAs
 
     # Generate "loc_long" based on user inputs
-    if (h == "join") {
+    if (h == "join" | h_env$map_name %in% c("internal_organs")) {
         d$loc_long <- if (!is.null(side)) {
             ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc]), NA)
         } else {

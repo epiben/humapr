@@ -26,10 +26,12 @@ make_label <- function (id, data, local_coords) {
         } else {
             id
         }
+
         # Divide string by underscores
         lab <- regmatches(lab, gregexpr("_", lab), invert = TRUE)[[1]]
-        if (!h_env$body_halves == "join") lab <- lab[-1] # Remove "left"/"right"
-        lab <- paste0(lab, collapse = " ") # Join using wide spaces
+        if (!h_env$body_halves == "join" & !h_env$map_name %in% c("internal_organs"))
+            lab <- lab[-1] # Remove "left"/"right"
+        lab <- paste0(lab, collapse = " ")
         label <- paste0(toupper(substr(lab, 1, 1)), substring(lab, 2), ": ", label)
     }
 

@@ -1,4 +1,7 @@
 distribute_coords <- function(coords, pad) {
+    if (nrow(coords) == 0)
+        return(coords) # nothing to do, so just return the empty data frame untouched
+
     x0s <- setNames(coords$x0, coords$region)
     if (!length(unique(x0s)) == length(x0s)) {
         # If some x0s are the same, deterministically (alphabetically) add "jitter"
