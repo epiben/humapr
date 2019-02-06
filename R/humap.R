@@ -1,11 +1,11 @@
 #' Create a humap, ready for plotting a geom
 #'
-#' \code{humap_body} sets up a \code{ggplot} object, ready for drawing a map,
-#' and compatible with with standard \code{ggplot2} function, e.g.,
-#' \code{theme()} and \code{facet_wrap()}. Doesn't really do  much on its own.
+#' \code{humap} sets up a \code{ggplot} object with \code{theme} settings appropriate for adding \code{geoms} from the \pkg{humapr} package.
+#' A \code{ggplot} object, it's compatible with standard \pkg{ggplot2} function, e.g.,
+#' \code{theme()} and \code{facet_wrap()}. Doesn't really do anything on its own.
 #'
 #' @return A ggplot object with suitable layout settings for the purpose of
-#'   \code{hump_body}.
+#'   \code{humap_body}.
 #'
 #' @export
 #' @import ggplot2
