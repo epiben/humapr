@@ -5,6 +5,7 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
     regions <- h_env$regions
     h <- h_env$body_halves
     combine <- h_env$combine
+    map_name <- h_env$map_name
 
     # Convert from user's left/right/mid indication to those of humapr
     if (is.list(bridge_side)) {
@@ -33,26 +34,18 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
         d <- d[!d[, side] == "mid", ]
     }
 
-    # d[is.na(d[, loc]), ] <- NA # to remove NAs
-
     # Generate "loc_long" based on user inputs
-    if (h == "join" | h_env$map_name %in% c("internal_organs")) {
+    if (h == "join" & !h_env$map_name %in% c("internal_organs")) {
         d$loc_long <- if (!is.null(side)) {
             ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc]), NA)
         } else {
             as.character(d[, loc])
         }
         h_env$regions <- paste0("right_", unique(rm_lr(regions)))
-    } else if (h %in% c("left", "right")) { # disabled, will be removed later on
-    #     d <- dplyr::filter(d, side == h) # To keep only relevant observations in d
-    #     d$loc_long <- ifelse(d[, side] == h,
-    #                          as.character(paste0(h, "_", d[, loc])),
-    #                          NA)
-    #     h_env$regions <- grep(paste0(h, "_"), regions, value = TRUE)
+    } else if (map_name %in% c("internal_organs")) {
+        d$loc_long <- as.character(d[, loc])
     } else {
-        d$loc_long <- ifelse(d[, side] %in% c("left", "right"),
-                             as.character(paste0(d[, side], "_", d[, loc])),
-                             NA)
+        d$loc_long <- ifelse(d[, side] %in% c("left", "right"), as.character(paste0(d[, side], "_", d[, loc])), NA)
     }
 
     # Make appropriate modifications if some regions are combined
@@ -62,6 +55,8 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
             for (old_loc in combine[[new_loc]]) {
                 if (h == "join") {
                     combine_key[[old_loc]] <- new_loc
+                } else if (map_name %in% c("internal_organs")) { # lavish, but simpler for now
+                    combine_key[[old_loc]] <- new_loc
                 } else {
                     combine_key[[paste0("right_", old_loc)]] <- paste0("right_", new_loc)
                     combine_key[[paste0("left_", old_loc)]] <- paste0("left_", new_loc)
@@ -69,10 +64,8 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
             }
         }
         # It may be worthwhile to use a simple data frame instead to get around the names(combine_key) thing
-        h_env$combine_key <- do.call(c, combine_key)
-        d$mapped_loc <- ifelse(d$loc_long %in% names(h_env$combine_key),
-                               h_env$combine_key[as.character(d$loc_long)],
-                               d$loc_long)
+        h_env$combine_key <- ckey <- do.call(c, combine_key)
+        d$mapped_loc <- ifelse(d$loc_long %in% names(ckey), ckey[as.character(d$loc_long)], d$loc_long)
     } else {
         d$mapped_loc <- d$loc_long
     }

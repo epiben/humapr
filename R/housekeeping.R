@@ -8,8 +8,10 @@
 
 housekeeping <- function(user, defs, vargs) {
     # Sync user-supplied and default arguments
-    defs[names(defs) %in% names(user)] <- user
-    # for (arg in names(defs)[names(defs) != "..."])
+    for (i in names(user))
+        if (i %in% names(defs)) defs[[i]] <- user[[i]]
+
+    # Save arguments in h_env
     for (arg in names(defs)[!names(defs) %in% c("mapping", "...")])
         assign(arg, eval(defs[[arg]]), h_env)
 

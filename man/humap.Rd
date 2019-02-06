@@ -4,7 +4,7 @@
 \alias{humap}
 \title{Create a humap, ready for plotting a geom}
 \usage{
-humap()
+humap(data = NULL, mapping = NULL)
 }
 \value{
 A ggplot object with suitable layout settings for the purpose of

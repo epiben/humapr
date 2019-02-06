@@ -5,8 +5,9 @@
 \title{geom_organs builds a map of the human internal organs}
 \usage{
 geom_organs(mapping = NULL, data = NULL, type = "simple",
-  annotate = "freq", bridge_loc = NULL, combine = NULL, controls = NULL,
-  na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...)
+  annotate = "freq", bridge_loc = NULL, combine = NULL,
+  controls = NULL, body_halves = "separate", na.rm = FALSE,
+  show.legend = FALSE, inherit.aes = TRUE, ...)
 }
 \arguments{
 \item{mapping}{supply an \code{aes()} object, just like other \code{ggplot2}

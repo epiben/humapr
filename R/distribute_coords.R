@@ -1,6 +1,9 @@
 distribute_coords <- function(coords, pad) {
-    if (nrow(coords) == 0)
-        return(coords) # nothing to do, so just return the empty data frame untouched
+    if (nrow(coords) == 0) # no labels => nothing to distribution
+        return(coords)
+
+    if (nrow(coords) == 1) # one label => no distribution, just make (x0, y0) = (x1, y1)
+        return(with(coords, data.frame(region, x0, y0, x1 = x0, y1 = y0, plot_mid, label_side, side_mid)))
 
     x0s <- setNames(coords$x0, coords$region)
     if (!length(unique(x0s)) == length(x0s)) {

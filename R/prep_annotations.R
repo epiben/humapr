@@ -47,7 +47,11 @@ prep_annotations <- function(mapped_loc, symmetric_map = TRUE) {
         # Consider checking that combine input has appropriate form (particularly, combinations' names)
         for (combine_name in names(combine))
             mapped_regions[mapped_regions == combine_name] <- combine[[combine_name]][[1]]
-        coords <- dplyr::filter(coords, region %in% lr_conc(mapped_regions))
+        if (map_name %in% c("internal_organs")) {
+            coords <- dplyr::filter(coords, region %in% mapped_regions)
+        } else {
+            coords <- dplyr::filter(coords, region %in% lr_conc(mapped_regions))
+        }
     }
 
     # Tweak x0 values, if necessary, so we can use the same distribution algorithm
