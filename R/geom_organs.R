@@ -1,4 +1,4 @@
-#' geom_ais builds a body map using AIS coding directly
+#' geom_organs builds a map of the human internal organs
 #'
 #'
 #' Use this function to draw a choropleth on a human body map. Use the arguments
@@ -40,14 +40,7 @@
 #'   be either "left" or "right, although see \code{bridge_side}).
 #' @param data tidy data frame, like the type you'd feed into ggplot() when
 #'   producing a histogram
-#' @param type currently, only \code{"simple"} is available, but soon "detailed"
-#'   will be an option as well, just as we're working on more natural-looking
-#'   and gender-specific maps.
-#' @param with_back logical, should the plot include the back-side of the head, neck and trunk?
-#' @param body_halves character string defining how to deal with body halves.
-#'   \code{"separate"} (default with side aesthetic) discriminates the left half
-#'   from the right; \code{"join"} (default without side aesthetic) merges
-#'   observations in, e.g., right and left side of the chest.
+#' @param type currently, only \code{"simple"} is available.
 #' @param annotate CURRENTLY NOT AVAILABLE \code{"freq"} (defaults) shows only absolute and relative
 #'   frequencies, \code{"all"} includes region names, and \code{NA} omits labels
 #'   altogether. See Details for ways to fine-tune the apperance of annotations.
@@ -57,11 +50,6 @@
 #' @param bridge_loc named \emph{list} specifying the bridge from your data
 #'   format to the native format of \code{geom_body}, e.g., \code{list(head =
 #'   c("head", "face", "scalp"))}. See Details.
-#' @param bridge_side names \emph{list}, specyfing the bridge from your
-#'   laterality values for each of the native values of \code{geom_body}, e.g.
-#'   \code{list(left = c("left", "l"), right = c("right", "r"), mid = c("mid",
-#'   "m"))}. The \code{mid} element is only required if mid-line observation are
-#'   included, see the \code{controls} argument.
 #' @param na.rm logical indicating whether to remove missing data. Default is
 #'   \code{FALSE}.
 #' @param controls named \emph{list} of more specific parameters for fine-tuning
@@ -81,39 +69,34 @@
 #'
 #' @export
 
-geom_ais <- function(mapping = NULL, data = NULL, type = "simple", with_back = TRUE,
-                      body_halves = NULL, annotate = "freq", bridge_loc = NULL,
-                      bridge_side = NULL, combine = NULL, controls = NULL,
-                      # Standard arguments to layer()
-                      na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
+geom_organs <- function(mapping = NULL, data = NULL, type = "simple", annotate = "freq",
+                        bridge_loc = NULL, combine = NULL, controls = NULL, body_halves = "separate",
+                        # Standard arguments to layer()
+                        na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
-    h_env$map_name <- "body_ais"
+    h_env$map_name <- "internal_organs"
+        # map_name is useful later for pre-specified annotation coordinates and other map-specific behaviour
 
     # Safety moves and housekeeping
     if (missing(data)) stop("Please, include data.")
-    vargs <- list(type = c("simple", "detailed"),
-                  with_back = c(TRUE, FALSE))
+    vargs <- list() # list(type = c("simple", "detailed"),
+                  # with_back = c(TRUE, FALSE))
     housekeeping(match.call()[-1], formals(), vargs)
 
     # Import relevant map (maps object in R/sysdata.rda)
-    map_name <- sprintf("ais_%s", h_env$type)
-    if (h_env$with_back) map_name <- paste0(map_name, "_complete")
-    fetch_map(map_name)
+    fetch_map(h_env$map_name)
 
     # Ensure valid user-supplied regions in "combine", if relevant
     test_combined()
 
-    # Use built-in AIS bridge (by design)
-    h_env$bridge_loc <- sprintf("ais_%s", h_env$type)
-    data <- build_bridge(data, geom = "ais")
+    # Apply bridge, if any
+    data <- build_bridge(data, geom = "organs")
 
     # Add mapped_loc variable to user's data frame
     data <- generate_mapped_loc(data)
 
     # Generate (preliminary) data for annotations, if relevant
-    map_symmetric <- if (h_env$with_back) FALSE else TRUE
-    prep_annotations(data$mapped_loc, map_symmetric)
-        # map_name might be useful later for pre-specified annotation coordinates
+    prep_annotations(data$mapped_loc, symmetric_map = FALSE)
 
     # Update aes() object to reflect changes
     mapping <- update_mapping(mapping)
