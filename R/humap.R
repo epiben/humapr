@@ -12,13 +12,19 @@
 #' @importFrom stats na.exclude na.omit setNames
 #' @importFrom magrittr %>%
 
-humap <- function() {
+humap <- function(data = NULL, mapping = NULL) {
+    # h_env is an internal object in R/sysdata.rda, and is reset here
+    rm(list = ls(envir = h_env), envir = h_env)
+    h_env$data <- data
+    h_env$mapping <- mapping
+
     # Just return a ggplot object with appropriate theme settings
+    blank <- ggplot2::element_blank() # => simpler theme() call
     ggplot2::ggplot() +
-        ggplot2::theme(axis.title = element_blank(),
-                       axis.text = element_blank(),
-                       axis.line = element_blank(),
-                       axis.ticks = element_blank(),
-                       panel.grid = element_blank(),
-                       panel.background = element_blank())
+        ggplot2::theme(axis.title = blank,
+                       axis.text = blank,
+                       axis.line = blank,
+                       axis.ticks = blank,
+                       panel.grid = blank,
+                       panel.background = blank)
 }

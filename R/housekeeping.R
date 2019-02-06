@@ -7,22 +7,27 @@
 # vargs: list of arguments with valid values, specific to each geom_*
 
 housekeeping <- function(user, defs, vargs) {
-    # h_env is an internal object in R/sysdata.rda, and is reset here
-    rm(list = ls(envir = h_env), envir = h_env)
-
     # Sync user-supplied and default arguments
     defs[names(defs) %in% names(user)] <- user
-    for (arg in names(defs)[names(defs) != "..."])
+    # for (arg in names(defs)[names(defs) != "..."])
+    for (arg in names(defs)[!names(defs) %in% c("mapping", "...")])
         assign(arg, eval(defs[[arg]]), h_env)
 
-    # Check that user supplied aes() object
-    if (is.null(user[[1]])) stop("Please, specify a mapping.")
-    if (is.null(user[[1]]$loc)) stop("Please, specify a 'loc' aesthetic.")
+    # Check that user supplied valid aes() object
+    if (is.null(user[["mapping"]])) {
+        if (is.null(h_env$mapping))
+            stop("Please, specify a mapping.")
+    } else {
+        assign("mapping", eval(defs[["mapping"]]), h_env) # to maintain class = "uneval" of mapping object
+    }
+    if (is.null(h_env$mapping$loc))
+        stop("Please, specify a 'loc' aesthetic.")
 
     # Extract 'loc' and 'side' var from aes(), assign to h_env to prevent breaking other scripts
-    h_env$loc <- as.character(user[[1]]$loc)
-    h_env$side <- user[[1]]$side %||% NULL
-    if (!is.null(h_env$side)) h_env$side <- as.character(h_env$side)
+    # Previously, as.character(...$loc/side) didn't require indexing, but they seem to have changed structure
+    h_env$loc <- as.character(h_env$mapping$loc)[2] # previously, without indexing
+    h_env$side <- h_env$mapping$side %||% NULL
+    if (!is.null(h_env$side)) h_env$side <- as.character(h_env$side)[2]
 
     if (exists("side", envir = h_env)) {
         if (is.null(h_env$side)) {
@@ -36,7 +41,7 @@ housekeeping <- function(user, defs, vargs) {
     }
 
     # Choose default and prompt user if invalid argument supplied
-    for (arg in names(vargs))
+    for (arg in names(vargs)) # vargs = valid arguments
         # Prompts and sets first of each vargs element as default
         if (!get(arg, h_env) %in% vargs[[arg]]) prompt_inv(arg, vargs[[arg]][1])
 
@@ -63,14 +68,9 @@ housekeeping <- function(user, defs, vargs) {
     # controls$vert_adj needs bounding box of map, so defined in prep_annotations.R
 
     # Test argument combinations, and make necessary changes
-    if (is.null(h_env$side) & h_env$body_halves != "join") {
+    if (is.null(h_env$side) & h_env$body_halves != "join" & !h_env$map_name %in% c("internal_organs")) {
         # Pool left- and right-sided data if no way to discriminate them
         h_env$body_halves <- "join"
         message("`side` aesthetic missing. Defaults to body_halves = \"join\".")
     }
-    # if (h_env$type == "simple" && h_env$proj != "neutral") {
-    #     # Ignore projection if type = "simple"
-    #     h_env$proj <- "neutral"
-    #     message("Projections not available for the simple body map; ignores `proj` argument.")
-    # }
 }

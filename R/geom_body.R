@@ -3,6 +3,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
      default_aes = aes(colour = NA, fill = "grey20", size = 0.5, linetype = 1, alpha = 1),
      draw_key = function (data, ...) draw_key_polygon(data, ...),
      draw_group = function(data, panel_scales, coord, ...) {
+
          # Transform data and append a label column to the data frame
          if (h_env$controls$mid_include)
              data <- dplyr::mutate(data,
@@ -42,7 +43,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
          }
 
          # Prepare data for plotting and create labels, if requested by user
-         if (h_env$body_halves == "join")
+         if (h_env$body_halves == "join" & !h_env$map_name %in% c("internal_organs"))
              # Essentially, row-bind two modified versions of the 'data' df
              data <- dplyr::mutate(data, label = paste0("left_", label), y = 0,
                                    count = 0, prop = 0) %>%
@@ -77,7 +78,11 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 
          # If the user wants annotations, the relevant grobs are made here
          if (h_env$annotate %in% c("all", "freq")) {
-             local_coords <- dplyr::mutate(h_env$anno_coords, label = rm_lr(region))
+             if (h_env$map_name %in% c("internal_organs")) {
+                 local_coords <- dplyr::mutate(h_env$anno_coords, label = region)
+             } else {
+                 local_coords <- dplyr::mutate(h_env$anno_coords, label = rm_lr(region))
+             }
 
              # Find the lines margin (i.e., where the lines end)
              lines_margin <- max(diff(xscale) / 10,
@@ -114,22 +119,19 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 
             labels <- sapply(label_data$label, function(.)
                 make_label(., label_data, local_coords), simplify = FALSE)
+            labels <- do.call(grid::grobTree, labels)
 
-            labels <- sapply(label_data$label, function(.)
-                 make_label(., label_data, local_coords), simplify = FALSE)
-             labels <- do.call(grid::grobTree, labels)
+            # Find longest label, and use it to define the lateral margins
+            label_text <- sapply(labels$children, function(.) .$label)
+            long_label <- label_text[order(nchar(label_text), decreasing = TRUE)][1] # indexing in case of ties
 
-             # Find longest label, and use it to define the lateral margins
-             label_text <- sapply(labels$children, function(.) .$label)
-             long_label <- label_text[order(nchar(label_text), decreasing = TRUE)][1]
-
-             # Return final grob tree with appropriate viewport
-             map_vp <- humap_vp(xscale, yscale, li_margin, long_label, h_env$body_halves)
-             grid::grobTree(m, lines, labels, vp = map_vp)
+            # Return final grob tree with appropriate viewport
+            map_vp <- humap_vp(xscale, yscale, li_margin, long_label)
+            grid::grobTree(m, lines, labels, vp = map_vp)
          } else {
              map_vp <- humap_vp(x_range = xscale, y_range = yscale,
                                 li_margin = list(main = 0, map = c(0, 0)),
-                                long_label = "", h_env$body_halves)
+                                long_label = "")
              grid::grobTree(m, vp = map_vp)
          }
      }
@@ -224,8 +226,16 @@ geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neut
                       # Standard arguments to layer()
                       na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
+    h_env$map_name <- "body_simple"
+
     # Safety moves and housekeeping
-    if (missing(data)) stop("Please, include data.")
+    if (missing(data)) {
+        if (is.null(h_env$data)) {
+            stop("Please, include data.")
+        } else {
+            data <- h_env$data
+        }
+    }
     vargs <- list(type = c("simple", "female", "male"),
                   proj = c("front", "back", "neutral"))
     housekeeping(match.call()[-1], formals(), vargs)
@@ -248,7 +258,7 @@ geom_body <- function(mapping = NULL, data = NULL, type = "simple", proj = "neut
         # map_name might be useful later for pre-specified annotation coordinates
 
     # Update aes() object to reflect changes
-    mapping <- update_mapping(mapping)
+    mapping <- update_mapping(h_env$mapping)
 
     ggplot2::layer(
         geom = GeomBody, mapping = mapping, data = data, stat = "count",

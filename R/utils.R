@@ -21,9 +21,10 @@ prompt_inv <- function(arg, val){
 def_dist <- function (x, p = h_env$controls$label_pad)
     distribute_coords(x, p)
 
-inverse_coords <- function (x, cols = "x0") {
+inverse_coords <- function (x, cols = "x0", ref = NULL) {
     # i = index vector of those to convert
-    i <- x$x0 > mean(range(x$x0))
+    if (is.null(ref)) ref <- mean(range(x$x0))
+    i <- x$x0 > ref
     if (sum(i) == 0) return(x)
     # temp_c <- coords[to_invert, ]
     for (col in cols)

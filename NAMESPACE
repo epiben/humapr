@@ -2,6 +2,7 @@
 
 export(geom_ais)
 export(geom_body)
+export(geom_organs)
 export(humap)
 import(ggplot2)
 importFrom(magrittr,"%>%")
