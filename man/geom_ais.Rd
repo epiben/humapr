@@ -11,11 +11,10 @@ geom_ais(mapping = NULL, data = NULL, type = "simple",
   inherit.aes = TRUE, ...)
 }
 \arguments{
-\item{mapping}{supply an \code{aes()} object, just like other \code{ggplot2}
-functions. \code{humapr::geom_*} can take to aesthetics: \code{loc} is the
-name of the data frame column containing localisation codes for
-observations; and \code{side} the column holding the laterality data (must
-be either "left" or "right, although see \code{bridge_side}).}
+\item{mapping}{supply an \code{aes()} object, just like other \code{ggplot2} functions. \code{humapr::geom_*} can
+take to aesthetics: \code{loc} is the name of the data frame column containing localisation codes for observations;
+and \code{side} the column holding the laterality data (must be either "left" or "right, although see
+\code{bridge_side}).}
 
 \item{data}{tidy data frame, like the type you'd feed into \code{ggplot()} when producing a histogram.}
 
@@ -62,10 +61,7 @@ these controls are available (more will follow in the future):
 A layer object to a \code{humap} object.
 }
 \description{
-Use this function to draw a choropleth on a human body map. Use the arguments
-to choose exactly what kind of map you want. If you don't supply a
-\code{body_halves} argument humapr will default to \code{pool} mode.
-}
-\details{
-\code{geom_ais} is a variant of \code{\link{geom_body}}, so for details.
+Use this function to draw a choropleth on a human body map. Use the arguments to choose exactly what kind of map you
+want. If you don't supply a \code{body_halves} argument humapr will default to \code{pool} mode. \code{geom_ais} is a
+variant of \code{\link{geom_body}}, so for see the details of that function for more information.
 }

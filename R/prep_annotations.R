@@ -8,13 +8,9 @@ prep_annotations <- function(mapped_loc, symmetric_map = TRUE) {
     map_name <- h_env$map_name
 
     # Applying defaults
-    h_env$controls$label_pad <- diff(sp::bbox(h_env$map)["y", ]) *
-        (h_env$controls$label_pad %||% 3.5) / 100
-
-    # Importing file with predefined (x0, y0)'s or just compute them
-    # if (type == "simple" && proj == "neutral") {
-        # This one should check that the computed (x0, y0) is actually inside
-        # the relevant region, and find a new one if it isn't
+    h_env$controls$label_pad <- diff(range(h_env$mapdf$lat)) * (h_env$controls$label_pad %||% 3.5) / 100
+    # Compute coords on the spot, if not pre-computed (they really should be, and will be down the road)
+    if (is.null(h_env$coords)) {
         coords <- h_env$mapdf %>%
             dplyr::mutate(plot_mid = mean(range(long))) %>% # is useful to mirror and inverse coordinates later
             dplyr::group_by(id) %>%
@@ -26,14 +22,9 @@ prep_annotations <- function(mapped_loc, symmetric_map = TRUE) {
             dplyr::mutate(side_mid = mean(range(x0))) %>%
             dplyr::rename(region = id) %>%
             as.data.frame()
-        # rownames(h_env$anno_coords) <- h_env$anno_coords$region
-        rownames(coords) <- h_env$coords$region
-    # } else {
-        # h_env$anno_coords <- read.csv2(sprintf("data/coords_%s_%s_%s_%s.csv", type,
-        #                                        map, gender, proj), row.names = 1)
-        # h_env$anno_coords <- h_env$anno_coords[h_env$regions, ]
-        # If we want to use pre-defined (x0, y0)'s, we should keep them in R/sysdata.rda
-    # }
+    } else {
+        coords <- h_env$coords
+    }
 
     # In the end, which regions are actually mapped?
     mapped_regions <- if (body_halves == "join" | h_env$map_name %in% c("internal_organs")) {
@@ -41,8 +32,8 @@ prep_annotations <- function(mapped_loc, symmetric_map = TRUE) {
     } else {
         rm_lr(mapped_loc)
     }
-
     mapped_regions <- as.vector(na.exclude(unique(mapped_regions)))
+
     if (!is.null(combine)) {
         # Consider checking that combine input has appropriate form (particularly, combinations' names)
         for (combine_name in names(combine))

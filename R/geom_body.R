@@ -49,26 +49,28 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
                  rbind(dplyr::mutate(data, label = paste0("right_", label)))
 
          # Make "local" copies of map and mapdf objects, to simplify subsequent code
-         map <- h_env$map
          mapdf <- h_env$mapdf
 
          # Give missing regions default NA fill
-         data <- dplyr::mutate(as.data.frame(map), Layer = as.character(Layer)) %>%
-             dplyr::left_join(data, by = c("Layer" = "label")) %>%
-             dplyr::mutate(label = Layer, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
+         data <- dplyr::distinct(dplyr::select(mapdf, id)) %>%
+             dplyr::left_join(data, by = c("id" = "label")) %>%
+             dplyr::mutate(label = id, fill = ifelse(is.na(fill), h_env$controls$na_fill, fill))
 
          # Yield fill colours for each polygon
          fill_df <- dplyr::filter(mapdf, !duplicated(id)) %>%
-             dplyr::left_join(data, by = c("id" = "label"))
+             dplyr::left_join(data, by = c("id" = "label")) %>%
+             dplyr::arrange(layer_order)
 
          # Start building the output, first off is the polygon map
          m <- grid::polygonGrob(x = grid::unit(mapdf$long, "native"), y = grid::unit(mapdf$lat, "native"),
-                                gp = grid::gpar(col = fill_df$colour, fill = scales::alpha(fill_df$fill, fill_df$alpha)),
-                                id = as.factor(mapdf$id))
+                                gp = grid::gpar(col = fill_df$colour,
+                                                fill = scales::alpha(fill_df$fill, fill_df$alpha),
+                                                lwd = fill_df$size),
+                                id = mapdf$layer_order)
 
          # Define x and y scales, as they're used repeatedly in the code
-         xscale <- sp::bbox(map)["x", ]
-         yscale <- sp::bbox(map)["y", ]
+         xscale <- range(mapdf$long)
+         yscale <- range(mapdf$lat)
 
          # If the user wants annotations, the relevant grobs are made here
          if (h_env$annotate %in% c("all", "freq")) {

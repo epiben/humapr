@@ -1,17 +1,14 @@
 #' geom_ais builds a body map using AIS coding directly
 #'
 #'
-#' Use this function to draw a choropleth on a human body map. Use the arguments
-#' to choose exactly what kind of map you want. If you don't supply a
-#' \code{body_halves} argument humapr will default to \code{pool} mode.
+#' Use this function to draw a choropleth on a human body map. Use the arguments to choose exactly what kind of map you
+#' want. If you don't supply a \code{body_halves} argument humapr will default to \code{pool} mode. \code{geom_ais} is a
+#' variant of \code{\link{geom_body}}, so for see the details of that function for more information.
 #'
-#' \code{geom_ais} is a variant of \code{\link{geom_body}}, so for details.
-#'
-#' @param mapping supply an \code{aes()} object, just like other \code{ggplot2}
-#'   functions. \code{humapr::geom_*} can take to aesthetics: \code{loc} is the
-#'   name of the data frame column containing localisation codes for
-#'   observations; and \code{side} the column holding the laterality data (must
-#'   be either "left" or "right, although see \code{bridge_side}).
+#' @param mapping supply an \code{aes()} object, just like other \code{ggplot2} functions. \code{humapr::geom_*} can
+#'   take to aesthetics: \code{loc} is the name of the data frame column containing localisation codes for observations;
+#'   and \code{side} the column holding the laterality data (must be either "left" or "right, although see
+#'   \code{bridge_side}).
 #' @param with_back logical, should the plot include the back-side of the head, neck and trunk?
 #' @inheritParams geom_body
 #'

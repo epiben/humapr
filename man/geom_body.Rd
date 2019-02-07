@@ -57,8 +57,7 @@ maps as well.}
 A layer object to be added to a \code{humap} object.
 }
 \description{
-Use this function to draw a choropleth on a human body map. Use the arguments to choose exactly what kind of map you
-want.
+Use this function to draw a choropleth on a human body map.
 }
 \details{
 The \code{annotate} argument may be a named \code{list} with any combination of the following four elements:
