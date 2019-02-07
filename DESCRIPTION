@@ -8,15 +8,13 @@ Authors@R:
 Maintainer: Benjamin Skov Kaas-Hansen <benskov@gmail.com>
 Description: An extension of ggplot2 that plots topographic human data on simple "body maps", to visualise data.
 Depends:
-    ggplot2 (>= 2.2.1),
-    R (>= 3.3.2)
+    ggplot2 (>= 3.1.0),
+    R (>= 3.5.1)
 Imports:
-    broom (>= 0.4.2),
-    dplyr (>= 0.5.0), 
+    broom (>= 0.4.3),
+    dplyr (>= 0.7.6), 
     grid (>= 3.3.2),
-    maptools (>= 0.8-39),
     magrittr (>= 1.5),
-    sp (>= 1.2-3)
 License: GPL-3
 LazyData: TRUE
 BugReports: https://github.com/benskov/humapr/issues
