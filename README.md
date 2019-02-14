@@ -1,6 +1,8 @@
 # humapr
 
-With this package, we want to provide a simple tool to visualise human topographic data. Although an early and simple version, it should be fully functional. We're currently preparing the package for CRAN submission, but invite you to go ahead and try it out. We're very keen to get feedback and bug reports from useRs, just as suggestions for improvements are very welcome!
+With this package, we want to provide a simple tool to visualise human topographic data. Although an early and simple version, it should be fully functional. We will submit the package to CRAN eventually, but wanted to collect experiences and feedback from the community first, to have a more rounded package to submit.
+
+Thus, we invite you to go ahead and put it to the test. We're very keen to get feedback and bug reports from useRs. If you have ideas for other geoms, feel free to throw us an email or added it under issues here on the GitHub page. 
 
 An example of one-way tabulated (simulated!) data, with annotations:
 
