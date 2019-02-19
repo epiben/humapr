@@ -104,7 +104,7 @@ humap() +
 
 Beware, though, that facetting can give distorted results, because the range is shared across facets. This may be intended behaviour, but sometimes it's better to do "stratified tabulation" and manually align plots. 
 
-To give the same appearance as normal `ggplot` facetting, I do actually use `facet_wrap` even though there is just one facetting level. It's a slight hack, but works well. Keeping annotation here can become a bit unwieldy, so I've removed them.
+To give the same appearance as normal `ggplot` facetting, I do actually use `facet_wrap` even though there is just one facetting level. It's a slight hack, but works well. Keeping annotations here can become a bit unwieldy, so I've removed them in this example.
 ```{r, fig.width=4}
 males <- humap() + 
     geom_organs(aes(loc = loc), filter(organ_data, gender == "Male"), annotate = NULL) +
