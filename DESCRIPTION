@@ -15,7 +15,7 @@ Imports:
     dplyr (>= 0.8.5), 
     grid (>= 3.5.1),
     magrittr (>= 1.5),
-    rlang (>=0.4.5)
+    rlang (>= 0.4.5)
 License: GPL-3
 LazyData: TRUE
 BugReports: https://github.com/benskov/humapr/issues
