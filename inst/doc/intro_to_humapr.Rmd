@@ -1,0 +1,134 @@
+---
+title: "Introduction to humapr"
+author: "Benjamin Skov Kaas-Hansen"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to humapr}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  fig.align = "center",
+  fig.height = 4,
+  fig.width = 3,
+  comment = "#>"
+)
+```
+
+This vignette gives a quick and dirty introduction to `humapr`. Built on `ggplot2`, it's not all that difficult to use, and we strive to keep the quirks to a minimum. This vignette features only customisation with standard `ggplot2` functions. 
+
+This first version of humapr is simple: you initiate things with `humap()`, basically creating an empty `ggplot` object with appropriate theme settings, and then you add the `geom` you want to use. `humapr` currently features two geom types: a stylised body surface divided into major topographic regions, and stylised internal organs. The arguments to these are similar; I'll show examples of both below. They is actually another geom (`geom_ais`) but I won't get into it here. 
+
+## Getting started
+`humapr` for now isn't on available on CRAN, so using `install.packages` won't get you far. Instead, use the `devtools` package to fetch `humapr` from GitHub where it currenly lives. If you don't have it, run `install.packages("devtools")`. My current R version is outdates, but this doesn't really cause problems. 
+
+```{r, message=FALSE, eval=FALSE}
+devtools::install_github("benskov/humapr")
+```
+
+## Setting up
+Here we load useful packages and create a little utility function to help us create simulated data for the examples below.
+
+```{r, message=FALSE}
+for (p in c("dplyr", "tibble", "humapr", "gridExtra", "grid")) 
+    library(p, character.only = TRUE)
+
+sampler <- function(x, n) 
+    sample(x, n, TRUE, sample(seq(0.5, 1, length = length(x)), length(x), TRUE))
+```
+
+## geom_body: Major topographic regions
+It shouldn't be a big surprise that this geom maps your data onto the stylised body surface. We first create some toy data to play with:
+
+```{r}
+body_data <- data.frame(loc = sampler(c("head", "neck", "chest", "abdomen", "arm", 
+                                        "forearm", "hand", "thigh", "leg", "foot"), 200),
+                        side = sampler(c("left", "right"), 200),
+                        gender = sample(c("male", "female"), 200, TRUE),
+                        year = 2010:2019) 
+```
+
+Let's look at top-10 rows in the toy data:
+```{r}
+head(body_data, 10)
+```
+
+And now, for a simple plot. We're not giving `humapr` any data to discriminate left- from right-side data, so regions are pooled.
+```{r}
+humap() +
+    geom_body(aes(loc = loc), body_data) 
+```
+
+If we do tell `humapr` which variable in the data frame holds information on side of the observation, this is put to use without further arguments:
+```{r}
+humap() +
+    geom_body(aes(loc = loc, side = side), body_data) 
+```
+
+## geom_organs: Internal organs
+Again, we create some toy data:
+
+```{r}
+organs <- c("urogenital", "right_kidney", "left_kidney", "pancreas", "liver", "spleen", 
+            "oesophagus", "stomach", "intestine", "heart", "trachea", "hyoid", "larynx", 
+            "right_lung", "left_lung")
+
+organ_data <- data.frame(loc = sampler(organs, 300),
+                         gender = sampler(c("Female", "Male"), 300),
+                         period = sampler(c("2001-05", "2006-10"), 300))
+```
+
+Then, we make a simple tabulation plot of the observation in each organ. Because organs, generally, are not left-right symmetric, there's no `side` argument in `geom_organs`. Instead, you assigne observations directly to, e.g., `right_lung` and `left_kidney`.
+
+```{r}
+humap() +
+    geom_organs(aes(loc = loc), organ_data)
+```
+
+## Annotation lines and labels
+By default, `humapr` puts annotation lines with absolute and relative frequency labels. You can change this with the `annotate` argument:
+```{r, fig.width=4}
+humap() +
+    geom_body(aes(loc = loc, side = side), body_data, annotate = "all") 
+```
+
+```{r}
+humap() +
+    geom_body(aes(loc = loc), body_data, annotate = NULL) 
+```
+
+## Change the fill scale
+`humapr` uses the default fill settings of `ggplot2`, so that low-count areas are dark, and high-count areas are light. It's straightfrward to change this with the `scale_fill_gradient` just as to change the fill colours altogether. Here, I let low-count areas have light-grey, and high-count areas dark-green fill.
+```{r}
+humap() +
+    geom_organs(aes(loc = loc), organ_data) +
+    scale_fill_gradient(low = "grey95", high = "darkgreen")
+```
+
+## Facetting
+Facetting is as simple as always when using `ggplot2`.
+
+```{r, fig.width=6}
+humap() +
+    geom_organs(aes(loc = loc), organ_data) +
+    facet_wrap(~ period)
+```
+
+Beware, however, that facetting can give distorted results, because the range is shared across facets. This may be intended behaviour, but sometimes it's better to do "stratified tabulation" and manually align plots. 
+
+Here---to give the same appearance as normal `ggplot2` facetting---I do actually use `facet_wrap` even though there is just one facetting level. It's a slight hack, but works well. Keeping annotations here can become a bit unwieldy, so I've removed them in this example.
+
+```{r, fig.width=4}
+males <- humap() + 
+    geom_organs(aes(loc = loc), filter(organ_data, gender == "Male"), annotate = NULL) +
+    facet_wrap(~ gender)
+females <- humap() + 
+    geom_organs(aes(loc = loc), filter(organ_data, gender == "Female"), annotate = NULL) +
+    facet_wrap(~ gender)
+grid.arrange(males, females, nrow = 1)
+```
+
