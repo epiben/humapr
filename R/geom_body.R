@@ -88,11 +88,9 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
              local_coords$x2 <- ifelse(local_coords$label_side == "left", xscale[1] - lines_margin, xscale[2] + lines_margin)
 
              # Define temp_labels to extract only relevant annotation coordinates
-             temp_labels <- if (h_env$body_halves == "join") {
-                 paste0("right_", label_data$label)
-             } else {
-                 label_data$label
-             }
+             temp_labels <- switch(h_env$body_halves,
+                                   "join" = paste0("right_", label_data$label),
+                                   label_data$label)
              local_coords <- dplyr::filter(local_coords, region %in% temp_labels)
 
              # Prepare data to feed into humap_vp()
@@ -108,9 +106,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
                                          default.units = "native", id.lengths = rep(3, nrow(local_coords)),
                                          gp = h_env$gp_lines)
 
-            labels <- sapply(label_data$label, function(.)
-                make_label(., label_data, local_coords), simplify = FALSE)
-                    # use lapply instead? - without local function!
+            labels <- lapply(label_data$label, make_label, data = label_data, local_coords = local_coords)
             labels <- do.call(grid::grobTree, labels)
 
             # Find longest label, and use it to define the lateral margins
