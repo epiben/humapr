@@ -10,8 +10,11 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
                                    y = if (h_env$controls$round_counts) ceiling(y / 2) else y / 2,
                                    count = if (h_env$controls$round_counts) ceiling(count / 2) else count / 2)
          coords <- coord$transform(data, panel_scales)
-         data$label <- as.character(panel_scales$x$breaks) # as.character to remove attributes
-         data <- dplyr::filter(data, !is.na(label))
+
+         data <- tibble::tibble(label = as.character(panel_scales$x$get_breaks()),
+                        x = attr(panel_scales$x$get_breaks(), "pos")) %>%
+             dplyr::right_join(data, by = "x") %>%
+             dplyr::filter(!is.na(label))
 
          # Pick only mapped regions with counts > 0 (only used if user combined regions)
          if (!is.null(h_env$combine)) {
@@ -26,27 +29,34 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 
          # Fill all regions included in the combine statement
          if (!is.null(h_env$combine)) {
-             new_data <- list(data)
+             new_data <- list(data) # start with actual data, then we append "pseudo data frames" for the regions to be combined
              for (i in seq(nrow(data))) {
                  if (data[i, "label"] %in% names(h_env$combine_key)) {
-                     old_locs <- names(h_env$combine_key[h_env$combine_key == h_env$combine_key[data[i, "label"]]])
+                     old_locs <- names(h_env$combine_key[h_env$combine_key == h_env$combine_key[data[i, "label", drop = TRUE]]])
                      for (old_loc in old_locs) {
                          # if (h_env$body_halves == "join") old_loc <- paste0(c("right_", "left_"), old_loc)
-                         if (!data[i, "label"] == old_loc) {
-                             new_data[[length(new_data) + 1]] <-
-                                 dplyr::mutate(data[i, ], label = old_loc, y = 0, count = 0, prop = 0)
+                         if (data[i, "label", drop = TRUE] != old_loc) {
+                             pseudo_df <- dplyr::mutate(data[i, ], label = old_loc, y = 0)
+                             if (is.null(h_env$fill)) pseudo_df <- dplyr::mutate(pseudo_df, count = 0, prop = 0)
+                             new_data[[length(new_data) + 1]] <- pseudo_df
+                                 # dplyr::mutate(data[i, ], label = old_loc, y = 0, count = 0, prop = 0)
                          }
                      }
                  }
              }
-             data <- do.call(rbind, new_data)
+             data <- bind_rows(new_data) # bind it all together # do.call(rbind, new_data)
          }
 
          # Prepare data for plotting and create labels, if requested by user
          if (h_env$body_halves == "join" & !h_env$map_name %in% c("internal_organs"))
              # Essentially, row-bind two modified versions of the 'data' df
-             data <- dplyr::mutate(data, label = paste0("left_", label), y = 0, count = 0, prop = 0) %>%
-                 rbind(dplyr::mutate(data, label = paste0("right_", label)))
+             if (is.null(h_env$fill)) {
+                 data <- dplyr::mutate(data, label = paste0("left_", label), y = 0, count = 0, prop = 0) %>%
+                     rbind(dplyr::mutate(data, label = paste0("right_", label)))
+             } else {
+                 data <- dplyr::mutate(data, label = paste0("left_", label), y = 0) %>%
+                     rbind(dplyr::mutate(data, label = paste0("right_", label)))
+             }
 
          # Make "local" copies of map and mapdf objects, to simplify subsequent code
          mapdf <- h_env$mapdf
@@ -148,7 +158,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' If you want to combine several regions and map them as one, supply a named \emph{list} in \code{combine}, following
 #' this logic: the name of each element will be printed as the annotation text (if you so desire), and the element must
 #' be a character vector specifying the names of \code{geom_body} regions to map as one. Underscores in the list element
-#' names will be converted to wide spaces. Make sure to \emph{not} use a name for a merged region that is already used
+#' names will be converted to spaces. Make sure to \emph{not} use a name for a merged region that is already used
 #' for another region; e.g., this is not allowed, because \code{hand} is already the name of another region: \code{list(hand =
 #' c("shoulder", "arm", "elbow", "wrist"))}. You may, however, use a name of a region inside the group, e.g., \code{list(hand = c("wrist", "hand"))}.
 #'
@@ -190,7 +200,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 geom_body <- function(mapping = NULL, data = NULL, body_halves = NULL, annotate = "freq", bridge_side = NULL,
                       bridge_loc = NULL, combine = NULL, controls = NULL, type = "simple", proj = "neutral",
                       # Standard arguments to layer()
-                      na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
+                      stat = "count", na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...) {
 
     h_env$map_name <- "body_simple"
 
@@ -227,7 +237,7 @@ geom_body <- function(mapping = NULL, data = NULL, body_halves = NULL, annotate 
     mapping <- update_mapping(h_env$mapping)
 
     ggplot2::layer(
-        geom = GeomBody, mapping = mapping, data = data, stat = "count",
+        geom = GeomBody, mapping = mapping, data = data, stat = stat,
         position = "identity", show.legend = show.legend, inherit.aes = inherit.aes,
         params = list(na.rm = na.rm, ...)
     )

@@ -15,8 +15,14 @@ make_label <- function (id, data, local_coords) {
     tid <- if (!h_env$body_halves == "join") id else substring(id, regexpr("_", id) + 1)
 
     # Base label with absolute and relative frequencies
-    label <- sprintf("%s (%s%%)", data[data$label == tid, "count"],
-                     round(data[data$label == tid, "prop"] * 100, 0))
+    if (is.null(h_env$fill)) {
+        abs_freq <- data[data$label == tid, "count", drop = TRUE]
+        rel_freq <- round(data[data$label == tid, "prop", drop = TRUE] * 100, 0)
+    } else {
+        abs_freq <- data[data$label == tid, "y", drop = TRUE]
+        rel_freq <- round(abs_freq / sum(data$y) * 100, 0)
+    }
+    label <- sprintf("%s (%s%%)", scales::label_comma()(abs_freq), rel_freq)
 
     # If desired by user, expand label to include also name of region
     if (h_env$annotate == "all") {
@@ -28,6 +34,7 @@ make_label <- function (id, data, local_coords) {
         }
 
         # Divide string by underscores
+        # FIX: use stringr instead, perhaps also: __ => ", " and _ => " "
         lab <- regmatches(lab, gregexpr("_", lab), invert = TRUE)[[1]]
         if (!h_env$body_halves == "join" & !h_env$map_name %in% c("internal_organs"))
             lab <- lab[-1] # Remove "left"/"right"

@@ -26,10 +26,11 @@ housekeeping <- function(user, defs, vargs) {
         stop("Please, specify a 'loc' aesthetic.")
 
     # Extract 'loc' and 'side' var from aes(), assign to h_env to prevent breaking other scripts
-    # Previously, as.character(...$loc/side) didn't require indexing, but they seem to have changed structure
-    h_env$loc <- rlang::as_name(h_env$mapping$loc) # previously, without indexing
+    h_env$loc <- rlang::as_name(h_env$mapping$loc)
     h_env$side <- h_env$mapping$side %||% NULL
-    if (!is.null(h_env$side)) h_env$side <- as.character(h_env$side)[2]
+    if (!is.null(h_env$side)) h_env$side <- rlang::as_name(h_env$side)
+    h_env$fill <- h_env$mapping$fill
+    h_env$fill <- if (is.null(h_env$fill)) NULL else rlang::as_name(h_env$fill)
 
     if (exists("side", envir = h_env)) {
         if (is.null(h_env$side)) {

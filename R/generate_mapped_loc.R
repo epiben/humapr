@@ -1,3 +1,4 @@
+
 generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regions, h, combine) {
     loc <- h_env$loc
     side <- h_env$side
@@ -37,9 +38,9 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
     # Generate "loc_long" based on user inputs
     if (h == "join" & !h_env$map_name %in% c("internal_organs")) {
         d$loc_long <- if (!is.null(side)) {
-            ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc]), NA)
+            ifelse(d[, side] %in% c("left", "right"), as.character(d[, loc, drop = TRUE]), NA)
         } else {
-            as.character(d[, loc])
+            as.character(d[, loc, drop = TRUE])
         }
         h_env$regions <- paste0("right_", unique(rm_lr(regions)))
     } else if (map_name %in% c("internal_organs")) {
@@ -73,14 +74,14 @@ generate_mapped_loc <- function(d) { # function(d, loc, side, bridge_side, regio
     }
 
     # Make sure mapped_loc is NA when necessary
-    d$mapped_loc <- ifelse(is.na(d[, loc]), NA, d$mapped_loc)
+    d$mapped_loc <- ifelse(is.na(d[, loc, drop = TRUE]), NA, d$mapped_loc)
 
     # Find missing values, and notify user if any such found
     missing_mapped_loc <- is.na(d$mapped_loc)
     if (sum(missing_mapped_loc) > 0) {
         missing_loc <- if (is.null(side)) sum(is.na(d[, loc])) else sum(is.na(d[, loc]) & !is.na(d[, side]))
-        missing_side <- sum(is.na(d[, side]) & !is.na(d[, loc]))
-        missing_both <- sum(is.na(d[, loc]) & is.na(d[, side]))
+        missing_side <- if (!is.null(side)) sum(is.na(d[, side]) & !is.na(d[, loc])) else 0
+        missing_both <- if (!is.null(side)) sum(is.na(d[, loc]) & is.na(d[, side])) else 0
         message(sprintf("Procesing your data yielded %s missing values:", sum(missing_mapped_loc)))
         if (missing_loc > 0) message(sprintf("- %s from '%s'", missing_loc, loc))
         if (missing_side > 0) message(sprintf("- %s from '%s'", missing_side, side))

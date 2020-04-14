@@ -51,11 +51,11 @@ build_bridge <- function(d, geom = "body") { # function (d, bridge, type) {
                     names(built_in), "."),
              call. = FALSE)
 
-    d[, h_env$loc] <- as.character(d[, h_env$loc]) # make sure it's not a factor
+    d[, h_env$loc] <- as.character(d[, h_env$loc, drop = TRUE]) # make sure it's not a factor
     for (hreg in names(bridge))
-        d[d[, h_env$loc] %in% bridge[[hreg]], h_env$loc] <- hreg
+        d[d[, h_env$loc, drop = TRUE] %in% bridge[[hreg]], h_env$loc] <- hreg
 
-    valid_locs <- d[, h_env$loc] %in% c(regions, NA) # include NA, as it's not an error, just a missing value
+    valid_locs <- d[, h_env$loc, drop = TRUE] %in% c(regions, NA) # include NA, as it's not an error, just a missing value
 
     if (sum(!valid_locs) > 0) {
         message(sprintf("%s data points (of %s) could not be associated with a region in the chosen map; they will be ignored.",
@@ -65,7 +65,7 @@ build_bridge <- function(d, geom = "body") { # function (d, bridge, type) {
     }
 
     # Return updated d, with non-valid region converted to NA
-    valid_regions <- d[, h_env$loc] %in% regions
+    valid_regions <- d[, h_env$loc, drop = TRUE] %in% regions
     dplyr::mutate(d, !!h_env$loc := ifelse(valid_regions, !!as.symbol(h_env$loc), NA))
     # d[converted, , drop = FALSE] # Return updated data frame
 }

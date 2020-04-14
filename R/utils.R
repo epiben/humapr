@@ -39,9 +39,13 @@ mirror_coord <- function(x, mid, side, side_ref)
 
 update_mapping <- function(m) { # m is an aes() object
     m$x <- as.symbol("mapped_loc")
-    m$fill <- as.symbol("..count..")
     m$group <- 1
     m$loc <- m$side <- NULL
+    if (!is.null(m$fill)) {
+        m$y <- m$fill
+    } else {
+        m$fill <- as.symbol("..count..")
+    }
     m
 }
 
