@@ -10,7 +10,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
                                    y = if (h_env$controls$round_counts) ceiling(y / 2) else y / 2,
                                    count = if (h_env$controls$round_counts) ceiling(count / 2) else count / 2)
          coords <- coord$transform(data, panel_scales)
-         data$label <- panel_scales$x$breaks # panel_scales$x.labels[data$x]
+         data$label <- as.character(panel_scales$x$breaks) # as.character to remove attributes
          data <- dplyr::filter(data, !is.na(label))
 
          # Pick only mapped regions with counts > 0 (only used if user combined regions)
@@ -110,6 +110,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 
             labels <- sapply(label_data$label, function(.)
                 make_label(., label_data, local_coords), simplify = FALSE)
+                    # use lapply instead? - without local function!
             labels <- do.call(grid::grobTree, labels)
 
             # Find longest label, and use it to define the lateral margins
