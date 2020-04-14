@@ -2,7 +2,9 @@
 title: "Introduction to humapr"
 author: "Benjamin Skov Kaas-Hansen"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+    rmarkdown::html_vignette:
+        df_print: tibble
 vignette: >
   %\VignetteIndexEntry{Introduction to humapr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,7 +26,7 @@ This vignette gives a quick and dirty introduction to `humapr`. Built on `ggplot
 This first version of humapr is simple: you initiate things with `humap()`, basically creating an empty `ggplot` object with appropriate theme settings, and then you add the `geom` you want to use. `humapr` currently features two geom types: a stylised body surface divided into major topographic regions, and stylised internal organs. The arguments to these are similar; I'll show examples of both below. They is actually another geom (`geom_ais`) but I won't get into it here. 
 
 ## Getting started
-`humapr` for now isn't on available on CRAN, so using `install.packages` won't get you far. Instead, use the `devtools` package to fetch `humapr` from GitHub where it currenly lives. If you don't have it, run `install.packages("devtools")`. My current R version is outdates, but this doesn't really cause problems. 
+`humapr` for now isn't on available on CRAN, so using `install.packages` won't get you far. Instead, use the `devtools` package to fetch `humapr` from GitHub where it currenly lives. If you don't have it, run `install.packages("devtools")`. 
 
 ```{r, message=FALSE, eval=FALSE}
 devtools::install_github("benskov/humapr")
@@ -33,7 +35,7 @@ devtools::install_github("benskov/humapr")
 ## Setting up
 Here we load useful packages and create a little utility function to help us create simulated data for the examples below.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 for (p in c("dplyr", "tibble", "humapr", "gridExtra", "grid")) 
     library(p, character.only = TRUE)
 
@@ -59,8 +61,8 @@ head(body_data, 10)
 
 And now, for a simple plot. We're not giving `humapr` any data to discriminate left- from right-side data, so regions are pooled.
 ```{r}
-humap() +
-    geom_body(aes(loc = loc), body_data) 
+humap() + 
+    geom_body(aes(loc = loc), body_data, combine = list(head = c("head", "neck"))) 
 ```
 
 If we do tell `humapr` which variable in the data frame holds information on side of the observation, this is put to use without further arguments:

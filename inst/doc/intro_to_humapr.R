@@ -10,7 +10,7 @@ knitr::opts_chunk$set(
 ## ---- message=FALSE, eval=FALSE------------------------------------------
 #  devtools::install_github("benskov/humapr")
 
-## ---- message=FALSE------------------------------------------------------
+## ---- message=FALSE, warning=FALSE---------------------------------------
 for (p in c("dplyr", "tibble", "humapr", "gridExtra", "grid")) 
     library(p, character.only = TRUE)
 
@@ -28,8 +28,8 @@ body_data <- data.frame(loc = sampler(c("head", "neck", "chest", "abdomen", "arm
 head(body_data, 10)
 
 ## ------------------------------------------------------------------------
-humap() +
-    geom_body(aes(loc = loc), body_data) 
+humap() + 
+    geom_body(aes(loc = loc), body_data, combine = list(head = c("head", "neck"))) 
 
 ## ------------------------------------------------------------------------
 humap() +
