@@ -27,7 +27,7 @@ housekeeping <- function(user, defs, vargs) {
 
     # Extract 'loc' and 'side' var from aes(), assign to h_env to prevent breaking other scripts
     # Previously, as.character(...$loc/side) didn't require indexing, but they seem to have changed structure
-    h_env$loc <- as.character(h_env$mapping$loc)[2] # previously, without indexing
+    h_env$loc <- rlang::as_name(h_env$mapping$loc) # previously, without indexing
     h_env$side <- h_env$mapping$side %||% NULL
     if (!is.null(h_env$side)) h_env$side <- as.character(h_env$side)[2]
 
