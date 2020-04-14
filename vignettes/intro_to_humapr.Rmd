@@ -2,7 +2,9 @@
 title: "Introduction to humapr"
 author: "Benjamin Skov Kaas-Hansen"
 date: "`r Sys.Date()`"
-output: rmarkdown::html_vignette
+output: 
+    rmarkdown::html_vignette:
+        df_print: tibble
 vignette: >
   %\VignetteIndexEntry{Introduction to humapr}
   %\VignetteEngine{knitr::rmarkdown}
@@ -33,7 +35,7 @@ devtools::install_github("benskov/humapr")
 ## Setting up
 Here we load useful packages and create a little utility function to help us create simulated data for the examples below.
 
-```{r, message=FALSE}
+```{r, message=FALSE, warning=FALSE}
 for (p in c("dplyr", "tibble", "humapr", "gridExtra", "grid")) 
     library(p, character.only = TRUE)
 
@@ -59,8 +61,8 @@ head(body_data, 10)
 
 And now, for a simple plot. We're not giving `humapr` any data to discriminate left- from right-side data, so regions are pooled.
 ```{r}
-humap() +
-    geom_body(aes(loc = loc), body_data) 
+humap() + 
+    geom_body(aes(loc = loc), body_data, combine = list(head = c("head", "neck"))) 
 ```
 
 If we do tell `humapr` which variable in the data frame holds information on side of the observation, this is put to use without further arguments:
