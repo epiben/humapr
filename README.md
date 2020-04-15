@@ -1,3 +1,5 @@
+<p align="center"><img height=350 src="https://raw.githubusercontent.com/benskov/humapr/master/public_figures/logo_name.png"></p>
+
 With `humapr` we seek to provide a simple tool to visualise human topographic data as choropleths. humapr is still simple but fully functional, and handles both tidy data (one row = one observation) and aggregated data (one row = one summary statistic, e.g. mean or sum). 
 
 The package originated in the area of forensic medicine and injury research, but we hope to get feedback from (potential) users to extend its functionalities and make it a useful resource in other disciplines as well. Thus, we invite you to go ahead and put it to the test and are very keen to get feedback and bug reports from useRs. If you have ideas for other geoms, feel free to throw us an email or added it under issues here on the GitHub page. 
