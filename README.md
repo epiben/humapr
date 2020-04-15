@@ -1,15 +1,12 @@
-# humapr
+With `humapr` we seek to provide a simple tool to visualise human topographic data as choropleths. humapr is still simple but fully functional, and handles both tidy data (one row = one observation) and aggregated data (one row = one summary statistic, e.g. mean or sum). 
 
-With this package, we want to provide a simple tool to visualise human topographic data as choropleths. humapr is still simple but fully functional, and handles both tidy data (one row = one observation) and aggregated data (one row = one summary statistic, e.g. mean or sum). Although an early and simple version, it should be fully functional. We will submit the package to CRAN eventually, but wanted to collect experiences and feedback from the community first, to have a more rounded package to submit.
+The package originated in the area of forensic medicine and injury research, but we hope to get feedback from (potential) users to extend its functionalities and make it a useful resource in other disciplines as well. Thus, we invite you to go ahead and put it to the test and are very keen to get feedback and bug reports from useRs. If you have ideas for other geoms, feel free to throw us an email or added it under issues here on the GitHub page. 
 
-Thus, we invite you to go ahead and put it to the test. We're very keen to get feedback and bug reports from useRs. If you have ideas for other geoms, feel free to throw us an email or added it under issues here on the GitHub page. 
+`humapr` isn't on CRAN, so you need to run `devtools::install_github("benskov/humapr")` to install it. The introductory vignette has more examples of how to use `humapr`, but we include here a simple example of a (simulated) two-way tabulation of number of lesions by type of force and sex:
 
-An example of one-way tabulated (simulated!) data, with annotations:
-
-![Example of a humap_body with simulated injury data with annotations, tabulated by type of force](/public_figures/example_simple_all.png)
-
-Another example of two-way tabulated (simulated!) data, without annotations:
-
+<p align="center">
 ![Example of a humap_body with simulated injury data, tabulated by type of force and gender](/public_figures/example_grid_trauma_gender.png)
+</p>
 
-*Will be updated*
+### Funding
+We started developing `humapr` a while ago and didn't receive funding directly for this project. However, the following entities have provided funding indirectly to its creation: Institute of Forensic Medicine, Aarhus University; NNF Centre for Protein Research (NNF14CC0001); Innovation Fund Denmark (5153-00002B).
