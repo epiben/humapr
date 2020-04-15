@@ -4,9 +4,7 @@ The package originated in the area of forensic medicine and injury research, but
 
 `humapr` isn't on CRAN, so you need to run `devtools::install_github("benskov/humapr")` to install it. The introductory vignette has more examples of how to use `humapr`, but we include here a simple example of a (simulated) two-way tabulation of number of lesions by type of force and sex:
 
-<p align="center">
-![Example of a humap_body with simulated injury data, tabulated by type of force and gender](/public_figures/example_grid_trauma_gender.png)
-</p>
+<p align="center"><img src="https://github.com/benskov/humapr/blob/master/public_figures/example_grid_trauma_gender.png"></p>
 
 ### Funding
 We started developing `humapr` a while ago and didn't receive funding directly for this project. However, the following entities have provided funding indirectly to its creation: Institute of Forensic Medicine, Aarhus University; NNF Centre for Protein Research (NNF14CC0001); Innovation Fund Denmark (5153-00002B).
