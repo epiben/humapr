@@ -9,38 +9,51 @@ geom_organs(mapping = NULL, data = NULL, annotate = "freq",
   na.rm = FALSE, show.legend = FALSE, inherit.aes = TRUE, ...)
 }
 \arguments{
-\item{mapping}{\code{aes()} object, just like other \code{ggplot2} functions, with two aesthetics: \code{loc} is the
-name of the data frame column containing localisation codes for observations; and \code{side} the column holding
-the laterality data (must be either "left" or "right, but see \code{bridge_side}). In the future, we'll probably
-add a third aesthetic to allow the fill reflect other things than merely tabulation counts.}
+\item{mapping}{\code{aes()} object, just like other \code{ggplot2} functions, with two
+aesthetics: \code{loc} is the name of the data frame column containing localisation
+codes for observations; and \code{side} the column holding the laterality data (must
+be either "left" or "right, but see \code{bridge_side}). It is possible to supply a
+\code{fill} argument to use pre-computed summary statistics (see below).}
 
-\item{data}{tidy data frame, like the type you'd feed into \code{ggplot()} when producing a histogram.}
+\item{data}{data frame, like the type you'd feed into \code{ggplot()} when producing a
+histogram. Is expected to be tidy, but can contain a summary statistic; in that
+case, you must specify a \code{fill} aesthetic and set \code{stat = "identity"} in
+the call to the \code{geom}.}
 
-\item{annotate}{\code{"freq"} (defaults) shows only absolute and relative frequencies, \code{"all"} includes region
-names, and \code{NA} omits labels altogether. See Details for ways to fine-tune the apperance of annotations.}
+\item{annotate}{\code{"freq"} (defaults) shows only absolute and relative frequencies,
+\code{"all"} includes region names, and \code{NA} omits labels altogether. See
+Details for ways to fine-tune the apperance of annotations.}
 
-\item{bridge_loc}{named \emph{list} specifying the bridge from your data format to the native format of
-\code{geom_body}, e.g., \code{list(head = c("head", "face", "scalp"))}. See Details.}
+\item{bridge_loc}{named \emph{list} specifying the bridge from your data format to the
+native format of \code{geom_body}, e.g., \code{list(head = c("head", "face",
+"scalp"))}. See Details.}
 
-\item{combine}{named \emph{list} of vectors naming the regions to be combined and mapped as one, e.g., \code{list(arm
-= c("shoulder", "arm", "elbow", "wrist"))}. See Details for behaviour.}
+\item{combine}{named \emph{list} of vectors naming the regions to be combined and
+mapped as one, e.g., \code{list(arm = c("shoulder", "arm", "elbow", "wrist"))}. See
+Details for behaviour.}
 
-\item{controls}{named \emph{list} of more specific parameters for fine-tuning the appereance of the humap. Currently,
-these controls are available (more will follow in the future):
-\itemize{
-  \item \code{na_fill}:  should be a string or function specifying the fill of zero-count regions (default: "black")
-  \item \code{label_pad}: a numeric defining the padding between labels, in percent of map height (default: \code{3.5})
-  \item \code{mid_include}: a logical defining whether to include mid-line observations and split them equally between left and right (default: \code{FALSE})
-  \item \code{round_counts}: a logical indicating whether to round (up) half-counts in annotation labels when splitting mid-line observations between left and right (default: \code{FALSE})
-}}
+\item{controls}{named \emph{list} of more specific parameters for fine-tuning the
+appereance of the humap. Currently, these controls are available (more will follow
+in the future): \itemize{ \item \code{na_fill}:  should be a string or function
+specifying the fill of zero-count regions (default: "black") \item \code{label_pad}:
+a numeric defining the padding between labels, in percent of map height (default:
+\code{3.5}) \item \code{mid_include}: a logical defining whether to include mid-line
+observations and split them equally between left and right (default: \code{FALSE})
+\item \code{round_counts}: a logical indicating whether to round (up) half-counts in
+annotation labels when splitting mid-line observations between left and right
+(default: \code{FALSE}) }}
 
-\item{na.rm}{logical indicating whether to remove missing data. Default is \code{FALSE}.}
+\item{na.rm}{logical indicating whether to remove missing data. Default is
+\code{FALSE}.}
 
-\item{show.legend}{passed on to the underlying machinery of the \code{geom}.}
+\item{show.legend}{passed on to the underlying machinery of the
+\code{geom}.}
 
-\item{inherit.aes}{passed on to the underlying machinery of the \code{geom}.}
+\item{inherit.aes}{passed on to the underlying machinery of the
+\code{geom}.}
 
-\item{...}{passed on to the underlying machinery of the \code{geom}.}
+\item{...}{passed on to the underlying machinery of the
+\code{geom}.}
 }
 \value{
 A layer object to a \code{humap} object.

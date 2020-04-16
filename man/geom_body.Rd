@@ -7,51 +7,70 @@
 geom_body(mapping = NULL, data = NULL, body_halves = NULL,
   annotate = "freq", bridge_side = NULL, bridge_loc = NULL,
   combine = NULL, controls = NULL, type = "simple",
-  proj = "neutral", na.rm = FALSE, show.legend = FALSE,
-  inherit.aes = TRUE, ...)
+  proj = "neutral", stat = "count", na.rm = FALSE,
+  show.legend = FALSE, inherit.aes = TRUE, ...)
 }
 \arguments{
-\item{mapping}{\code{aes()} object, just like other \code{ggplot2} functions, with two aesthetics: \code{loc} is the
-name of the data frame column containing localisation codes for observations; and \code{side} the column holding
-the laterality data (must be either "left" or "right, but see \code{bridge_side}). In the future, we'll probably
-add a third aesthetic to allow the fill reflect other things than merely tabulation counts.}
+\item{mapping}{\code{aes()} object, just like other \code{ggplot2} functions, with two
+aesthetics: \code{loc} is the name of the data frame column containing localisation
+codes for observations; and \code{side} the column holding the laterality data (must
+be either "left" or "right, but see \code{bridge_side}). It is possible to supply a
+\code{fill} argument to use pre-computed summary statistics (see below).}
 
-\item{data}{tidy data frame, like the type you'd feed into \code{ggplot()} when producing a histogram.}
+\item{data}{data frame, like the type you'd feed into \code{ggplot()} when producing a
+histogram. Is expected to be tidy, but can contain a summary statistic; in that
+case, you must specify a \code{fill} aesthetic and set \code{stat = "identity"} in
+the call to the \code{geom}.}
 
-\item{body_halves}{character string defining how to deal with body halves. \code{"separate"} (default with side
-aesthetic) discriminates the left half from the right; \code{"join"} (default without side aesthetic) merges
-observations in, e.g., right and left side of the chest.}
+\item{body_halves}{character string defining how to deal with body halves.
+\code{"separate"} (default with side aesthetic) discriminates the left half from the
+right; \code{"join"} (default without side aesthetic) merges observations in, e.g.,
+right and left side of the chest.}
 
-\item{annotate}{\code{"freq"} (defaults) shows only absolute and relative frequencies, \code{"all"} includes region
-names, and \code{NA} omits labels altogether. See Details for ways to fine-tune the apperance of annotations.}
+\item{annotate}{\code{"freq"} (defaults) shows only absolute and relative frequencies,
+\code{"all"} includes region names, and \code{NA} omits labels altogether. See
+Details for ways to fine-tune the apperance of annotations.}
 
-\item{bridge_side}{named \emph{list}, specyfing the bridge from your laterality values for each of the native values
-of \code{geom_body}, e.g. \code{list(left = c("left", "l"), right = c("right", "r"), mid = c("mid", "m"))}. The
-\code{mid} element is only required if mid-line observation are included, see the \code{controls} argument.}
+\item{bridge_side}{named \emph{list}, specyfing the bridge from your laterality values
+for each of the native values of \code{geom_body}, e.g. \code{list(left = c("left",
+"l"), right = c("right", "r"), mid = c("mid", "m"))}. The \code{mid} element is only
+required if mid-line observation are included, see the \code{controls} argument.}
 
-\item{bridge_loc}{named \emph{list} specifying the bridge from your data format to the native format of
-\code{geom_body}, e.g., \code{list(head = c("head", "face", "scalp"))}. See Details.}
+\item{bridge_loc}{named \emph{list} specifying the bridge from your data format to the
+native format of \code{geom_body}, e.g., \code{list(head = c("head", "face",
+"scalp"))}. See Details.}
 
-\item{combine}{named \emph{list} of vectors naming the regions to be combined and mapped as one, e.g., \code{list(arm
-= c("shoulder", "arm", "elbow", "wrist"))}. See Details for behaviour.}
+\item{combine}{named \emph{list} of vectors naming the regions to be combined and
+mapped as one, e.g., \code{list(arm = c("shoulder", "arm", "elbow", "wrist"))}. See
+Details for behaviour.}
 
-\item{controls}{named \emph{list} of more specific parameters for fine-tuning the appereance of the humap. Currently,
-these controls are available (more will follow in the future):
-\itemize{
-  \item \code{na_fill}:  should be a string or function specifying the fill of zero-count regions (default: "black")
-  \item \code{label_pad}: a numeric defining the padding between labels, in percent of map height (default: \code{3.5})
-  \item \code{mid_include}: a logical defining whether to include mid-line observations and split them equally between left and right (default: \code{FALSE})
-  \item \code{round_counts}: a logical indicating whether to round (up) half-counts in annotation labels when splitting mid-line observations between left and right (default: \code{FALSE})
-}}
+\item{controls}{named \emph{list} of more specific parameters for fine-tuning the
+appereance of the humap. Currently, these controls are available (more will follow
+in the future): \itemize{ \item \code{na_fill}:  should be a string or function
+specifying the fill of zero-count regions (default: "black") \item \code{label_pad}:
+a numeric defining the padding between labels, in percent of map height (default:
+\code{3.5}) \item \code{mid_include}: a logical defining whether to include mid-line
+observations and split them equally between left and right (default: \code{FALSE})
+\item \code{round_counts}: a logical indicating whether to round (up) half-counts in
+annotation labels when splitting mid-line observations between left and right
+(default: \code{FALSE}) }}
 
-\item{type}{currently, only \code{"simple"} is available, but we're working on more natural-looking and sex-specific
-maps as well.}
+\item{type}{currently, only \code{"simple"} is available, but we're working on more
+natural-looking and sex-specific maps as well.}
 
-\item{proj}{\code{"front"} or \code{"back"}. Ignored if \code{type = "simple"}, so currently not in use.}
+\item{proj}{\code{"front"} or \code{"back"}. Ignored if \code{type = "simple"}, so
+currently not in use.}
 
-\item{na.rm}{logical indicating whether to remove missing data. Default is \code{FALSE}.}
+\item{stat}{either \code{"count"} (default) or \code{"identity"}. Use the former with
+tidy data, and the latter when you supply a column with a pre-computed summary
+statistic. When using \code{stat = "identity"}, you must supply the name of the
+column with the summary statistic as the \code{fill} aesthetic.}
 
-\item{show.legend, inherit.aes, ...}{passed on to the underlying machinery of the \code{geom}.}
+\item{na.rm}{logical indicating whether to remove missing data. Default is
+\code{FALSE}.}
+
+\item{show.legend, inherit.aes, ...}{passed on to the underlying machinery of the
+\code{geom}.}
 }
 \value{
 A layer object to be added to a \code{humap} object.
@@ -60,26 +79,28 @@ A layer object to be added to a \code{humap} object.
 Use this function to draw a choropleth on a human body map.
 }
 \details{
-The \code{annotate} argument may be a named \code{list} with any combination of the following four elements:
-\itemize{
-  \item \code{details}: a character string, and may be any of the valid values of the simple argument
-(\code{"freq"}, \code{"all"}, \code{NA})
-  \item \code{gp}: must be a \code{gpar} object (see \code{?grid::gpar}). If only \code{gp} is specified, it is applied to both
-annotation text and lines.
-  \item \code{gp_text}: must be a \code{gpar} object, and is applied to annotation text.
-  \item \code{gp_lines}: must be a \code{gpar} object, and is applied to annotation lines
-}
+The \code{annotate} argument may be a named \code{list} with any combination of the
+following four elements: \itemize{ \item \code{details}: a character string, and may
+be any of the valid values of the simple argument (\code{"freq"}, \code{"all"},
+\code{NA}) \item \code{gp}: must be a \code{gpar} object (see \code{?grid::gpar}). If
+only \code{gp} is specified, it is applied to both annotation text and lines. \item
+\code{gp_text}: must be a \code{gpar} object, and is applied to annotation text. \item
+\code{gp_lines}: must be a \code{gpar} object, and is applied to annotation lines }
 
-The \code{bridge} argument allows you to use your own localisation values, and bridge them to those of
-\code{geom_body}. The idea is simple: you supply a named \code{list}, each element of which corresponds one region in
-the \code{geom_body} map; the name of the element should be the name of the region, and the element value a
-character vector of values in your data that correspond to that region. See vignette [add reference to vignette here]
-for examples.
+The \code{bridge} argument allows you to use your own localisation values, and bridge
+them to those of \code{geom_body}. The idea is simple: you supply a named \code{list},
+each element of which corresponds one region in the \code{geom_body} map; the name of
+the element should be the name of the region, and the element value a character vector
+of values in your data that correspond to that region. See vignette [add reference to
+vignette here] for examples.
 
-If you want to combine several regions and map them as one, supply a named \emph{list} in \code{combine}, following
-this logic: the name of each element will be printed as the annotation text (if you so desire), and the element must
-be a character vector specifying the names of \code{geom_body} regions to map as one. Underscores in the list element
-names will be converted to wide spaces. Make sure to \emph{not} use a name for a merged region that is already used
-for another region; e.g., this is not allowed, because \code{hand} is already the name of another region: \code{list(hand =
-c("shoulder", "arm", "elbow", "wrist"))}. You may, however, use a name of a region inside the group, e.g., \code{list(hand = c("wrist", "hand"))}.
+If you want to combine several regions and map them as one, supply a named \emph{list}
+in \code{combine}, following this logic: the name of each element will be printed as
+the annotation text (if you so desire), and the element must be a character vector
+specifying the names of \code{geom_body} regions to map as one. Underscores in the
+list element names will be converted to spaces. Make sure to \emph{not} use a name for
+a merged region that is already used for another region; e.g., this is not allowed,
+because \code{hand} is already the name of another region: \code{list(hand =
+c("shoulder", "arm", "elbow", "wrist"))}. You may, however, use a name of a region
+inside the group, e.g., \code{list(hand = c("wrist", "hand"))}.
 }

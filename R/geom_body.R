@@ -164,14 +164,7 @@ GeomBody <- ggplot2::ggproto("GeomBody", Geom,
 #' c("shoulder", "arm", "elbow", "wrist"))}. You may, however, use a name of a region
 #' inside the group, e.g., \code{list(hand = c("wrist", "hand"))}.
 #'
-#' @param mapping \code{aes()} object, just like other \code{ggplot2} functions, with two
-#'   aesthetics: \code{loc} is the name of the data frame column containing localisation
-#'   codes for observations; and \code{side} the column holding the laterality data (must
-#'   be either "left" or "right, but see \code{bridge_side}). It is possible to supply a
-#'   \code{fill} argument to use pre-computed summary statistics, in which case you must
-#'   also specify the \code{stat} argument (see below).
-#' @param data tidy data frame, like the type you'd feed into \code{ggplot()} when
-#'   producing a histogram.
+#' @inheritParams humap
 #' @param type currently, only \code{"simple"} is available, but we're working on more
 #'   natural-looking and sex-specific maps as well.
 #' @param proj \code{"front"} or \code{"back"}. Ignored if \code{type = "simple"}, so
