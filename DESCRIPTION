@@ -6,7 +6,7 @@ Authors@R:
     c(person("Benjamin Skov", "Kaas-Hansen", email = "benskov@gmail.com", role = c("cre", "aut")),
       person("Asser", "Thomsen", email = "aht@forens.au.dk", role = "aut"))
 Maintainer: Benjamin Skov Kaas-Hansen <benskov@gmail.com>
-Description: An extension of ggplot2 that plots topographic human data on simple "body maps", to visualise data.
+Description: An extension of ggplot2 that plots topographic human data on choropleths.
 Depends:
     ggplot2 (>= 3.3.0),
     R (>= 3.5)

@@ -1,12 +1,12 @@
 ## Test environments
-* local OS X install (Catalina 10.15), R 3.6.3 (2020-02-29)
-* ubuntu 12.04 (on travis-ci), R 3.1.2
+* local OS X install (Catalina 10.15), R 3.6.3
+* ubuntu 16.04.6 LTS (on travis-ci), R 3.6.2
 * win-builder (devel and release)
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was one NOTE:
+There was one NOTE (only in win-builder):
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Benjamin Skov Kaas-Hansen <benskov@gmail.com>'
   
