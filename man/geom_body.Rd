@@ -4,11 +4,23 @@
 \alias{geom_body}
 \title{Add normal body map to your \code{humap}}
 \usage{
-geom_body(mapping = NULL, data = NULL, body_halves = NULL,
-  annotate = "freq", bridge_side = NULL, bridge_loc = NULL,
-  combine = NULL, controls = NULL, type = "simple",
-  proj = "neutral", stat = "count", na.rm = FALSE,
-  show.legend = FALSE, inherit.aes = TRUE, ...)
+geom_body(
+  mapping = NULL,
+  data = NULL,
+  body_halves = NULL,
+  annotate = "freq",
+  bridge_side = NULL,
+  bridge_loc = NULL,
+  combine = NULL,
+  controls = NULL,
+  type = "simple",
+  proj = "neutral",
+  stat = "count",
+  na.rm = FALSE,
+  show.legend = FALSE,
+  inherit.aes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mapping}{\code{aes()} object, just like other \code{ggplot2} functions, with two

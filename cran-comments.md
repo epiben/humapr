@@ -17,7 +17,7 @@ There was one NOTE:
     
   COMMENTS:
    - This is my first submission.
-   - I mentioned ggplot2 twice DESCRIPTION, but never just ggplot. Not sure why this NOTE appears.
+   - DESCRIPTION mentions ggplot2 twice but never just ggplot. Not sure why this NOTE appears.
 
 ## DOWNSTREAM DEPENDENCIES
 There are currently no downstream dependencies for this package.

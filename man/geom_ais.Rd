@@ -4,11 +4,22 @@
 \alias{geom_ais}
 \title{geom_ais builds a body map using AIS coding directly}
 \usage{
-geom_ais(mapping = NULL, data = NULL, type = "simple",
-  with_back = TRUE, body_halves = NULL, annotate = "freq",
-  bridge_loc = NULL, bridge_side = NULL, combine = NULL,
-  controls = NULL, na.rm = FALSE, show.legend = FALSE,
-  inherit.aes = TRUE, ...)
+geom_ais(
+  mapping = NULL,
+  data = NULL,
+  type = "simple",
+  with_back = TRUE,
+  body_halves = NULL,
+  annotate = "freq",
+  bridge_loc = NULL,
+  bridge_side = NULL,
+  combine = NULL,
+  controls = NULL,
+  na.rm = FALSE,
+  show.legend = FALSE,
+  inherit.aes = TRUE,
+  ...
+)
 }
 \arguments{
 \item{mapping}{supply an \code{aes()} object, just like other \code{ggplot2} functions. \code{humapr::geom_*} can
