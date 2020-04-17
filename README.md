@@ -1,4 +1,7 @@
-[![Build Status](https://travis-ci.org/benskov/humapr.svg?branch=master)](https://travis-ci.org/benskov/humapr)
+<p align="right">
+    <img src="https://travis-ci.org/benskov/humapr.svg?branch=master">
+    <img src="https://img.shields.io/badge/version-0.1.0-informational">
+</p>
 
 <p align="center"><img src="https://raw.githubusercontent.com/benskov/humapr/master/public_figures/logo_name.png" height="350"></p>
 
