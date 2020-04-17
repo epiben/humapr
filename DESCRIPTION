@@ -3,15 +3,14 @@ Type: Package
 Title: Visualise Topographic Human Data
 Version: 0.1.0
 Authors@R:
-    c(person("Kaas-Hansen", "Benjamin Skov", email = "benskov@gmail.com", role = c("cre", "aut")),
-      person("Thomsen", "Asser", email = "aht@forens.au.dk", role = "aut"))
+    c(person("Benjamin Skov", "Kaas-Hansen", email = "benskov@gmail.com", role = c("cre", "aut")),
+      person("Asser", "Thomsen", email = "aht@forens.au.dk", role = "aut"))
 Maintainer: Benjamin Skov Kaas-Hansen <benskov@gmail.com>
 Description: An extension of ggplot2 that plots topographic human data on simple "body maps", to visualise data.
 Depends:
     ggplot2 (>= 3.3.0),
-    R (>= 3.5.1)
+    R (>= 3.5)
 Imports:
-    broom (>= 0.5.5),
     dplyr (>= 0.8.5), 
     grid (>= 3.5.1),
     magrittr (>= 1.5),
@@ -20,7 +19,9 @@ Imports:
 License: GPL-3
 LazyData: TRUE
 BugReports: https://github.com/benskov/humapr/issues
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.0
+Encoding: UTF-8
 Suggests: knitr,
+    gridExtra,
     rmarkdown
 VignetteBuilder: knitr
