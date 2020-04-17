@@ -5,3 +5,5 @@
 ^public_figures$
 ^documentation$
 _config.yml
+cran-comments.md
+.travis.yml
