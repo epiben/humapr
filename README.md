@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/benskov/humapr.svg?branch=master)](https://travis-ci.org/benskov/humapr)
+
 <p align="center"><img src="https://raw.githubusercontent.com/benskov/humapr/master/public_figures/logo_name.png" height="350"></p>
 
 With `humapr` we seek to provide a simple tool to visualise human topographic data as choropleths. It's still simple but fully functional, and handles both tidy data (one row = one observation) and aggregated data (one row = one summary statistic, e.g. mean or sum). 
