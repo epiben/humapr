@@ -1,5 +1,5 @@
 <p align="right">
-    <img src="https://travis-ci.org/benskov/humapr.svg?branch=master">
+    <a href="https://travis-ci.org/benskov/humapr" target="_blank"><img src="https://travis-ci.org/benskov/humapr.svg?branch=master"></a>
     <img src="https://img.shields.io/badge/version-0.1.0-informational">
 </p>
 
