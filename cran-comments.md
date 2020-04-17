@@ -6,7 +6,7 @@
 ## R CMD check results
 There were no ERRORs or WARNINGs.
 
-There was one NOTE (only in win-builder):
+There was one NOTE (win-builder only):
 * checking CRAN incoming feasibility ... NOTE
   Maintainer: 'Benjamin Skov Kaas-Hansen <benskov@gmail.com>'
   
@@ -17,7 +17,7 @@ There was one NOTE (only in win-builder):
     
   COMMENTS:
    - This is my first submission.
-   - DESCRIPTION mentions ggplot2 twice but never just ggplot. Not sure why this NOTE appears.
+   - In 9:30 of the DESCRIPTION, ggplot2 is intentional; I don't mean ggplot. 
 
 ## DOWNSTREAM DEPENDENCIES
 There are currently no downstream dependencies for this package.
